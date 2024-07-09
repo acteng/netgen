@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "Add a short description here"
 authors = ["Your Name <and@email>"]
 channels = ["conda-forge", "https://prefix.dev/r-forge/"]
-platforms = ["osx-64"]
+platforms = ["osx-64", "linux-64"]
 
 [tasks]
 rstudio = "open netgen.Rproj"
