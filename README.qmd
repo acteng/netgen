@@ -11,8 +11,8 @@ format: gfm
 usethis::use_data_raw()
 usethis::use_description()
 usethis::use_r("get.R")
-usethis::use_package("glue")
-usethis::use_package("xml2")
+usethis::use_package("sf")
+usethis::use_package("simodels")
 #     ‘fs’ ‘lubridate’ ‘stringr’
 usethis::use_package("fs")
 usethis::use_package("lubridate")
@@ -24,5 +24,7 @@ usethis::use_github_action("pkgdown")
 # Setup gh pages:
 usethis::use_github_pages()
 ```
+
+
 
 
