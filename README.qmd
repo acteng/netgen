@@ -3,4 +3,26 @@ title: Generate origin-destination data and route networks
 format: gfm
 ---
 
+```{r}
+#| eval: false
+#| echo: false
+#| label: repo-setup
+# Create data-raw and data folders
+usethis::use_data_raw()
+usethis::use_description()
+usethis::use_r("get.R")
+usethis::use_package("glue")
+usethis::use_package("xml2")
+#     ‘fs’ ‘lubridate’ ‘stringr’
+usethis::use_package("fs")
+usethis::use_package("lubridate")
+usethis::use_package("stringr")
+devtools::check()
+# Set-up pkgdown + ci
+usethis::use_pkgdown()
+usethis::use_github_action("pkgdown")
+# Setup gh pages:
+usethis::use_github_pages()
+```
+
 
