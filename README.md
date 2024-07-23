@@ -3,7 +3,11 @@
 
 The code in this results demonstrates how to generate origin-destination
 (OD) data for a given set of zones and destinations. OD data is a key
-input into models for generating route networks. The code is fully
+input into spatial interaction models (SIMs) for generating route
+networks. (See [An introduction to spatial interaction models: from
+first
+principles](https://robinlovelace.github.io/simodels/articles/sims-first-principles.html)
+introduction to SIMs for more information.) The code is fully
 reproducible, although requires a validation dataset that is not in the
 public domain to generate goodness-of-fit statistics shown in this
 README.
@@ -16,10 +20,11 @@ if (!require("devtools")) install.packages("devtools")
 devtools::install_github("acteng/netgen")
 ```
 
-The package uses the `{simodels}` R package to pre-process the input
-datasets and generate the OD data used as the basis of the interaction
-prediction model. The input datasets are illustrated in the figure
-below:
+The package uses the [`{simodels}` R
+package](https://robinlovelace.github.io/simodels/) to pre-process the
+input datasets and generate the OD data used as the basis of the
+interaction prediction model. The input datasets are illustrated in the
+figure below:
 
 ![](README_files/figure-commonmark/inputs-1.png)
 
