@@ -47,23 +47,26 @@ m2 = od_from_si |>
 m1
 ```
 
-![](README_files/figure-commonmark/unnamed-chunk-5-1.png)
+![](README_files/figure-commonmark/plot-od-all-1.png)
 
 ``` r
 m2
 ```
 
-![](README_files/figure-commonmark/unnamed-chunk-5-2.png)
+![](README_files/figure-commonmark/plot-od-all-2.png)
 
 ``` r
-od = read_csv("od_york.csv")
+# gravity_model = function(beta, d, m, n) {
+#   m * n * exp(-beta * d / 1000)
+# } 
+# # perform SIM
+# od_res = si_calculate(
+#   od_from_si,
+#   fun = gravity_model,
+#   d = distance_euclidean,
+#   m = destination_n_pupils,
+#   n = destination_n_pupils,
+#   constraint_production = origin_all,
+#   beta = 0.9
+#   )
 ```
-
-    Rows: 2366 Columns: 3
-    ── Column specification ────────────────────────────────────────────────────────
-    Delimiter: ","
-    chr (1): LSOA21
-    dbl (2): URN, frequency
-
-    ℹ Use `spec()` to retrieve the full column specification for this data.
-    ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.

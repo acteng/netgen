@@ -54,3 +54,6 @@ po/*
 rsconnect/
 
 /.quarto/
+*.csv
+*.geojson
+*.xlsx

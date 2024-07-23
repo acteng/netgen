@@ -28,6 +28,7 @@ usethis::use_github_pages()
 zones_york = sf::read_sf("lsoas_york.geojson")
 destinations_york = sf::read_sf("school_minimal.geojson")
 usethis::use_data(zones_york, destinations_york, overwrite = TRUE)
+usethis::use_data_raw("zones_york")
 ```
 
 ```{r}
@@ -48,6 +49,7 @@ od_from_si = simodels::si_to_od(zones_york, destinations_york, max_dist = max_di
 ```
 
 ```{r}
+#| label: plot-od-all
 #| layout-ncol: 2
 m1 = od_from_si_full |>
   ggplot() +
@@ -59,23 +61,26 @@ m1
 m2
 ```
 
+```{r}
+#| include: false
+od = read_csv("od_york.csv")
+```
+
 
 ```{r}
-od = read_csv("od_york.csv")
-gravity_model = function(beta, d, m, n) {
-  m * n * exp(-beta * d / 1000)
-} 
-# perform SIM
-od_res = si_calculate(
-  od_from_si,
-  fun = gravity_model,
-  d = distance_euclidean,
-  m = destination_n_pupils,
-  n = destination_n_pupils,
-  constraint_production = origin_all,
-  beta = 0.9
-  )
-od_model1 = 
+# gravity_model = function(beta, d, m, n) {
+#   m * n * exp(-beta * d / 1000)
+# } 
+# # perform SIM
+# od_res = si_calculate(
+#   od_from_si,
+#   fun = gravity_model,
+#   d = distance_euclidean,
+#   m = destination_n_pupils,
+#   n = destination_n_pupils,
+#   constraint_production = origin_all,
+#   beta = 0.9
+#   )
 ```
 
 
