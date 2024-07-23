@@ -12,8 +12,6 @@ lsoas_2021 = sf::read_sf("lsoas_2021.geojson") |>
 zones_york = lsoas_2021 |>
   filter(str_detect(LSOA21NM, "^York")) 
 
-usethis::use_data(zones_york, overwrite = TRUE)
-
 # Population in each zone:
 u_xls = "https://www.ons.gov.uk/file?uri=/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/lowersuperoutputareamidyearpopulationestimatesnationalstatistics/mid2021andmid2022/sapelsoabroadagetablefinal.xlsx"
 
@@ -43,8 +41,16 @@ zones_york = left_join(
   lsoa_populations_to_join
 )
 zones_york = sf::st_sf(
-  data = sf::st_drop_geometry(zones_york),
+  sf::st_drop_geometry(zones_york),
   geometry = zones_york$geometry
 )
 
+names(zones_york)
+
 usethis::use_data(zones_york, overwrite = TRUE)
+
+
+destinations_york = destinations_york |>
+  filter(!is.na(n_pupils))
+
+usethis::use_data(destinations_york, overwrite = TRUE)

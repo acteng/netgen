@@ -1,7 +1,13 @@
 ---
 title: Generate origin-destination data and route networks
 format: gfm
+execute: 
+  echo: false
 ---
+
+The code in this results demonstrates how to generate origin-destination (OD) data for a given set of zones and destinations.
+OD data is a key input into models for generating route networks.
+The code is fully reproducible, although requires a validation dataset that is not in the public domain to generate goodness-of-fit statistics shown in this README.
 
 ```{r}
 #| eval: false
@@ -31,18 +37,48 @@ usethis::use_data(zones_york, destinations_york, overwrite = TRUE)
 usethis::use_data_raw("zones_york")
 ```
 
+Install the package as follows (you can also clone the repo and run `devtools::load_all()`):
+
 ```{r}
+#| echo: true
+#| eval: false
+if (!require("devtools")) install.packages("devtools")
+devtools::install_github("acteng/netgen")
+```
+
+```{r}
+#| include: false
 devtools::load_all()
 ```
 
 ```{r}
+#| include: false
 library(tidyverse)
+library(patchwork)
 # Set theme to void:
 theme_set(theme_void())
 ```
 
+The package uses the `{simodels}` R package to pre-process the input datasets and generate the OD data used as the basis of the interaction prediction model.
+The input datasets are illustrated in the figure below:
 
 ```{r}
+#| label: inputs
+g1 = zones_york |>
+  ggplot() +
+  geom_sf() +
+  labs(title = "Zones")
+g2 = destinations_york |>
+    ggplot() +
+    geom_sf() +
+    labs(title = "Destinations")
+g1 + g2
+```
+
+Based on these inputs the `si_to_od()` function generates the OD data, as shown below (note: 2 versions are created, one with a maximum distance constraint for speed of processing, important when working with large datasets):
+
+```{r}
+#| echo: true
 max_dist = 5000 # meters
 od_from_si_full = simodels::si_to_od(zones_york, destinations_york)
 od_from_si = simodels::si_to_od(zones_york, destinations_york, max_dist = max_dist)
@@ -61,27 +97,95 @@ m1
 m2
 ```
 
+The output OD dataset has column names taken from both the origin and destination datasets, with the following column names:
+
+```{r}
+names(od_from_si)
+```
+
 ```{r}
 #| include: false
-od = read_csv("od_york.csv")
+od_observed = read_csv("od_york.csv")
+names(od_observed)[1:2] = c("O", "D")
 ```
+
+Let's run a simple model:
 
 
 ```{r}
-# gravity_model = function(beta, d, m, n) {
-#   m * n * exp(-beta * d / 1000)
-# } 
-# # perform SIM
-# od_res = si_calculate(
-#   od_from_si,
-#   fun = gravity_model,
-#   d = distance_euclidean,
-#   m = destination_n_pupils,
-#   n = destination_n_pupils,
+#| label: simple-model
+#| echo: true
+gravity_model = function(beta, d, m, n) {
+  m * n * exp(-beta * d / 1000)
+} 
+# perform SIM
+od_res = simodels::si_calculate(
+  od_from_si,
+  fun = gravity_model,
+  d = distance_euclidean,
+  m = origin_f0_to_15,
+  n = destination_n_pupils,
 #   constraint_production = origin_all,
-#   beta = 0.9
-#   )
+  beta = 0.9
+  )
 ```
 
+```{r}
+#| label: od-joined
+#| include: false
+od_joined = inner_join(
+  od_res,
+  od_observed
+)
+```
+
+We can assess the model fit, starting with a scatter plot and a simple R-squared test:
+
+```{r}
+#| label: r-squared
+od_joined |>
+  ggplot() +
+    geom_point(aes(x = frequency, y = interaction)) +
+    geom_smooth(aes(x = frequency, y = interaction), method = "lm")
+rsq = cor(od_joined$frequency, od_joined$interaction)^2
+# rsq
+```
+
+The R-squared value is `r round(rsq, 3)`.
+
+Let's see if making the model production constrained can help:
+
+```{r}
+#| label: constrained
+#| echo: true
+od_res_constrained = simodels::si_calculate(
+  od_from_si,
+  fun = gravity_model,
+  d = distance_euclidean,
+  m = origin_f0_to_15,
+  n = destination_n_pupils,
+  constraint_production = origin_f0_to_15,
+  beta = 0.9
+  )
+```
+
+```{r}
+#| include: false
+od_joined_constrained = inner_join(
+    od_res_constrained,
+    od_observed
+    )
+nrow(od_joined_constrained)
+nrow(od_joined)
+waldo::compare(od_joined, od_joined_constrained)
+# plot(od_joined$interaction, od_joined_constrained$interaction)
+summary(is.na(od_joined_constrained$interaction))
+# summary(is.na(zones_york$f0_to_15))
+summary(is.na(destinations_york$n_pupils))
+rsq_constrained = cor(od_joined_constrained$frequency, od_joined_constrained$interaction)^2
+rsq_constrained
+```
+
+The R-squared value is `r round(rsq_constrained, 3)`.
 
 
