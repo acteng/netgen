@@ -61,7 +61,7 @@ theme_set(theme_void())
 ```
 
 The package uses the [`{simodels}` R package](https://robinlovelace.github.io/simodels/) to pre-process the input datasets and generate the OD data used as the basis of the interaction prediction model.
-The input datasets are illustrated in the figure below:
+The input datasets are illustrated in the figure below (these are `zones_york` and `destinations_york` that are provided with the pacage):
 
 ```{r}
 #| label: inputs
@@ -76,7 +76,39 @@ g2 = destinations_york |>
 g1 + g2
 ```
 
-Based on these inputs the `si_to_od()` function generates the OD data, as shown below (note: 2 versions are created, one with a maximum distance constraint for speed of processing, important when working with large datasets):
+Before we run any models let's compare the total number of pupils in the zones dataset and the destinations dataset (they should be the same):
+
+```{r}
+#| label: compare-totals
+#| echo: true
+zone_overestimate_factor = 
+  (sum(zones_york$f0_to_15) + sum(zones_york$m0_to_15)) /
+    sum(destinations_york$n_pupils)
+zone_overestimate_factor
+```
+
+As one would expect, the total number of pupils in the zones dataset is a bit bigger than the total number of pupils in the destinations dataset: not all people aged 0 to 15 go to school, especially those under school age.
+To tackle this issue we'll create a new variables called `pupils_estimated` in the zones dataset, which is the sum of the number of pupils in the zones dataset and the number of pupils in the destinations dataset.
+
+```{r}
+#| label: add-pupils-estimated
+#| echo: true
+zones_york = zones_york |>
+  dplyr::mutate(
+    pupils_estimated = (f0_to_15 + m0_to_15) / zone_overestimate_factor
+  )
+```
+
+After the adjustment shown above, the totals in the origin and destination columns should be the same:
+
+```{r}
+#| label: compare-totals-after
+#| echo: true
+sum(zones_york$pupils_estimated)
+sum(destinations_york$n_pupils)
+```
+
+Based on these inputs the `si_to_od()` function generates the OD data, as shown below (note: 2 versions are created, one with a maximum distance constraint for speed of processing, important when working with large datasets).
 
 ```{r}
 #| echo: true
@@ -124,7 +156,7 @@ od_res = simodels::si_calculate(
   od_from_si,
   fun = gravity_model,
   d = distance_euclidean,
-  m = origin_f0_to_15,
+  m = origin_pupils_estimated,
   n = destination_n_pupils,
 #   constraint_production = origin_all,
   beta = 0.9
@@ -140,7 +172,7 @@ od_joined = inner_join(
 )
 ```
 
-We can assess the model fit, starting with a scatter plot and a simple R-squared test:
+We can assess the model fit at thre levels: the origin level (number of students departing from each zone), the destination level (the number arriving at each school in the input dataset) and the origin-destination level.
 
 ```{r}
 #| label: r-squared
@@ -163,9 +195,9 @@ od_res_constrained = simodels::si_calculate(
   od_from_si,
   fun = gravity_model,
   d = distance_euclidean,
-  m = origin_f0_to_15,
+  m = origin_pupils_estimated,
   n = destination_n_pupils,
-  constraint_production = origin_f0_to_15,
+  constraint_production = origin_pupils_estimated,
   beta = 0.9
   )
 ```
@@ -181,7 +213,7 @@ nrow(od_joined)
 waldo::compare(od_joined, od_joined_constrained)
 # plot(od_joined$interaction, od_joined_constrained$interaction)
 summary(is.na(od_joined_constrained$interaction))
-# summary(is.na(zones_york$f0_to_15))
+# summary(is.na(zones_york$pupils_estimated))
 summary(is.na(destinations_york$n_pupils))
 rsq_constrained = cor(od_joined_constrained$frequency, od_joined_constrained$interaction)^2
 rsq_constrained
