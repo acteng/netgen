@@ -3,6 +3,8 @@ title: Generate origin-destination data and route networks
 format: gfm
 execute: 
   echo: false
+  message: false
+  warning: false
 ---
 
 The code in this results demonstrates how to generate origin-destination (OD) data for a given set of zones and destinations.
@@ -57,7 +59,7 @@ devtools::load_all()
 library(tidyverse)
 library(patchwork)
 # Set theme to void:
-theme_set(theme_void())
+theme_set(theme_minimal())
 ```
 
 The package uses the [`{simodels}` R package](https://robinlovelace.github.io/simodels/) to pre-process the input datasets and generate the OD data used as the basis of the interaction prediction model.
@@ -163,6 +165,18 @@ od_res = simodels::si_calculate(
   )
 ```
 
+We'll make one adjustment to the output dataset, renaming the `interaction` column to `trips`, and setting the total number of trips to be the same as the total number of pupils in the destinations dataset:
+
+```{r}
+#| label: adjust-output
+#| echo: true
+interaction_overestimate_factor = sum(destinations_york$n_pupils) / sum(od_res$interaction)
+od_res = od_res |>
+  dplyr::mutate(
+    trips = interaction * interaction_overestimate_factor
+  )
+```
+
 ```{r}
 #| label: od-joined
 #| include: false
@@ -172,15 +186,49 @@ od_joined = inner_join(
 )
 ```
 
-We can assess the model fit at thre levels: the origin level (number of students departing from each zone), the destination level (the number arriving at each school in the input dataset) and the origin-destination level.
+We can assess the model fit at three levels: the origin level (number of students departing from each zone), the destination level (the number arriving at each school in the input dataset) and the origin-destination level.
 
 ```{r}
 #| label: r-squared
-od_joined |>
+res_o = od_joined |>
+  group_by(O) |>
+  summarise(
+    Observed = first(origin_pupils_estimated),
+    Modelled = sum(trips),
+    Type = "Origin"
+  )
+res_d = od_joined |>
+  group_by(D) |>
+  summarise(
+    Observed = first(destination_n_pupils),
+    Modelled = sum(trips),
+    Type = "Destination"
+  )
+res_od = od_joined |>
+  transmute(
+    Observed = frequency,
+    Modelled = trips,
+    Type = "OD"
+  )
+res_combined = bind_rows(res_o, res_d, res_od) |>
+  # Create ordered factor with types:
+  mutate(
+    Type = factor(Type, levels = c("Origin", "Destination", "OD"))
+  )
+g_combined = res_combined |>
   ggplot() +
-    geom_point(aes(x = frequency, y = interaction)) +
-    geom_smooth(aes(x = frequency, y = interaction), method = "lm")
-rsq = cor(od_joined$frequency, od_joined$interaction)^2
+    geom_point(aes(x = Observed, y = Modelled)) +
+    geom_smooth(aes(x = Observed, y = Modelled), method = "lm") +
+    facet_wrap(~Type, scales = "free") +
+    labs(
+      title = "Model fit at origin, destination and OD levels",
+      x = "Observed",
+      y = "Modelled"
+    ) 
+#  + g_d 
+#  + g_od
+g_combined
+rsq = cor(od_joined$frequency, od_joined$trips)^2
 # rsq
 ```
 

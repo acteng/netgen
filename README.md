@@ -82,9 +82,6 @@ od_from_si_full = simodels::si_to_od(zones_york, destinations_york)
 od_from_si = simodels::si_to_od(zones_york, destinations_york, max_dist = max_dist)
 ```
 
-    4338 OD pairs remaining after removing those with a distance greater than 5000 meters:
-    57% of all possible OD pairs
-
 ![](README_files/figure-commonmark/plot-od-all-1.png)
 
 ![](README_files/figure-commonmark/plot-od-all-2.png)
@@ -121,12 +118,23 @@ od_res = simodels::si_calculate(
   )
 ```
 
-We can assess the model fit at thre levels: the origin level (number of
+We’ll make one adjustment to the output dataset, renaming the
+`interaction` column to `trips`, and setting the total number of trips
+to be the same as the total number of pupils in the destinations
+dataset:
+
+``` r
+interaction_overestimate_factor = sum(destinations_york$n_pupils) / sum(od_res$interaction)
+od_res = od_res |>
+  dplyr::mutate(
+    trips = interaction * interaction_overestimate_factor
+  )
+```
+
+We can assess the model fit at three levels: the origin level (number of
 students departing from each zone), the destination level (the number
 arriving at each school in the input dataset) and the origin-destination
 level.
-
-    `geom_smooth()` using formula = 'y ~ x'
 
 ![](README_files/figure-commonmark/r-squared-1.png)
 
