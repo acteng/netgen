@@ -154,4 +154,6 @@ od_res_constrained = simodels::si_calculate(
   )
 ```
 
+![](README_files/figure-commonmark/r-squared-constrained-1.png)
+
 The R-squared value is 0.57.
