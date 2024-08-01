@@ -3,6 +3,8 @@ title: Generate origin-destination data and route networks
 format: gfm
 execute: 
   echo: false
+  message: false
+  warning: false
 ---
 
 The code in this results demonstrates how to generate origin-destination (OD) data for a given set of zones and destinations.
@@ -57,11 +59,11 @@ devtools::load_all()
 library(tidyverse)
 library(patchwork)
 # Set theme to void:
-theme_set(theme_void())
+theme_set(theme_minimal())
 ```
 
 The package uses the [`{simodels}` R package](https://robinlovelace.github.io/simodels/) to pre-process the input datasets and generate the OD data used as the basis of the interaction prediction model.
-The input datasets are illustrated in the figure below:
+The input datasets are illustrated in the figure below (these are `zones_york` and `destinations_york` that are provided with the pacage):
 
 ```{r}
 #| label: inputs
@@ -76,7 +78,39 @@ g2 = destinations_york |>
 g1 + g2
 ```
 
-Based on these inputs the `si_to_od()` function generates the OD data, as shown below (note: 2 versions are created, one with a maximum distance constraint for speed of processing, important when working with large datasets):
+Before we run any models let's compare the total number of pupils in the zones dataset and the destinations dataset (they should be the same):
+
+```{r}
+#| label: compare-totals
+#| echo: true
+zone_overestimate_factor = 
+  (sum(zones_york$f0_to_15) + sum(zones_york$m0_to_15)) /
+    sum(destinations_york$n_pupils)
+zone_overestimate_factor
+```
+
+As one would expect, the total number of pupils in the zones dataset is a bit bigger than the total number of pupils in the destinations dataset: not all people aged 0 to 15 go to school, especially those under school age.
+To tackle this issue we'll create a new variables called `pupils_estimated` in the zones dataset, which is the sum of the number of pupils in the zones dataset and the number of pupils in the destinations dataset.
+
+```{r}
+#| label: add-pupils-estimated
+#| echo: true
+zones_york = zones_york |>
+  dplyr::mutate(
+    pupils_estimated = (f0_to_15 + m0_to_15) / zone_overestimate_factor
+  )
+```
+
+After the adjustment shown above, the totals in the origin and destination columns should be the same:
+
+```{r}
+#| label: compare-totals-after
+#| echo: true
+sum(zones_york$pupils_estimated)
+sum(destinations_york$n_pupils)
+```
+
+Based on these inputs the `si_to_od()` function generates the OD data, as shown below (note: 2 versions are created, one with a maximum distance constraint for speed of processing, important when working with large datasets).
 
 ```{r}
 #| echo: true
@@ -124,10 +158,22 @@ od_res = simodels::si_calculate(
   od_from_si,
   fun = gravity_model,
   d = distance_euclidean,
-  m = origin_f0_to_15,
+  m = origin_pupils_estimated,
   n = destination_n_pupils,
 #   constraint_production = origin_all,
   beta = 0.9
+  )
+```
+
+We'll make one adjustment to the output dataset, renaming the `interaction` column to `trips`, and setting the total number of trips to be the same as the total number of pupils in the destinations dataset:
+
+```{r}
+#| label: adjust-output
+#| echo: true
+interaction_overestimate_factor = sum(destinations_york$n_pupils) / sum(od_res$interaction)
+od_res = od_res |>
+  dplyr::mutate(
+    trips = interaction * interaction_overestimate_factor
   )
 ```
 
@@ -140,15 +186,49 @@ od_joined = inner_join(
 )
 ```
 
-We can assess the model fit, starting with a scatter plot and a simple R-squared test:
+We can assess the model fit at three levels: the origin level (number of students departing from each zone), the destination level (the number arriving at each school in the input dataset) and the origin-destination level.
 
 ```{r}
 #| label: r-squared
-od_joined |>
+res_o = od_joined |>
+  group_by(O) |>
+  summarise(
+    Observed = first(origin_pupils_estimated),
+    Modelled = sum(trips),
+    Type = "Origin"
+  )
+res_d = od_joined |>
+  group_by(D) |>
+  summarise(
+    Observed = first(destination_n_pupils),
+    Modelled = sum(trips),
+    Type = "Destination"
+  )
+res_od = od_joined |>
+  transmute(
+    Observed = frequency,
+    Modelled = trips,
+    Type = "OD"
+  )
+res_combined = bind_rows(res_o, res_d, res_od) |>
+  # Create ordered factor with types:
+  mutate(
+    Type = factor(Type, levels = c("Origin", "Destination", "OD"))
+  )
+g_combined = res_combined |>
   ggplot() +
-    geom_point(aes(x = frequency, y = interaction)) +
-    geom_smooth(aes(x = frequency, y = interaction), method = "lm")
-rsq = cor(od_joined$frequency, od_joined$interaction)^2
+    geom_point(aes(x = Observed, y = Modelled)) +
+    geom_smooth(aes(x = Observed, y = Modelled), method = "lm") +
+    facet_wrap(~Type, scales = "free") +
+    labs(
+      title = "Model fit at origin, destination and OD levels (unconstrained)",
+      x = "Observed",
+      y = "Modelled"
+    ) 
+#  + g_d 
+#  + g_od
+g_combined
+rsq = cor(od_joined$frequency, od_joined$trips)^2
 # rsq
 ```
 
@@ -163,11 +243,25 @@ od_res_constrained = simodels::si_calculate(
   od_from_si,
   fun = gravity_model,
   d = distance_euclidean,
-  m = origin_f0_to_15,
+  m = origin_pupils_estimated,
   n = destination_n_pupils,
-  constraint_production = origin_f0_to_15,
+  constraint_production = origin_pupils_estimated,
   beta = 0.9
   )
+```
+
+```{r}
+#| include: false
+# Aim: check totals per origin
+sum(od_res_constrained$interaction) == sum(destinations_york$n_pupils)
+od_res_constrained_o = od_res_constrained |>
+  sf::st_drop_geometry() |>
+  group_by(O) |>
+  summarise(
+    trips = sum(interaction)
+  )
+od_res_constrained_o$trips
+
 ```
 
 ```{r}
@@ -181,10 +275,48 @@ nrow(od_joined)
 waldo::compare(od_joined, od_joined_constrained)
 # plot(od_joined$interaction, od_joined_constrained$interaction)
 summary(is.na(od_joined_constrained$interaction))
-# summary(is.na(zones_york$f0_to_15))
+# summary(is.na(zones_york$pupils_estimated))
 summary(is.na(destinations_york$n_pupils))
 rsq_constrained = cor(od_joined_constrained$frequency, od_joined_constrained$interaction)^2
 rsq_constrained
+```
+
+```{r}
+#| label: r-squared-constrained
+res_o = od_joined_constrained |>
+  group_by(O) |>
+  summarise(
+    Observed = first(origin_pupils_estimated),
+    Modelled = sum(interaction),
+    Type = "Origin"
+  )
+res_d = od_joined_constrained |>
+  group_by(D) |>
+  summarise(
+    Observed = first(destination_n_pupils),
+    Modelled = sum(interaction),
+    Type = "Destination"
+  )
+res_od = od_joined_constrained |>
+  transmute(
+    Observed = frequency,
+    Modelled = interaction,
+    Type = "OD"
+  )
+res_combined = bind_rows(res_o, res_d, res_od) |>
+  mutate(
+    Type = factor(Type, levels = c("Origin", "Destination", "OD"))
+  )
+res_combined |>
+  ggplot() +
+    geom_point(aes(x = Observed, y = Modelled)) +
+    geom_smooth(aes(x = Observed, y = Modelled), method = "lm") +
+    facet_wrap(~Type, scales = "free") +
+    labs(
+      title = "Model fit at origin, destination and OD levels (production constrained)",
+      x = "Observed",
+      y = "Modelled"
+    )
 ```
 
 The R-squared value is `r round(rsq_constrained, 3)`.
