@@ -143,7 +143,7 @@ The R-squared value is 0.401.
 Let’s see if making the model production constrained can help:
 
 ``` r
-od_res_constrained = simodels::si_calculate(
+res_constrained = simodels::si_calculate(
   od_from_si,
   fun = gravity_model,
   d = distance_euclidean,
@@ -157,3 +157,62 @@ od_res_constrained = simodels::si_calculate(
 ![](README_files/figure-commonmark/r-squared-constrained-1.png)
 
 The R-squared value is 0.57.
+
+Let’s implement a doubly-constrained model, starting with the outputs of
+the production-constrained model:
+
+``` r
+res_doubly_constrained = res_constrained |>
+  group_by(D) |>
+  mutate(
+    observed_group = first(destination_n_pupils),
+    modelled_group = sum(interaction),
+    modelled_overestimate_factor = modelled_group / observed_group,
+    interaction = interaction / modelled_overestimate_factor
+  )
+# summary(res_doubly_constrained)
+sum(res_doubly_constrained$interaction) == sum(res_constrained$interaction) 
+```
+
+    [1] TRUE
+
+![](README_files/figure-commonmark/r-squared-doubly-constrained-1.png)
+
+The R-squared value is 0.579.
+
+The model is now ‘doubly constrained’ in a basic sense: the first
+iteration constrains the totals for each origin to the observed totals,
+and the second iteration constrains the totals for each destination to
+the observed totals.
+
+Let’s constrain by the origin totals again:
+
+``` r
+res_doubly_constrained_2 = res_doubly_constrained |>
+  group_by(O) |>
+  mutate(
+    observed_group = first(origin_pupils_estimated),
+    modelled_group = sum(interaction),
+    modelled_overestimate_factor = modelled_group / observed_group,
+    interaction = interaction / modelled_overestimate_factor
+  )
+```
+
+And then by the destination totals again:
+
+``` r
+res_doubly_constrained_3 = res_doubly_constrained_2 |>
+  group_by(D) |>
+  mutate(
+    observed_group = first(destination_n_pupils),
+    modelled_group = sum(interaction),
+    modelled_overestimate_factor = modelled_group / observed_group,
+    interaction = interaction / modelled_overestimate_factor
+  )
+```
+
+After one more full iteration of fitting to the observed totals, the
+R-squared value is 0.592.
+
+Additional iterations do not increase model fit against the observed OD
+data in this case (working not shown).

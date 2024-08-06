@@ -1,11 +1,18 @@
 ---
 title: Generate origin-destination data and route networks
+---
+
+```{r}
+#| eval: false
+#| echo: false
 format: gfm
 execute: 
   echo: false
   message: false
   warning: false
----
+```
+
+# Introduction
 
 The code in this results demonstrates how to generate origin-destination (OD) data for a given set of zones and destinations.
 OD data is a key input into spatial interaction models (SIMs) for generating route networks.
@@ -32,12 +39,6 @@ usethis::use_pkgdown()
 usethis::use_github_action("pkgdown")
 # Setup gh pages:
 usethis::use_github_pages()
-
-# generate example datasets:
-zones_york = sf::read_sf("lsoas_york.geojson")
-destinations_york = sf::read_sf("school_minimal.geojson")
-usethis::use_data(zones_york, destinations_york, overwrite = TRUE)
-usethis::use_data_raw("zones_york")
 ```
 
 Install the package as follows (you can also clone the repo and run `devtools::load_all()`):
@@ -110,6 +111,8 @@ sum(zones_york$pupils_estimated)
 sum(destinations_york$n_pupils)
 ```
 
+# Preprocessing
+
 Based on these inputs the `si_to_od()` function generates the OD data, as shown below (note: 2 versions are created, one with a maximum distance constraint for speed of processing, important when working with large datasets).
 
 ```{r}
@@ -142,7 +145,16 @@ names(od_from_si)
 #| include: false
 od_observed = read_csv("od_york.csv")
 names(od_observed)[1:2] = c("O", "D")
+# join od_observed to od_from_si:
+od_from_si = left_join(
+  od_from_si,
+  od_observed
+)
 ```
+
+# A basic model
+
+## An unconstrained model
 
 Let's run a simple model:
 
@@ -177,34 +189,25 @@ od_res = od_res |>
   )
 ```
 
-```{r}
-#| label: od-joined
-#| include: false
-od_joined = left_join(
-  od_res,
-  od_observed
-)
-```
-
 We can assess the model fit at three levels: the origin level (number of students departing from each zone), the destination level (the number arriving at each school in the input dataset) and the origin-destination level.
 
 ```{r}
 #| label: r-squared
-res_o = od_joined |>
+res_o = od_res |>
   group_by(O) |>
   summarise(
     Observed = first(origin_pupils_estimated),
     Modelled = sum(trips),
     Type = "Origin"
   )
-res_d = od_joined |>
+res_d = od_res |>
   group_by(D) |>
   summarise(
     Observed = first(destination_n_pupils),
     Modelled = sum(trips),
     Type = "Destination"
   )
-res_od = od_joined |>
+res_od = od_res |>
   transmute(
     Observed = frequency,
     Modelled = trips,
@@ -228,18 +231,20 @@ g_combined = res_combined |>
 #  + g_d 
 #  + g_od
 g_combined
-rsq = cor(od_joined$frequency, od_joined$trips, use = "complete.obs")^2
+rsq = cor(od_res$frequency, od_res$trips, use = "complete.obs")^2
 # rsq
 ```
 
 The R-squared value is `r round(rsq, 3)`.
+
+## Production-constrained model
 
 Let's see if making the model production constrained can help:
 
 ```{r}
 #| label: constrained
 #| echo: true
-od_res_constrained = simodels::si_calculate(
+res_constrained = simodels::si_calculate(
   od_from_si,
   fun = gravity_model,
   d = distance_euclidean,
@@ -253,51 +258,40 @@ od_res_constrained = simodels::si_calculate(
 ```{r}
 #| include: false
 # Aim: check totals per origin
-sum(od_res_constrained$interaction) == sum(destinations_york$n_pupils)
-od_res_constrained_o = od_res_constrained |>
+sum(res_constrained$interaction) == sum(destinations_york$n_pupils)
+res_constrained_o = res_constrained |>
   sf::st_drop_geometry() |>
   group_by(O) |>
   summarise(
     trips = sum(interaction)
   )
-od_res_constrained_o$trips
+res_constrained_o$trips
 
 ```
 
 ```{r}
 #| include: false
-od_joined_constrained = left_join(
-    od_res_constrained,
-    od_observed
-    )
-nrow(od_joined_constrained)
-nrow(od_joined)
-waldo::compare(od_joined, od_joined_constrained)
-# plot(od_joined$interaction, od_joined_constrained$interaction)
-summary(is.na(od_joined_constrained$interaction))
-# summary(is.na(zones_york$pupils_estimated))
-summary(is.na(destinations_york$n_pupils))
-rsq_constrained = cor(od_joined_constrained$frequency, od_joined_constrained$interaction, use = "complete.obs")^2
+rsq_constrained = cor(res_constrained$frequency, res_constrained$interaction, use = "complete.obs")^2
 rsq_constrained
 ```
 
 ```{r}
 #| label: r-squared-constrained
-res_o = od_joined_constrained |>
+res_o = res_constrained |>
   group_by(O) |>
   summarise(
     Observed = first(origin_pupils_estimated),
     Modelled = sum(interaction),
     Type = "Origin"
   )
-res_d = od_joined_constrained |>
+res_d = res_constrained |>
   group_by(D) |>
   summarise(
     Observed = first(destination_n_pupils),
     Modelled = sum(interaction),
     Type = "Destination"
   )
-res_od = od_joined_constrained |>
+res_od = res_constrained |>
   transmute(
     Observed = frequency,
     Modelled = interaction,
@@ -321,6 +315,272 @@ res_combined |>
 
 The R-squared value is `r round(rsq_constrained, 3)`.
 
+## Doubly-constrained model
+
+Let's implement a doubly-constrained model, starting with the outputs of the production-constrained model:
+
+```{r}
+#| label: doubly-constrained
+#| echo: true
+res_doubly_constrained = res_constrained |>
+  group_by(D) |>
+  mutate(
+    observed_group = first(destination_n_pupils),
+    modelled_group = sum(interaction),
+    modelled_overestimate_factor = modelled_group / observed_group,
+    interaction = interaction / modelled_overestimate_factor
+  )
+# summary(res_doubly_constrained)
+sum(res_doubly_constrained$interaction) == sum(res_constrained$interaction) 
+```
+
+```{r}
+#| include: false
+rsq_doubly_constrained = cor(res_doubly_constrained$frequency, res_doubly_constrained$interaction, use = "complete.obs")^2
+rsq_doubly_constrained
+```
+
+```{r}
+#| label: r-squared-doubly-constrained
+res_o = res_doubly_constrained |>
+  group_by(O) |>
+  summarise(
+    Observed = first(origin_pupils_estimated),
+    Modelled = sum(interaction),
+    Type = "Origin"
+  )
+res_d = res_doubly_constrained |>
+  group_by(D) |>
+  summarise(
+    Observed = first(destination_n_pupils),
+    Modelled = sum(interaction),
+    Type = "Destination"
+  )
+res_od = res_doubly_constrained |>
+  transmute(
+    Observed = frequency,
+    Modelled = interaction,
+    Type = "OD"
+  )
+res_combined = bind_rows(res_o, res_d, res_od) |>
+  mutate(
+    Type = factor(Type, levels = c("Origin", "Destination", "OD"))
+  )
+res_combined |>
+  ggplot() +
+    geom_point(aes(x = Observed, y = Modelled)) +
+    geom_smooth(aes(x = Observed, y = Modelled), method = "lm") +
+    facet_wrap(~Type, scales = "free") +
+    labs(
+      title = "Model fit at origin, destination and OD levels (doubly constrained)",
+      x = "Observed",
+      y = "Modelled"
+    )
+```
+
+The R-squared value is `r round(rsq_doubly_constrained, 3)`.
+
+The model is now 'doubly constrained' in a basic sense: the first iteration constrains the totals for each origin to the observed totals, and the second iteration constrains the totals for each destination to the observed totals.
+
+Let's constrain by the origin totals again:
+
+```{r}
+#| label: doubly-constrained-2
+#| echo: true
+res_doubly_constrained_2 = res_doubly_constrained |>
+  group_by(O) |>
+  mutate(
+    observed_group = first(origin_pupils_estimated),
+    modelled_group = sum(interaction),
+    modelled_overestimate_factor = modelled_group / observed_group,
+    interaction = interaction / modelled_overestimate_factor
+  )
+```
+
+```{r}
+#| include: false
+rsq_doubly_constrained_2 = cor(res_doubly_constrained_2$frequency, res_doubly_constrained_2$interaction, use = "complete.obs")^2
+rsq_doubly_constrained_2
+```
+
+And then by the destination totals again:
+
+```{r}
+#| label: doubly-constrained-3
+#| echo: true
+res_doubly_constrained_3 = res_doubly_constrained_2 |>
+  group_by(D) |>
+  mutate(
+    observed_group = first(destination_n_pupils),
+    modelled_group = sum(interaction),
+    modelled_overestimate_factor = modelled_group / observed_group,
+    interaction = interaction / modelled_overestimate_factor
+  )
+```
+
+```{r}
+#| include: false
+rsq_doubly_constrained_3 = cor(res_doubly_constrained_3$frequency, res_doubly_constrained_3$interaction, use = "complete.obs")^2
+rsq_doubly_constrained_3
+```
+
+After one more full iteration of fitting to the observed totals, the R-squared value is `r round(rsq_doubly_constrained_3, 3)`.
+
+Additional iterations do not increase model fit against the observed OD data in this case (working not shown).
+
+```{r}
+#| include: false
+res_doubly_constrained_4 = res_doubly_constrained_3 |>
+  group_by(O) |>
+  mutate(
+    observed_group = first(origin_pupils_estimated),
+    modelled_group = sum(interaction),
+    modelled_overestimate_factor = modelled_group / observed_group,
+    interaction = interaction / modelled_overestimate_factor
+  )
+res_doubly_constrained_5 = res_doubly_constrained_4 |>
+  group_by(D) |>
+  mutate(
+    observed_group = first(destination_n_pupils),
+    modelled_group = sum(interaction),
+    modelled_overestimate_factor = modelled_group / observed_group,
+    interaction = interaction / modelled_overestimate_factor
+  )
+```
+
+```{r}
+#| include: false
+rsq_doubly_constrained_5 = cor(res_doubly_constrained_5$frequency, res_doubly_constrained_5$interaction, use = "complete.obs")^2
+rsq_doubly_constrained_5
+```
 
 
+```{r}
+#| include: false 
+#| label: one-more-iteration
+res_doubly_constrained_6 = res_doubly_constrained_5 |>
+  group_by(O) |>
+  mutate(
+    observed_group = first(origin_pupils_estimated),
+    modelled_group = sum(interaction),
+    modelled_overestimate_factor = modelled_group / observed_group,
+    interaction = interaction / modelled_overestimate_factor
+  )
+res_doubly_constrained_7 = res_doubly_constrained_6 |>
+  group_by(D) |>
+  mutate(
+    observed_group = first(destination_n_pupils),
+    modelled_group = sum(interaction),
+    modelled_overestimate_factor = modelled_group / observed_group,
+    interaction = interaction / modelled_overestimate_factor
+  )
+```
 
+```{r}
+#| include: false
+rsq_doubly_constrained_7 = cor(res_doubly_constrained_7$frequency, res_doubly_constrained_7$interaction, use = "complete.obs")^2
+rsq_doubly_constrained_7
+```
+
+# Fitting model parameters
+
+So far, arbitrary values have been used for the beta parameter in the gravity model.
+Let's try to do better by fitting a model.
+
+We'll first create a new distance variable that is 1 if the the distance is less than 1 km.
+We'll also calculate the log of the distance.
+
+
+```{r}
+od_from_si = od_from_si |>
+  mutate(
+    distance_km = case_when(
+      distance_euclidean < 1000 ~ 1,
+      TRUE ~ distance_euclidean / 1000
+    ),
+    log_distance = log(distance_km)
+  )
+# plot(od_from_si$distance_euclidean, od_from_si$distance_km)
+# With ggplot2:
+g1 = od_from_si |>
+  ggplot() +
+  geom_point(aes(x = distance_euclidean, y = distance_km))
+g2 = od_from_si |>
+  ggplot() +
+  geom_point(aes(x = distance_euclidean, y = log_distance))
+g1 + g2
+```
+
+We now fit models with `lm()`:
+
+```{r}
+#| label: fit-model
+#| echo: true
+m1 = od_from_si |>
+  lm(frequency ~ log_distance, data = _)
+# With origin_pupils_estimated:
+m2 = od_from_si |>
+  lm(frequency ~ log_distance + origin_pupils_estimated, data = _)
+# With destination_n_pupils:
+m3 = od_from_si |>
+  lm(frequency ~ log_distance + destination_n_pupils, data = _)
+# With both:
+m4 = od_from_si |>
+  lm(frequency ~ log_distance + origin_pupils_estimated + destination_n_pupils, data = _)
+# With m x n:
+m5 = od_from_si |>
+  lm(frequency ~ log_distance + I(origin_pupils_estimated * destination_n_pupils), data = _)
+```
+
+```{r}
+#| include: false
+# summary(m1)
+od_m1 = simodels::si_predict(od_from_si, m1)
+od_m2 = simodels::si_predict(od_from_si, m2)
+od_m3 = simodels::si_predict(od_from_si, m3)
+od_m4 = simodels::si_predict(od_from_si, m4)
+od_m5 = simodels::si_predict(od_from_si, m5)
+summary(m1)
+summary(m2)
+summary(m3)
+summary(m4)
+summary(m5)
+rsq_m1 = cor(od_m1$frequency, od_m1$interaction, use = "complete.obs")^2
+rsq_m1
+rsq_m2 = cor(od_m2$frequency, od_m2$interaction, use = "complete.obs")^2
+rsq_m2
+rsq_m3 = cor(od_m3$frequency, od_m3$interaction, use = "complete.obs")^2
+rsq_m3
+rsq_m4 = cor(od_m4$frequency, od_m4$interaction, use = "complete.obs")^2
+rsq_m4
+rsq_m5 = cor(od_m5$frequency, od_m5$interaction, use = "complete.obs")^2
+rsq_m5
+
+# Constrained version:
+od_m1co = simodels::si_predict(od_from_si, m1, constraint_production = origin_pupils_estimated)
+od_m1cd = simodels::si_predict(od_from_si, m1, constraint_production = destination_n_pupils)
+rsq_m1co = cor(od_m1co$frequency, od_m1co$interaction, use = "complete.obs")^2 # production-constrained seems to fit a bit better
+rsq_m1cd = cor(od_m1cd$frequency, od_m1cd$interaction, use = "complete.obs")^2
+od_m2co = simodels::si_predict(od_from_si, m2, constraint_production = origin_pupils_estimated)
+od_m3co = simodels::si_predict(od_from_si, m3, constraint_production = origin_pupils_estimated)
+od_m4co = simodels::si_predict(od_from_si, m4, constraint_production = origin_pupils_estimated)
+od_m5co = simodels::si_predict(od_from_si, m5, constraint_production = origin_pupils_estimated)
+
+rsq_m2co = cor(od_m2co$frequency, od_m2co$interaction, use = "complete.obs")^2
+rsq_m3co = cor(od_m3co$frequency, od_m3co$interaction, use = "complete.obs")^2
+rsq_m4co = cor(od_m4co$frequency, od_m4co$interaction, use = "complete.obs")^2
+rsq_m5co = cor(od_m5co$frequency, od_m5co$interaction, use = "complete.obs")^2
+```
+
+
+The models are not particularly good at predicting the observed data, as shown by the R-squared values, which range from `r round(min(c(rsq_m1, rsq_m2, rsq_m3, rsq_m4, rsq_m5)), 3)` to `r round(max(c(rsq_m1, rsq_m2, rsq_m3, rsq_m4, rsq_m5)), 3)`.
+
+# Multi-level models
+
+SIMs can be seen as a multi-level system, with origins and destinations at different levels.
+We will try fitting a multi-level model to the data.
+
+```{r}
+library(lme4)
+mml1 = lmer(frequency ~ log_distance + (1|O) + (1|D), data = od_from_si)
+```
