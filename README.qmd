@@ -321,6 +321,71 @@ res_combined |>
 
 The R-squared value is `r round(rsq_constrained, 3)`.
 
+Let's implement a doubly-constrained model, starting with the outputs of the production-constrained model:
 
+```{r}
+#| label: doubly-constrained
+#| echo: true
+od_res_doubly_constrained = od_res_constrained |>
+  group_by(D) |>
+  mutate(
+    observed_group = first(destination_n_pupils),
+    modelled_group = sum(interaction),
+    modelled_overestimate_factor = modelled_group / observed_group,
+    interaction = interaction / modelled_overestimate_factor
+  )
+# summary(od_res_doubly_constrained)
+sum(od_res_doubly_constrained$interaction) == sum(od_res_constrained$interaction) 
+```
+
+```{r}
+#| include: false
+od_joined_doubly_constrained = left_join(
+    od_res_doubly_constrained,
+    od_observed
+    )
+rsq_doubly_constrained = cor(od_joined_doubly_constrained$frequency, od_joined_doubly_constrained$interaction, use = "complete.obs")^2
+rsq_doubly_constrained
+```
+
+```{r}
+#| label: r-squared-doubly-constrained
+res_o = od_joined_doubly_constrained |>
+  group_by(O) |>
+  summarise(
+    Observed = first(origin_pupils_estimated),
+    Modelled = sum(interaction),
+    Type = "Origin"
+  )
+res_d = od_joined_doubly_constrained |>
+  group_by(D) |>
+  summarise(
+    Observed = first(destination_n_pupils),
+    Modelled = sum(interaction),
+    Type = "Destination"
+  )
+res_od = od_joined_doubly_constrained |>
+  transmute(
+    Observed = frequency,
+    Modelled = interaction,
+    Type = "OD"
+  )
+res_combined = bind_rows(res_o, res_d, res_od) |>
+  mutate(
+    Type = factor(Type, levels = c("Origin", "Destination", "OD"))
+  )
+res_combined |>
+  ggplot() +
+    geom_point(aes(x = Observed, y = Modelled)) +
+    geom_smooth(aes(x = Observed, y = Modelled), method = "lm") +
+    facet_wrap(~Type, scales = "free") +
+    labs(
+      title = "Model fit at origin, destination and OD levels (doubly constrained)",
+      x = "Observed",
+      y = "Modelled"
+    )
+```
+
+The R-squared value is `r round(rsq_doubly_constrained, 3)`.
 
 

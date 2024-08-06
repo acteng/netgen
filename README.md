@@ -157,3 +157,25 @@ od_res_constrained = simodels::si_calculate(
 ![](README_files/figure-commonmark/r-squared-constrained-1.png)
 
 The R-squared value is 0.57.
+
+Let’s implement a doubly-constrained model, starting with the outputs of
+the production-constrained model:
+
+``` r
+od_res_doubly_constrained = od_res_constrained |>
+  group_by(D) |>
+  mutate(
+    observed_group = first(destination_n_pupils),
+    modelled_group = sum(interaction),
+    modelled_overestimate_factor = modelled_group / observed_group,
+    interaction = interaction / modelled_overestimate_factor
+  )
+# summary(od_res_doubly_constrained)
+sum(od_res_doubly_constrained$interaction) == sum(od_res_constrained$interaction) 
+```
+
+    [1] TRUE
+
+![](README_files/figure-commonmark/r-squared-doubly-constrained-1.png)
+
+The R-squared value is 0.579.
