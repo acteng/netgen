@@ -388,4 +388,5 @@ res_combined |>
 
 The R-squared value is `r round(rsq_doubly_constrained, 3)`.
 
+The model is now 'doubly constrained' in a basic sense: the first iteration constrains the totals for each origin to the observed totals, and the second iteration constrains the totals for each destination to the observed totals.
 

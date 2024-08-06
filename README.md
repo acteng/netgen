@@ -179,3 +179,8 @@ sum(od_res_doubly_constrained$interaction) == sum(od_res_constrained$interaction
 ![](README_files/figure-commonmark/r-squared-doubly-constrained-1.png)
 
 The R-squared value is 0.579.
+
+The model is now ‘doubly constrained’ in a basic sense: the first
+iteration constrains the totals for each origin to the observed totals,
+and the second iteration constrains the totals for each destination to
+the observed totals.
