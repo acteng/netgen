@@ -239,7 +239,7 @@ Let's see if making the model production constrained can help:
 ```{r}
 #| label: constrained
 #| echo: true
-od_res_constrained = simodels::si_calculate(
+res_constrained = simodels::si_calculate(
   od_from_si,
   fun = gravity_model,
   d = distance_euclidean,
@@ -253,21 +253,21 @@ od_res_constrained = simodels::si_calculate(
 ```{r}
 #| include: false
 # Aim: check totals per origin
-sum(od_res_constrained$interaction) == sum(destinations_york$n_pupils)
-od_res_constrained_o = od_res_constrained |>
+sum(res_constrained$interaction) == sum(destinations_york$n_pupils)
+res_constrained_o = res_constrained |>
   sf::st_drop_geometry() |>
   group_by(O) |>
   summarise(
     trips = sum(interaction)
   )
-od_res_constrained_o$trips
+res_constrained_o$trips
 
 ```
 
 ```{r}
 #| include: false
 od_joined_constrained = left_join(
-    od_res_constrained,
+    res_constrained,
     od_observed
     )
 nrow(od_joined_constrained)
@@ -326,7 +326,7 @@ Let's implement a doubly-constrained model, starting with the outputs of the pro
 ```{r}
 #| label: doubly-constrained
 #| echo: true
-od_res_doubly_constrained = od_res_constrained |>
+res_doubly_constrained = res_constrained |>
   group_by(D) |>
   mutate(
     observed_group = first(destination_n_pupils),
@@ -334,14 +334,14 @@ od_res_doubly_constrained = od_res_constrained |>
     modelled_overestimate_factor = modelled_group / observed_group,
     interaction = interaction / modelled_overestimate_factor
   )
-# summary(od_res_doubly_constrained)
-sum(od_res_doubly_constrained$interaction) == sum(od_res_constrained$interaction) 
+# summary(res_doubly_constrained)
+sum(res_doubly_constrained$interaction) == sum(res_constrained$interaction) 
 ```
 
 ```{r}
 #| include: false
 od_joined_doubly_constrained = left_join(
-    od_res_doubly_constrained,
+    res_doubly_constrained,
     od_observed
     )
 rsq_doubly_constrained = cor(od_joined_doubly_constrained$frequency, od_joined_doubly_constrained$interaction, use = "complete.obs")^2
@@ -390,3 +390,118 @@ The R-squared value is `r round(rsq_doubly_constrained, 3)`.
 
 The model is now 'doubly constrained' in a basic sense: the first iteration constrains the totals for each origin to the observed totals, and the second iteration constrains the totals for each destination to the observed totals.
 
+Let's constrain by the origin totals again:
+
+```{r}
+#| label: doubly-constrained-2
+#| echo: true
+res_doubly_constrained_2 = res_doubly_constrained |>
+  group_by(O) |>
+  mutate(
+    observed_group = first(origin_pupils_estimated),
+    modelled_group = sum(interaction),
+    modelled_overestimate_factor = modelled_group / observed_group,
+    interaction = interaction / modelled_overestimate_factor
+  )
+```
+
+```{r}
+#| include: false
+od_joined_doubly_constrained_2 = left_join(
+    res_doubly_constrained_2,
+    od_observed
+    )
+rsq_doubly_constrained_2 = cor(od_joined_doubly_constrained_2$frequency, od_joined_doubly_constrained_2$interaction, use = "complete.obs")^2
+rsq_doubly_constrained_2
+```
+
+And then by the destination totals again:
+
+```{r}
+#| label: doubly-constrained-3
+#| echo: true
+res_doubly_constrained_3 = res_doubly_constrained_2 |>
+  group_by(D) |>
+  mutate(
+    observed_group = first(destination_n_pupils),
+    modelled_group = sum(interaction),
+    modelled_overestimate_factor = modelled_group / observed_group,
+    interaction = interaction / modelled_overestimate_factor
+  )
+```
+
+```{r}
+#| include: false
+od_joined_doubly_constrained_3 = left_join(
+    res_doubly_constrained_3,
+    od_observed
+    )
+rsq_doubly_constrained_3 = cor(od_joined_doubly_constrained_3$frequency, od_joined_doubly_constrained_3$interaction, use = "complete.obs")^2
+rsq_doubly_constrained_3
+```
+
+After one more full iteration of fitting to the observed totals, the R-squared value is `r round(rsq_doubly_constrained_3, 3)`.
+
+Additional iterations do not increase model fit against the observed OD data in this case (working not shown).
+
+```{r}
+#| include: false
+res_doubly_constrained_4 = res_doubly_constrained_3 |>
+  group_by(O) |>
+  mutate(
+    observed_group = first(origin_pupils_estimated),
+    modelled_group = sum(interaction),
+    modelled_overestimate_factor = modelled_group / observed_group,
+    interaction = interaction / modelled_overestimate_factor
+  )
+res_doubly_constrained_5 = res_doubly_constrained_4 |>
+  group_by(D) |>
+  mutate(
+    observed_group = first(destination_n_pupils),
+    modelled_group = sum(interaction),
+    modelled_overestimate_factor = modelled_group / observed_group,
+    interaction = interaction / modelled_overestimate_factor
+  )
+```
+
+```{r}
+#| include: false
+od_joined_doubly_constrained_5 = left_join(
+    res_doubly_constrained_5,
+    od_observed
+    )
+rsq_doubly_constrained_5 = cor(od_joined_doubly_constrained_5$frequency, od_joined_doubly_constrained_5$interaction, use = "complete.obs")^2
+rsq_doubly_constrained_5
+```
+
+
+```{r}
+#| include: false
+#| label: one-more-iteration
+res_doubly_constrained_6 = res_doubly_constrained_5 |>
+  group_by(O) |>
+  mutate(
+    observed_group = first(origin_pupils_estimated),
+    modelled_group = sum(interaction),
+    modelled_overestimate_factor = modelled_group / observed_group,
+    interaction = interaction / modelled_overestimate_factor
+  )
+res_doubly_constrained_7 = res_doubly_constrained_6 |>
+  group_by(D) |>
+  mutate(
+    observed_group = first(destination_n_pupils),
+    modelled_group = sum(interaction),
+    modelled_overestimate_factor = modelled_group / observed_group,
+    interaction = interaction / modelled_overestimate_factor
+  )
+```
+
+```{r}
+#| include: false
+od_joined_doubly_constrained_7 = left_join(
+    res_doubly_constrained_7,
+    od_observed
+    )
+rsq_doubly_constrained_7 = cor(od_joined_doubly_constrained_7$frequency, od_joined_doubly_constrained_7$interaction, use = "complete.obs")^2
+rsq_doubly_constrained_7
+```
