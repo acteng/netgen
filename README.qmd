@@ -180,7 +180,7 @@ od_res = od_res |>
 ```{r}
 #| label: od-joined
 #| include: false
-od_joined = inner_join(
+od_joined = left_join(
   od_res,
   od_observed
 )
@@ -266,7 +266,7 @@ od_res_constrained_o$trips
 
 ```{r}
 #| include: false
-od_joined_constrained = inner_join(
+od_joined_constrained = left_join(
     od_res_constrained,
     od_observed
     )
