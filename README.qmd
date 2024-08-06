@@ -39,12 +39,6 @@ usethis::use_pkgdown()
 usethis::use_github_action("pkgdown")
 # Setup gh pages:
 usethis::use_github_pages()
-
-# generate example datasets:
-zones_york = sf::read_sf("lsoas_york.geojson")
-destinations_york = sf::read_sf("school_minimal.geojson")
-usethis::use_data(zones_york, destinations_york, overwrite = TRUE)
-usethis::use_data_raw("zones_york")
 ```
 
 Install the package as follows (you can also clone the repo and run `devtools::load_all()`):
@@ -580,3 +574,13 @@ rsq_m5co = cor(od_m5co$frequency, od_m5co$interaction, use = "complete.obs")^2
 
 
 The models are not particularly good at predicting the observed data, as shown by the R-squared values, which range from `r round(min(c(rsq_m1, rsq_m2, rsq_m3, rsq_m4, rsq_m5)), 3)` to `r round(max(c(rsq_m1, rsq_m2, rsq_m3, rsq_m4, rsq_m5)), 3)`.
+
+# Multi-level models
+
+SIMs can be seen as a multi-level system, with origins and destinations at different levels.
+We will try fitting a multi-level model to the data.
+
+```{r}
+library(lme4)
+mml1 = lmer(frequency ~ log_distance + (1|O) + (1|D), data = od_from_si)
+```
