@@ -151,6 +151,11 @@ names(od_from_si)
 #| include: false
 od_observed = read_csv("od_york.csv")
 names(od_observed)[1:2] = c("O", "D")
+# join od_observed to od_from_si:
+od_from_si = left_join(
+  od_from_si,
+  od_observed
+)
 ```
 
 # A basic model
@@ -190,34 +195,25 @@ od_res = od_res |>
   )
 ```
 
-```{r}
-#| label: od-joined
-#| include: false
-od_joined = left_join(
-  od_res,
-  od_observed
-)
-```
-
 We can assess the model fit at three levels: the origin level (number of students departing from each zone), the destination level (the number arriving at each school in the input dataset) and the origin-destination level.
 
 ```{r}
 #| label: r-squared
-res_o = od_joined |>
+res_o = od_res |>
   group_by(O) |>
   summarise(
     Observed = first(origin_pupils_estimated),
     Modelled = sum(trips),
     Type = "Origin"
   )
-res_d = od_joined |>
+res_d = od_res |>
   group_by(D) |>
   summarise(
     Observed = first(destination_n_pupils),
     Modelled = sum(trips),
     Type = "Destination"
   )
-res_od = od_joined |>
+res_od = od_res |>
   transmute(
     Observed = frequency,
     Modelled = trips,
@@ -241,7 +237,7 @@ g_combined = res_combined |>
 #  + g_d 
 #  + g_od
 g_combined
-rsq = cor(od_joined$frequency, od_joined$trips, use = "complete.obs")^2
+rsq = cor(od_res$frequency, od_res$trips, use = "complete.obs")^2
 # rsq
 ```
 
@@ -281,38 +277,27 @@ res_constrained_o$trips
 
 ```{r}
 #| include: false
-od_joined_constrained = left_join(
-    res_constrained,
-    od_observed
-    )
-nrow(od_joined_constrained)
-nrow(od_joined)
-waldo::compare(od_joined, od_joined_constrained)
-# plot(od_joined$interaction, od_joined_constrained$interaction)
-summary(is.na(od_joined_constrained$interaction))
-# summary(is.na(zones_york$pupils_estimated))
-summary(is.na(destinations_york$n_pupils))
-rsq_constrained = cor(od_joined_constrained$frequency, od_joined_constrained$interaction, use = "complete.obs")^2
+rsq_constrained = cor(res_constrained$frequency, res_constrained$interaction, use = "complete.obs")^2
 rsq_constrained
 ```
 
 ```{r}
 #| label: r-squared-constrained
-res_o = od_joined_constrained |>
+res_o = res_constrained |>
   group_by(O) |>
   summarise(
     Observed = first(origin_pupils_estimated),
     Modelled = sum(interaction),
     Type = "Origin"
   )
-res_d = od_joined_constrained |>
+res_d = res_constrained |>
   group_by(D) |>
   summarise(
     Observed = first(destination_n_pupils),
     Modelled = sum(interaction),
     Type = "Destination"
   )
-res_od = od_joined_constrained |>
+res_od = res_constrained |>
   transmute(
     Observed = frequency,
     Modelled = interaction,
@@ -357,31 +342,27 @@ sum(res_doubly_constrained$interaction) == sum(res_constrained$interaction)
 
 ```{r}
 #| include: false
-od_joined_doubly_constrained = left_join(
-    res_doubly_constrained,
-    od_observed
-    )
-rsq_doubly_constrained = cor(od_joined_doubly_constrained$frequency, od_joined_doubly_constrained$interaction, use = "complete.obs")^2
+rsq_doubly_constrained = cor(res_doubly_constrained$frequency, res_doubly_constrained$interaction, use = "complete.obs")^2
 rsq_doubly_constrained
 ```
 
 ```{r}
 #| label: r-squared-doubly-constrained
-res_o = od_joined_doubly_constrained |>
+res_o = res_doubly_constrained |>
   group_by(O) |>
   summarise(
     Observed = first(origin_pupils_estimated),
     Modelled = sum(interaction),
     Type = "Origin"
   )
-res_d = od_joined_doubly_constrained |>
+res_d = res_doubly_constrained |>
   group_by(D) |>
   summarise(
     Observed = first(destination_n_pupils),
     Modelled = sum(interaction),
     Type = "Destination"
   )
-res_od = od_joined_doubly_constrained |>
+res_od = res_doubly_constrained |>
   transmute(
     Observed = frequency,
     Modelled = interaction,
@@ -424,11 +405,7 @@ res_doubly_constrained_2 = res_doubly_constrained |>
 
 ```{r}
 #| include: false
-od_joined_doubly_constrained_2 = left_join(
-    res_doubly_constrained_2,
-    od_observed
-    )
-rsq_doubly_constrained_2 = cor(od_joined_doubly_constrained_2$frequency, od_joined_doubly_constrained_2$interaction, use = "complete.obs")^2
+rsq_doubly_constrained_2 = cor(res_doubly_constrained_2$frequency, res_doubly_constrained_2$interaction, use = "complete.obs")^2
 rsq_doubly_constrained_2
 ```
 
@@ -449,11 +426,7 @@ res_doubly_constrained_3 = res_doubly_constrained_2 |>
 
 ```{r}
 #| include: false
-od_joined_doubly_constrained_3 = left_join(
-    res_doubly_constrained_3,
-    od_observed
-    )
-rsq_doubly_constrained_3 = cor(od_joined_doubly_constrained_3$frequency, od_joined_doubly_constrained_3$interaction, use = "complete.obs")^2
+rsq_doubly_constrained_3 = cor(res_doubly_constrained_3$frequency, res_doubly_constrained_3$interaction, use = "complete.obs")^2
 rsq_doubly_constrained_3
 ```
 
@@ -483,11 +456,7 @@ res_doubly_constrained_5 = res_doubly_constrained_4 |>
 
 ```{r}
 #| include: false
-od_joined_doubly_constrained_5 = left_join(
-    res_doubly_constrained_5,
-    od_observed
-    )
-rsq_doubly_constrained_5 = cor(od_joined_doubly_constrained_5$frequency, od_joined_doubly_constrained_5$interaction, use = "complete.obs")^2
+rsq_doubly_constrained_5 = cor(res_doubly_constrained_5$frequency, res_doubly_constrained_5$interaction, use = "complete.obs")^2
 rsq_doubly_constrained_5
 ```
 
@@ -515,11 +484,7 @@ res_doubly_constrained_7 = res_doubly_constrained_6 |>
 
 ```{r}
 #| include: false
-od_joined_doubly_constrained_7 = left_join(
-    res_doubly_constrained_7,
-    od_observed
-    )
-rsq_doubly_constrained_7 = cor(od_joined_doubly_constrained_7$frequency, od_joined_doubly_constrained_7$interaction, use = "complete.obs")^2
+rsq_doubly_constrained_7 = cor(res_doubly_constrained_7$frequency, res_doubly_constrained_7$interaction, use = "complete.obs")^2
 rsq_doubly_constrained_7
 ```
 
@@ -528,3 +493,36 @@ rsq_doubly_constrained_7
 So far, arbitrary values have been used for the beta parameter in the gravity model.
 Let's try to do better by fitting a model.
 
+We'll first create a new distance variable that is 1 if the the distance is less than 1 km.
+We'll also calculate the log of the distance.
+
+
+```{r}
+od_from_si = od_from_si |>
+  mutate(
+    distance_km = case_when(
+      distance_euclidean < 1000 ~ 1,
+      TRUE ~ distance_euclidean / 1000
+    ),
+    log_distance = log(distance_km)
+  )
+# plot(od_from_si$distance_euclidean, od_from_si$distance_km)
+# With ggplot2:
+g1 = od_from_si |>
+  ggplot() +
+  geom_point(aes(x = distance_euclidean, y = distance_km))
+g2 = od_from_si |>
+  ggplot() +
+  geom_point(aes(x = distance_euclidean, y = log_distance))
+g1 + g2
+```
+
+We now fit the model with `lm()`:
+
+```{r}
+#| label: fit-model
+#| echo: true
+m1 = od_from_si |>
+  lm(frequency ~ log_distance, data = _)
+summary(m1)
+```
