@@ -138,7 +138,7 @@ level.
 
 ![](README_files/figure-commonmark/r-squared-1.png)
 
-The R-squared value is NA.
+The R-squared value is 0.401.
 
 Let’s see if making the model production constrained can help:
 
@@ -156,4 +156,4 @@ od_res_constrained = simodels::si_calculate(
 
 ![](README_files/figure-commonmark/r-squared-constrained-1.png)
 
-The R-squared value is NA.
+The R-squared value is 0.57.

@@ -228,7 +228,7 @@ g_combined = res_combined |>
 #  + g_d 
 #  + g_od
 g_combined
-rsq = cor(od_joined$frequency, od_joined$trips)^2
+rsq = cor(od_joined$frequency, od_joined$trips, use = "complete.obs")^2
 # rsq
 ```
 
@@ -277,7 +277,7 @@ waldo::compare(od_joined, od_joined_constrained)
 summary(is.na(od_joined_constrained$interaction))
 # summary(is.na(zones_york$pupils_estimated))
 summary(is.na(destinations_york$n_pupils))
-rsq_constrained = cor(od_joined_constrained$frequency, od_joined_constrained$interaction)^2
+rsq_constrained = cor(od_joined_constrained$frequency, od_joined_constrained$interaction, use = "complete.obs")^2
 rsq_constrained
 ```
 
