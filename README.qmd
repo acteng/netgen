@@ -1,11 +1,18 @@
 ---
 title: Generate origin-destination data and route networks
+---
+
+```{r}
+#| eval: false
+#| echo: false
 format: gfm
 execute: 
   echo: false
   message: false
   warning: false
----
+```
+
+# Introduction
 
 The code in this results demonstrates how to generate origin-destination (OD) data for a given set of zones and destinations.
 OD data is a key input into spatial interaction models (SIMs) for generating route networks.
@@ -110,6 +117,8 @@ sum(zones_york$pupils_estimated)
 sum(destinations_york$n_pupils)
 ```
 
+# Preprocessing
+
 Based on these inputs the `si_to_od()` function generates the OD data, as shown below (note: 2 versions are created, one with a maximum distance constraint for speed of processing, important when working with large datasets).
 
 ```{r}
@@ -143,6 +152,10 @@ names(od_from_si)
 od_observed = read_csv("od_york.csv")
 names(od_observed)[1:2] = c("O", "D")
 ```
+
+# A basic model
+
+## An unconstrained model
 
 Let's run a simple model:
 
@@ -234,6 +247,8 @@ rsq = cor(od_joined$frequency, od_joined$trips, use = "complete.obs")^2
 
 The R-squared value is `r round(rsq, 3)`.
 
+## Production-constrained model
+
 Let's see if making the model production constrained can help:
 
 ```{r}
@@ -320,6 +335,8 @@ res_combined |>
 ```
 
 The R-squared value is `r round(rsq_constrained, 3)`.
+
+## Doubly-constrained model
 
 Let's implement a doubly-constrained model, starting with the outputs of the production-constrained model:
 
@@ -476,7 +493,7 @@ rsq_doubly_constrained_5
 
 
 ```{r}
-#| include: false
+#| include: false 
 #| label: one-more-iteration
 res_doubly_constrained_6 = res_doubly_constrained_5 |>
   group_by(O) |>
@@ -505,3 +522,9 @@ od_joined_doubly_constrained_7 = left_join(
 rsq_doubly_constrained_7 = cor(od_joined_doubly_constrained_7$frequency, od_joined_doubly_constrained_7$interaction, use = "complete.obs")^2
 rsq_doubly_constrained_7
 ```
+
+# Fitting model parameters
+
+So far, arbitrary values have been used for the beta parameter in the gravity model.
+Let's try to do better by fitting a model.
+
