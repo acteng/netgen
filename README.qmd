@@ -487,17 +487,19 @@ rsq_doubly_constrained_7
 So far, arbitrary values have been used for the beta parameter in the gravity model.
 Let's try to do better by fitting a model.
 
-We'll first create a new distance variable that is 1 if the the distance is less than 1 km.
+<!-- We'll first create a new distance variable that is 1 if the the distance is less than 1 km. -->
 We'll also calculate the log of the distance.
 
 
 ```{r}
 od_from_si = od_from_si |>
   mutate(
-    distance_km = case_when(
-      distance_euclidean < 1000 ~ 1,
-      TRUE ~ distance_euclidean / 1000
-    ),
+    # option 1: set an arbitrary cutoff below which distances cannot go below:
+    # distance_km = case_when(
+    #   distance_euclidean < 1000 ~ 1,
+    #   TRUE ~ distance_euclidean / 1000
+    # ),
+    distance_km = distance_euclidean / 1000,
     log_distance = log(distance_km)
   )
 # plot(od_from_si$distance_euclidean, od_from_si$distance_km)
@@ -581,6 +583,6 @@ SIMs can be seen as a multi-level system, with origins and destinations at diffe
 We will try fitting a multi-level model to the data.
 
 ```{r}
-library(lme4)
-mml1 = lmer(frequency ~ log_distance + (1|O) + (1|D), data = od_from_si)
+# library(lme4)
+# mml1 = lmer(frequency ~ log_distance + (1|O) + (1|D), data = od_from_si)
 ```
