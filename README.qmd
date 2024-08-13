@@ -161,8 +161,13 @@ Let's run a simple model:
 #| label: simple-model
 #| echo: true
 gravity_model = function(beta, d, m, n) {
-  m * n * exp(-beta * d / 1000)
+  m * n * exp(-beta * d)
 } 
+# We'll divide the distance by 1000 to use more sensible values for beta:
+od_from_si = od_from_si |>
+  mutate(
+    d_e = distance_euclidean
+  )
 # perform SIM
 od_res = simodels::si_calculate(
   od_from_si,
@@ -494,20 +499,20 @@ od_from_si = od_from_si |>
   mutate(
     # option 1: set an arbitrary cutoff below which distances cannot go below:
     # distance_km = case_when(
-    #   distance_euclidean < 1000 ~ 1,
-    #   TRUE ~ distance_euclidean / 1000
+    #   d_e < 1000 ~ 1,
+    #   TRUE ~ d_e
     # ),
-    distance_km = distance_euclidean / 1000,
+    distance_km = d_e,
     log_distance = log(distance_km)
   )
-# plot(od_from_si$distance_euclidean, od_from_si$distance_km)
+# plot(od_from_si$d_e, od_from_si$distance_km)
 # With ggplot2:
 g1 = od_from_si |>
   ggplot() +
-  geom_point(aes(x = distance_euclidean, y = distance_km))
+  geom_point(aes(x = d_e, y = distance_km))
 g2 = od_from_si |>
   ggplot() +
-  geom_point(aes(x = distance_euclidean, y = log_distance))
+  geom_point(aes(x = d_e, y = log_distance))
 g1 + g2
 ```
 
@@ -582,7 +587,7 @@ We can estimate the `beta` parameter in the gravity model using non-linear least
 ```{r}
 names(od_from_si)
 gravity_model = function(beta, d, m, n) {
-  origin_pupils_estimated * destination_n_pupils * exp(-beta * distance_euclidean / 1000)
+  origin_pupils_estimated * destination_n_pupils * exp(-beta * d_e)
 }
 ```
 
@@ -591,10 +596,11 @@ Let's try to do this with a {brms} formula as follows:
 ```{r}
 #| label: brms
 #| echo: true
+#| eval: false
 library(brms)
 # Define formula:
 f = bf(frequency ~ origin_pupils_estimated * destination_n_pupils * 
-  exp(-beta * distance_euclidean / 1000), beta ~ 1, nl = TRUE)
+  exp(-beta * d_e), beta ~ 1, nl = TRUE)
 # Fit model:
 m_b1 = brm(
   f,
@@ -606,8 +612,9 @@ Let's plot the results:
 
 ```{r}
 #| label: plot-brms
+#| eval: false
 conditions = data.frame(
-  distance_euclidean = seq(0, 5000, length.out = 100),
+  d_e = seq(0, 5, length.out = 100),
   origin_pupils_estimated = mean(od_from_si$origin_pupils_estimated),
   destination_n_pupils = mean(od_from_si$destination_n_pupils)
 )
