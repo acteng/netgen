@@ -1,6 +1,8 @@
 # Generate origin-destination data and route networks
 
 
+# Introduction
+
 The code in this results demonstrates how to generate origin-destination
 (OD) data for a given set of zones and destinations. OD data is a key
 input into spatial interaction models (SIMs) for generating route
@@ -71,6 +73,8 @@ sum(destinations_york$n_pupils)
 
     [1] 25631
 
+# Preprocessing
+
 Based on these inputs the `si_to_od()` function generates the OD data,
 as shown below (note: 2 versions are created, one with a maximum
 distance constraint for speed of processing, important when working with
@@ -99,6 +103,10 @@ destination datasets, with the following column names:
     [15] "origin_m65_and_over"               "origin_pupils_estimated"          
     [17] "destination_n_pupils"              "destination_phase"                
     [19] "destination_type_of_establishment" "geometry"                         
+
+# A basic model
+
+## An unconstrained model
 
 Let’s run a simple model:
 
@@ -140,6 +148,8 @@ level.
 
 The R-squared value is 0.401.
 
+## Production-constrained model
+
 Let’s see if making the model production constrained can help:
 
 ``` r
@@ -157,6 +167,8 @@ res_constrained = simodels::si_calculate(
 ![](README_files/figure-commonmark/r-squared-constrained-1.png)
 
 The R-squared value is 0.57.
+
+## Doubly-constrained model
 
 Let’s implement a doubly-constrained model, starting with the outputs of
 the production-constrained model:
@@ -216,3 +228,42 @@ R-squared value is 0.592.
 
 Additional iterations do not increase model fit against the observed OD
 data in this case (working not shown).
+
+# Fitting model parameters
+
+So far, arbitrary values have been used for the beta parameter in the
+gravity model. Let’s try to do better by fitting a model.
+
+<!-- We'll first create a new distance variable that is 1 if the the distance is less than 1 km. -->
+
+We’ll also calculate the log of the distance.
+
+![](README_files/figure-commonmark/unnamed-chunk-31-1.png)
+
+We now fit models with `lm()`:
+
+``` r
+m1 = od_from_si |>
+  lm(frequency ~ log_distance, data = _)
+# With origin_pupils_estimated:
+m2 = od_from_si |>
+  lm(frequency ~ log_distance + origin_pupils_estimated, data = _)
+# With destination_n_pupils:
+m3 = od_from_si |>
+  lm(frequency ~ log_distance + destination_n_pupils, data = _)
+# With both:
+m4 = od_from_si |>
+  lm(frequency ~ log_distance + origin_pupils_estimated + destination_n_pupils, data = _)
+# With m x n:
+m5 = od_from_si |>
+  lm(frequency ~ log_distance + I(origin_pupils_estimated * destination_n_pupils), data = _)
+```
+
+The models are not particularly good at predicting the observed data, as
+shown by the R-squared values, which range from 0.218 to 0.333.
+
+# Multi-level models
+
+SIMs can be seen as a multi-level system, with origins and destinations
+at different levels. We will try fitting a multi-level model to the
+data.
