@@ -112,8 +112,13 @@ Let’s run a simple model:
 
 ``` r
 gravity_model = function(beta, d, m, n) {
-  m * n * exp(-beta * d / 1000)
+  m * n * exp(-beta * d)
 } 
+# We'll divide the distance by 1000 to use more sensible values for beta:
+od_from_si = od_from_si |>
+  mutate(
+    d_e = distance_euclidean
+  )
 # perform SIM
 od_res = simodels::si_calculate(
   od_from_si,
@@ -261,6 +266,43 @@ m5 = od_from_si |>
 
 The models are not particularly good at predicting the observed data, as
 shown by the R-squared values, which range from 0.218 to 0.333.
+
+# Non-linear models
+
+We can estimate the `beta` parameter in the gravity model using
+non-linear least squares regression in the following function (from
+above)
+
+     [1] "O"                                 "D"                                
+     [3] "distance_euclidean"                "origin_LSOA21NM"                  
+     [5] "origin_total"                      "origin_f0_to_15"                  
+     [7] "origin_f16_to_29"                  "origin_f30_to_44"                 
+     [9] "origin_f45_to_64"                  "origin_f65_and_over"              
+    [11] "origin_m0_to_15"                   "origin_m16_to_29"                 
+    [13] "origin_m30_to_44"                  "origin_m45_to_64"                 
+    [15] "origin_m65_and_over"               "origin_pupils_estimated"          
+    [17] "destination_n_pupils"              "destination_phase"                
+    [19] "destination_type_of_establishment" "frequency"                        
+    [21] "geometry"                          "d_e"                              
+    [23] "distance_km"                       "log_distance"                     
+
+Let’s try to do this with a {brms} formula as follows:
+
+``` r
+library(brms)
+# Define formula:
+f = bf(frequency ~ origin_pupils_estimated * destination_n_pupils * 
+  exp(-beta * d_e), beta ~ 1, nl = TRUE)
+# Fit model:
+m_b1 = brm(
+  f,
+  data = od_from_si
+)
+```
+
+Let’s plot the results:
+
+# Nearest neighbour model
 
 # Multi-level models
 
