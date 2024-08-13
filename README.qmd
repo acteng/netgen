@@ -7,6 +7,7 @@ execute:
   echo: false
   message: false
   warning: false
+  cache: true
 ---
 
 # Introduction
@@ -573,6 +574,47 @@ rsq_m5co = cor(od_m5co$frequency, od_m5co$interaction, use = "complete.obs")^2
 
 
 The models are not particularly good at predicting the observed data, as shown by the R-squared values, which range from `r round(min(c(rsq_m1, rsq_m2, rsq_m3, rsq_m4, rsq_m5)), 3)` to `r round(max(c(rsq_m1, rsq_m2, rsq_m3, rsq_m4, rsq_m5)), 3)`.
+
+# Non-linear models
+
+We can estimate the `beta` parameter in the gravity model using non-linear least squares regression in the following function (from above)
+
+```{r}
+names(od_from_si)
+gravity_model = function(beta, d, m, n) {
+  origin_pupils_estimated * destination_n_pupils * exp(-beta * distance_euclidean / 1000)
+}
+```
+
+Let's try to do this with a {brms} formula as follows:
+
+```{r}
+#| label: brms
+#| echo: true
+library(brms)
+# Define formula:
+f = bf(frequency ~ origin_pupils_estimated * destination_n_pupils * 
+  exp(-beta * distance_euclidean / 1000), beta ~ 1, nl = TRUE)
+# Fit model:
+m_b1 = brm(
+  f,
+  data = od_from_si
+)
+```
+
+Let's plot the results:
+
+```{r}
+#| label: plot-brms
+conditions = data.frame(
+  distance_euclidean = seq(0, 5000, length.out = 100),
+  origin_pupils_estimated = mean(od_from_si$origin_pupils_estimated),
+  destination_n_pupils = mean(od_from_si$destination_n_pupils)
+)
+plot(conditional_effects(m_b1), conditions = conditions, ask = FALSE)
+```
+
+# Nearest neighbour model
 
 # Multi-level models
 
