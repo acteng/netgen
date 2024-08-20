@@ -287,42 +287,43 @@ data in this case (working not shown).
 
 ![](README_files/figure-commonmark/plot-doubly-9-1.png)
 
-# Fitting model parameters
+# Summary and next steps
 
-So far, arbitrary values have been used for the beta parameter in the
-gravity model. Let’s try to do better by fitting a model.
+The reproducible code in this vignette shows how to develop fast
+reproducible spatial interaction models (SIMs) using the `{simodels}`
+package. A simple model, using only one estimated parameter (beta) can
+explain more than half of the variation in flows, as measured by the
+R-squared value. This is not bad considering that York has a river so
+many of the Euclidean distances are not representative of the actual
+travel distances.
 
+There are many ways the model could be refined:
+
+- Using different models for different types of schools (e.g. primary
+  and secondary schools).
+- Adding more parameters to the model, e.g. exponents on the origin and
+  destination populations (see Wilson’s work for more on that).
+- Using regression to estimate the impact of other variables on flows
+- Using a more complex model, such as the radiation model.
+
+For the purposes of this repo, however, we have demonstrated how to
+rapidly generate plausible OD data that can feed into network generation
+models.
+
+<!-- Potentially useful out-takes/notes: -->
+<!-- # Fitting model parameters
+&#10;So far, arbitrary values have been used for the beta parameter in the gravity model.
+Let's try to do better by fitting a model. -->
 <!-- We'll first create a new distance variable that is 1 if the the distance is less than 1 km. -->
 <!-- We'll also calculate the log of the distance. -->
-
-![](README_files/figure-commonmark/unnamed-chunk-37-1.png)
-
 <!-- We now fit models with `lm()`: -->
-
-Basic linear models fail to predict the observed OD data, as shown by
-the R-squared values, which range from 0.218 to 0.333.
-
+<!-- Basic linear models fail to predict the observed OD data, as shown by the R-squared values, which range from 0.218 to 0.333. -->
 <!-- # Multi-level models
 &#10;SIMs can be seen as a multi-level system, with origins and destinations at different levels.
 We will try fitting a multi-level model to the data. -->
-
-# Parameterising distance decay
-
-Distance is a key determinant of travel. Let’s see what the relationship
-between distance and trips is in the observed data, a relationship that
-strengthens when we convert the number of trips between each OD pair to
-the proportion of trips made from each zone to each destination.
-
-![](README_files/figure-commonmark/unnamed-chunk-41-1.png)
-
-We can fit a model with exponential decay to the data, resulting in the
-following curves. The model predicting the proportion of trips fits the
-data slightly better.
-
-![](README_files/figure-commonmark/unnamed-chunk-43-1.png)
-
-    [1] 0.4767784
-
-    [1] 0.2211387
-
+<!-- # Parameterising distance decay
+&#10;Distance is a key determinant of travel.
+Let's see what the relationship between distance and trips is in the observed data, a relationship that strengthens when we convert the number of trips between each OD pair to the proportion of trips made from each zone to each destination. -->
+<!-- We can fit a model with exponential decay to the data, resulting in the following curves.
+The model predicting the proportion of trips fits the data slightly better. -->
 <!-- Let's see if we can get better fit with a multi-level model: -->

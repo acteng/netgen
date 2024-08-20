@@ -558,16 +558,49 @@ rsq_doubly_constrained_9
 plot_od_fit(res_doubly_constrained_9, "(doubly-constrained, 9 iterations)")
 ```
 
-# Fitting model parameters
+
+# Summary and next steps
+
+The reproducible code in this vignette shows how to develop fast reproducible spatial interaction models (SIMs) using the `{simodels}` package.
+A simple model, using only one estimated parameter (beta) can explain more than half of the variation in flows, as measured by the R-squared value.
+This is not bad considering that York has a river so many of the Euclidean distances are not representative of the actual travel distances.
+
+There are many ways the model could be refined:
+
+- Using different models for different types of schools (e.g. primary and secondary schools).
+- Adding more parameters to the model, e.g. exponents on the origin and destination populations (see Wilson's work for more on that).
+- Using regression to estimate the impact of other variables on flows
+- Using a more complex model, such as the radiation model.
+
+For the purposes of this repo, however, we have demonstrated how to rapidly generate plausible OD data that can feed into network generation models.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- Potentially useful out-takes/notes: -->
+
+<!-- # Fitting model parameters
 
 So far, arbitrary values have been used for the beta parameter in the gravity model.
-Let's try to do better by fitting a model.
+Let's try to do better by fitting a model. -->
 
 <!-- We'll first create a new distance variable that is 1 if the the distance is less than 1 km. -->
 <!-- We'll also calculate the log of the distance. -->
 
 
 ```{r}
+#| include: false
 cutoff = 0.05
 od_from_si = od_from_si |>
   mutate(
@@ -654,7 +687,7 @@ rsq_m5co = cor(od_m5co$frequency, od_m5co$interaction, use = "complete.obs")^2
 ```
 
 
-Basic linear models fail to predict the observed OD data, as shown by the R-squared values, which range from `r round(min(c(rsq_m1, rsq_m2, rsq_m3, rsq_m4, rsq_m5)), 3)` to `r round(max(c(rsq_m1, rsq_m2, rsq_m3, rsq_m4, rsq_m5)), 3)`.
+<!-- Basic linear models fail to predict the observed OD data, as shown by the R-squared values, which range from `r round(min(c(rsq_m1, rsq_m2, rsq_m3, rsq_m4, rsq_m5)), 3)` to `r round(max(c(rsq_m1, rsq_m2, rsq_m3, rsq_m4, rsq_m5)), 3)`. -->
 
 <!-- # Multi-level models
 
@@ -666,13 +699,14 @@ We will try fitting a multi-level model to the data. -->
 # mml1 = lmer(frequency ~ log_distance + (1|O) + (1|D), data = od_from_si)
 ```
 
-# Parameterising distance decay
+<!-- # Parameterising distance decay
 
 Distance is a key determinant of travel.
-Let's see what the relationship between distance and trips is in the observed data, a relationship that strengthens when we convert the number of trips between each OD pair to the proportion of trips made from each zone to each destination.
+Let's see what the relationship between distance and trips is in the observed data, a relationship that strengthens when we convert the number of trips between each OD pair to the proportion of trips made from each zone to each destination. -->
 
 
 ```{r}
+#| include: false
 od_from_si_proportion = od_from_si |>
   group_by(O) |>
   mutate(
@@ -695,8 +729,8 @@ g2 = od_from_si_proportion |>
 g1 + g2
 ```
 
-We can fit a model with exponential decay to the data, resulting in the following curves.
-The model predicting the proportion of trips fits the data slightly better.
+<!-- We can fit a model with exponential decay to the data, resulting in the following curves.
+The model predicting the proportion of trips fits the data slightly better. -->
 
 ```{r}
 #| include: false
@@ -726,10 +760,11 @@ g2 = od_from_si_proportion |>
 ```
 
 ```{r}
-g1 + g2
+# g1 + g2
 ```
 
 ```{r}
+#| include: false
 si_proportion_res1 = simodels::si_predict(od_from_si_proportion, m4, constraint_production = origin_pupils_estimated)
 # destination constrained:
 si_proportion_res2 = simodels::si_predict(od_from_si_proportion, m4, constraint_production = destination_n_pupils)
