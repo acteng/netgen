@@ -144,7 +144,7 @@ students departing from each zone), the destination level (the number
 arriving at each school in the input dataset) and the origin-destination
 level.
 
-![](README_files/figure-commonmark/r-squared-1.png)
+![](README_files/figure-commonmark/r-squared1-1.png)
 
 The R-squared value is 0.401.
 
@@ -229,6 +229,8 @@ R-squared value is 0.592.
 Additional iterations do not increase model fit against the observed OD
 data in this case (working not shown).
 
+![](README_files/figure-commonmark/plot-doubly-9-1.png)
+
 # Fitting model parameters
 
 So far, arbitrary values have been used for the beta parameter in the
@@ -238,7 +240,7 @@ gravity model. Let’s try to do better by fitting a model.
 
 We’ll also calculate the log of the distance.
 
-![](README_files/figure-commonmark/unnamed-chunk-31-1.png)
+![](README_files/figure-commonmark/unnamed-chunk-35-1.png)
 
 We now fit models with `lm()`:
 
