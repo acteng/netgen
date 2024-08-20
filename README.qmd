@@ -603,10 +603,10 @@ rsq_m5co = cor(od_m5co$frequency, od_m5co$interaction, use = "complete.obs")^2
 
 The models are not particularly good at predicting the observed data, as shown by the R-squared values, which range from `r round(min(c(rsq_m1, rsq_m2, rsq_m3, rsq_m4, rsq_m5)), 3)` to `r round(max(c(rsq_m1, rsq_m2, rsq_m3, rsq_m4, rsq_m5)), 3)`.
 
-# Multi-level models
+<!-- # Multi-level models
 
 SIMs can be seen as a multi-level system, with origins and destinations at different levels.
-We will try fitting a multi-level model to the data.
+We will try fitting a multi-level model to the data. -->
 
 ```{r}
 # library(lme4)
