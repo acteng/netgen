@@ -182,7 +182,7 @@ We'll make one adjustment to the output dataset, renaming the `interaction` colu
 interaction_overestimate_factor = sum(destinations_york$n_pupils) / sum(od_res$interaction)
 od_res = od_res |>
   dplyr::mutate(
-    trips = interaction * interaction_overestimate_factor
+    interaction = interaction * interaction_overestimate_factor
   )
 ```
 
@@ -195,20 +195,20 @@ res_o = od_res |>
   group_by(O) |>
   summarise(
     Observed = first(origin_pupils_estimated),
-    Modelled = sum(trips),
+    Modelled = sum(interaction),
     Type = "Origin"
   )
 res_d = od_res |>
   group_by(D) |>
   summarise(
     Observed = first(destination_n_pupils),
-    Modelled = sum(trips),
+    Modelled = sum(interaction),
     Type = "Destination"
   )
 res_od = od_res |>
   transmute(
     Observed = frequency,
-    Modelled = trips,
+    Modelled = interaction,
     Type = "OD"
   )
 res_combined = bind_rows(res_o, res_d, res_od) |>
@@ -229,7 +229,7 @@ g_combined = res_combined |>
 #  + g_d 
 #  + g_od
 g_combined
-rsq = cor(od_res$frequency, od_res$trips, use = "complete.obs")^2
+rsq = cor(od_res$frequency, od_res$interaction, use = "complete.obs")^2
 # rsq
 ```
 
@@ -242,20 +242,20 @@ plot_od_fit = function(od_res, title = "(unconstrained)") {
     group_by(O) |>
     summarise(
       Observed = first(origin_pupils_estimated),
-      Modelled = sum(trips),
+      Modelled = sum(interaction),
       Type = "Origin"
     )
   res_d = od_res |>
     group_by(D) |>
     summarise(
       Observed = first(destination_n_pupils),
-      Modelled = sum(trips),
+      Modelled = sum(interaction),
       Type = "Destination"
     )
   res_od = od_res |>
     transmute(
       Observed = frequency,
-      Modelled = trips,
+      Modelled = interaction,
       Type = "OD"
     )
   res_combined = bind_rows(res_o, res_d, res_od) |>
@@ -571,6 +571,7 @@ There are many ways the model could be refined:
 - Adding more parameters to the model, e.g. exponents on the origin and destination populations (see Wilson's work for more on that).
 - Using regression to estimate the impact of other variables on flows
 - Using a more complex model, such as the radiation model.
+- Scalability: it would be worth exploring how well the approach scales for all LSOAs and schools in the UK, for example.
 
 For the purposes of this repo, however, we have demonstrated how to rapidly generate plausible OD data that can feed into network generation models.
 
