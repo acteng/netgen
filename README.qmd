@@ -558,6 +558,40 @@ rsq_doubly_constrained_9
 plot_od_fit(res_doubly_constrained_9, "(doubly-constrained, 9 iterations)")
 ```
 
+# Model output
+
+The model outputs OD data, with any of the columns listed below:
+
+```{r}
+#| echo: true
+names(res_doubly_constrained_9)
+```
+
+For the purposes of this project, we'll only use three of them:
+
+```{r}
+#| echo: true
+res_output = res_doubly_constrained_9 |>
+  select(O, D, trips_modelled = interaction)
+summary(res_output)
+```
+
+The results are saved as .csv and .geojson files ready for the next step:
+
+```{r}
+#| echo: true
+sf::write_sf(res_output, "res_output.geojson", delete_dsn = TRUE)
+res_output |>
+  sf::st_drop_geometry() |>
+  write_csv("res_output.csv")
+```
+
+```{r}
+#| eval: false
+system("gh release list")
+system("gh release create v0.1.0 res_output.geojson res_output.csv")
+```
+
 
 # Summary and next steps
 
