@@ -122,7 +122,7 @@ od_res = simodels::si_calculate(
   m = origin_pupils_estimated,
   n = destination_n_pupils,
 #   constraint_production = origin_all,
-  beta = 0.9
+  beta = 0.8
   )
 ```
 
@@ -135,7 +135,7 @@ dataset:
 interaction_overestimate_factor = sum(destinations_york$n_pupils) / sum(od_res$interaction)
 od_res = od_res |>
   dplyr::mutate(
-    trips = interaction * interaction_overestimate_factor
+    interaction = interaction * interaction_overestimate_factor
   )
 ```
 
@@ -146,7 +146,63 @@ level.
 
 ![](README_files/figure-commonmark/r-squared1-1.png)
 
-The R-squared value is 0.401.
+The R-squared value is 0.398.
+
+## Optimising the value of beta
+
+The beta parameter in the gravity model is a key parameter that
+determines the strength of the distance decay effect.
+
+We can optimise it with an objective function that minimises the
+difference between the observed and modelled trips:
+
+``` r
+objective_function = function(beta) {
+  od_res = simodels::si_calculate(
+    od_from_si,
+    fun = gravity_model,
+    d = distance_euclidean,
+    m = origin_pupils_estimated,
+    n = destination_n_pupils,
+    beta = beta
+  )
+  interaction_overestimate_factor = sum(destinations_york$n_pupils) / sum(od_res$interaction)
+  od_res = od_res |>
+    dplyr::mutate(
+      trips = interaction * interaction_overestimate_factor
+    )
+  sum((od_res$trips - od_res$frequency)^2, na.rm = TRUE)
+}
+# Try it with beta of 0.8:
+objective_function(0.8)
+```
+
+    [1] 586859.6
+
+``` r
+# Optimise it:
+beta_opt = optimise(objective_function, c(0.1, 1))
+beta_new = beta_opt$minimum
+beta_new
+```
+
+    [1] 0.9064594
+
+Let’s try re-running the model with the new beta value:
+
+``` r
+res_optimised = simodels::si_calculate(
+  od_from_si,
+  fun = gravity_model,
+  d = distance_euclidean,
+  m = origin_pupils_estimated,
+  n = destination_n_pupils,
+  beta = beta_new
+  )
+cor(res_optimised$frequency, res_optimised$interaction, use = "complete.obs")^2
+```
+
+    [1] 0.4012082
 
 ## Production-constrained model
 
@@ -160,13 +216,13 @@ res_constrained = simodels::si_calculate(
   m = origin_pupils_estimated,
   n = destination_n_pupils,
   constraint_production = origin_pupils_estimated,
-  beta = 0.9
+  beta = beta_new
   )
 ```
 
 ![](README_files/figure-commonmark/r-squared-constrained-1.png)
 
-The R-squared value is 0.57.
+The R-squared value is 0.571.
 
 ## Doubly-constrained model
 
@@ -190,7 +246,7 @@ sum(res_doubly_constrained$interaction) == sum(res_constrained$interaction)
 
 ![](README_files/figure-commonmark/r-squared-doubly-constrained-1.png)
 
-The R-squared value is 0.579.
+The R-squared value is 0.58.
 
 The model is now ‘doubly constrained’ in a basic sense: the first
 iteration constrains the totals for each origin to the observed totals,
@@ -224,48 +280,100 @@ res_doubly_constrained_3 = res_doubly_constrained_2 |>
 ```
 
 After one more full iteration of fitting to the observed totals, the
-R-squared value is 0.592.
+R-squared value is 0.594.
 
 Additional iterations do not increase model fit against the observed OD
 data in this case (working not shown).
 
 ![](README_files/figure-commonmark/plot-doubly-9-1.png)
 
-# Fitting model parameters
+# Model output
 
-So far, arbitrary values have been used for the beta parameter in the
-gravity model. Let’s try to do better by fitting a model.
-
-<!-- We'll first create a new distance variable that is 1 if the the distance is less than 1 km. -->
-
-We’ll also calculate the log of the distance.
-
-![](README_files/figure-commonmark/unnamed-chunk-35-1.png)
-
-We now fit models with `lm()`:
+The model outputs OD data, with any of the columns listed below:
 
 ``` r
-m1 = od_from_si |>
-  lm(frequency ~ log_distance, data = _)
-# With origin_pupils_estimated:
-m2 = od_from_si |>
-  lm(frequency ~ log_distance + origin_pupils_estimated, data = _)
-# With destination_n_pupils:
-m3 = od_from_si |>
-  lm(frequency ~ log_distance + destination_n_pupils, data = _)
-# With both:
-m4 = od_from_si |>
-  lm(frequency ~ log_distance + origin_pupils_estimated + destination_n_pupils, data = _)
-# With m x n:
-m5 = od_from_si |>
-  lm(frequency ~ log_distance + I(origin_pupils_estimated * destination_n_pupils), data = _)
+names(res_doubly_constrained_9)
 ```
 
-The models are not particularly good at predicting the observed data, as
-shown by the R-squared values, which range from 0.218 to 0.333.
+     [1] "O"                                 "D"                                
+     [3] "distance_euclidean"                "origin_LSOA21NM"                  
+     [5] "origin_total"                      "origin_f0_to_15"                  
+     [7] "origin_f16_to_29"                  "origin_f30_to_44"                 
+     [9] "origin_f45_to_64"                  "origin_f65_and_over"              
+    [11] "origin_m0_to_15"                   "origin_m16_to_29"                 
+    [13] "origin_m30_to_44"                  "origin_m45_to_64"                 
+    [15] "origin_m65_and_over"               "origin_pupils_estimated"          
+    [17] "destination_n_pupils"              "destination_phase"                
+    [19] "destination_type_of_establishment" "frequency"                        
+    [21] "geometry"                          "interaction"                      
+    [23] "trips"                             "observed_group"                   
+    [25] "modelled_group"                    "modelled_overestimate_factor"     
 
-# Multi-level models
+For the purposes of this project, we’ll only use three of them:
 
-SIMs can be seen as a multi-level system, with origins and destinations
-at different levels. We will try fitting a multi-level model to the
-data.
+``` r
+res_output = res_doubly_constrained_9 |>
+  select(O, D, trips_modelled = interaction)
+summary(res_output)
+```
+
+          O                   D          trips_modelled               geometry   
+     Length:4338        Min.   :121266   Min.   :  0.01305   LINESTRING   :4338  
+     Class :character   1st Qu.:121711   1st Qu.:  0.72370   epsg:4326    :   0  
+     Mode  :character   Median :142845   Median :  1.89543   +proj=long...:   0  
+                        Mean   :137748   Mean   :  5.90848                       
+                        3rd Qu.:144709   3rd Qu.:  5.61269                       
+                        Max.   :150205   Max.   :224.64802                       
+
+The results are saved as .csv and .geojson files ready for the next
+step:
+
+``` r
+sf::write_sf(res_output, "res_output.geojson", delete_dsn = TRUE)
+res_output |>
+  sf::st_drop_geometry() |>
+  write_csv("res_output.csv")
+```
+
+# Summary and next steps
+
+The reproducible code in this vignette shows how to develop fast
+reproducible spatial interaction models (SIMs) using the `{simodels}`
+package. A simple model, using only one estimated parameter (beta) can
+explain more than half of the variation in flows, as measured by the
+R-squared value. This is not bad considering that York has a river so
+many of the Euclidean distances are not representative of the actual
+travel distances.
+
+There are many ways the model could be refined:
+
+- Using different models for different types of schools (e.g. primary
+  and secondary schools).
+- Adding more parameters to the model, e.g. exponents on the origin and
+  destination populations (see Wilson’s work for more on that).
+- Using regression to estimate the impact of other variables on flows
+- Using a more complex model, such as the radiation model.
+- Scalability: it would be worth exploring how well the approach scales
+  for all LSOAs and schools in the UK, for example.
+
+For the purposes of this repo, however, we have demonstrated how to
+rapidly generate plausible OD data that can feed into network generation
+models.
+
+<!-- Potentially useful out-takes/notes: -->
+<!-- # Fitting model parameters
+&#10;So far, arbitrary values have been used for the beta parameter in the gravity model.
+Let's try to do better by fitting a model. -->
+<!-- We'll first create a new distance variable that is 1 if the the distance is less than 1 km. -->
+<!-- We'll also calculate the log of the distance. -->
+<!-- We now fit models with `lm()`: -->
+<!-- Basic linear models fail to predict the observed OD data, as shown by the R-squared values, which range from 0.218 to 0.333. -->
+<!-- # Multi-level models
+&#10;SIMs can be seen as a multi-level system, with origins and destinations at different levels.
+We will try fitting a multi-level model to the data. -->
+<!-- # Parameterising distance decay
+&#10;Distance is a key determinant of travel.
+Let's see what the relationship between distance and trips is in the observed data, a relationship that strengthens when we convert the number of trips between each OD pair to the proportion of trips made from each zone to each destination. -->
+<!-- We can fit a model with exponential decay to the data, resulting in the following curves.
+The model predicting the proportion of trips fits the data slightly better. -->
+<!-- Let's see if we can get better fit with a multi-level model: -->
