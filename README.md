@@ -44,6 +44,8 @@ network generation stages.
     5 E01013339 121266          2.95 
     6 E01013340 121266          0.124
 
+![](README_files/figure-commonmark/desire-lines-r-1.png)
+
 ## Python
 
                O       D  trips_modelled

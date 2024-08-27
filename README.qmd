@@ -43,6 +43,8 @@ library(tidyverse)
 library(tmap)
 # Get the datasets we'll use
 system("gh release download v0.1.0")
+# theme void:
+theme_set(theme_void())
 ```
 
 ## Python
@@ -67,8 +69,13 @@ It's worth importing and visualising the OD datasets before routing and network 
 ## R
 
 ```{r}
+#| label: desire-lines-r
 od = read_csv("res_output.csv")
 head(od)
+od_geo = sf::read_sf("res_output.geojson")
+od_geo |>
+  ggplot() +
+  geom_sf(aes(alpha = trips_modelled))
 ```
 
 ## Python
@@ -76,4 +83,7 @@ head(od)
 ```{python}
 od = pd.read_csv("res_output.csv")
 od.head()
+# TBC
 ```
+
+:::
