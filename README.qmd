@@ -12,3 +12,68 @@ execute:
 The input of the network generation approaches demonstrated in this repo is origin-destionation data.
 There are many sources of OD data, see [odgen](odgen.qmd) for a way to generate synthetic OD data that we'll use in the reproducible code below.
 
+# Setup
+
+```{r}
+#| include: false
+pkgs = c("sf", "tidyverse", "tmap", "reticulate")
+pkgs_to_install = pkgs[!pkgs %in% installed.packages()]
+if (length(pkgs_to_install) > 0) {
+  install.packages(pkgs_to_install)
+}
+# Install geopandas:
+reticulate::py_install("geopandas")
+```
+
+::: {.panel-tabset group="language"}
+
+## R
+
+<!---
+ jn: I would suggest to use specific packages from tidyverse instead of attaching the whole tidyverse 
+
+rl: Why? Tidyverse is popular and it makes life easy.
+Also that's the approach in the teaching materials.
+For the book and for software development that's another matter but for this blog post I think it's fine.
+--->
+
+```{r}
+library(sf)
+library(tidyverse)
+library(tmap)
+# Get the datasets we'll use
+system("gh release download v0.1.0")
+```
+
+## Python
+
+```{python}
+import pandas as pd
+import geopandas as gpd
+
+# Get the datasets we'll use with os and subprocess:
+import subprocess
+subprocess.run(["gh", "release", "download", "v0.1.0"])
+```
+
+:::
+
+# Data import and visualisation
+
+It's worth importing and visualising the OD datasets before routing and network generation stages.
+
+::: {.panel-tabset group="language"}
+
+## R
+
+```{r}
+od = read_csv("res_output.csv")
+head(od)
+```
+
+## Python
+
+```{python}
+od = pd.read_csv("res_output.csv")
+od.head()
+```
