@@ -4,7 +4,6 @@ title: Generate origin-destination data for route network generation
 #| echo: false
 format: gfm
 execute: 
-  echo: false
   message: false
   warning: false
 ---
