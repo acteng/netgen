@@ -14,7 +14,7 @@ execute:
 The code in this results demonstrates how to generate origin-destination (OD) data for a given set of zones and destinations.
 OD data is a key input into spatial interaction models (SIMs) for generating route networks.
 (See [An introduction to spatial interaction models: from first principles](https://robinlovelace.github.io/simodels/articles/sims-first-principles.html) introduction to SIMs for more information.)
-The code is fully reproducible, although requires a validation dataset that is not in the public domain to generate goodness-of-fit statistics shown in this README.
+The code is fully reproducible, although requires a validation dataset that is not in the public domain to generate goodness-of-fit statistics shown in this reproducible document.
 
 ```{r}
 #| eval: false
