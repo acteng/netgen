@@ -602,10 +602,11 @@ This is not bad considering that York has a river so many of the Euclidean dista
 There are many ways the model could be refined:
 
 - Using different models for different types of schools (e.g. primary and secondary schools).
+- Using route distance rather than Euclidean distance to estimate flows and explore impact on model fit.
 - Adding more parameters to the model, e.g. exponents on the origin and destination populations (see Wilson's work for more on that).
 - Using regression to estimate the impact of other variables on flows
 - Using a more complex model, such as the radiation model.
-- Scalability: it would be worth exploring how well the approach scales for all LSOAs and schools in the UK, for example.
+- Scalability: it would be worth exploring how well the approach scales for all LSOAs and schools in the UK, for example, for example uses the `max_dist` parameter in the `od` package (work in progress to integrate this into the `simodels` package), see https://github.com/ITSLeeds/od/pull/48 for details.
 
 For the purposes of this repo, however, we have demonstrated how to rapidly generate plausible OD data that can feed into network generation models.
 
