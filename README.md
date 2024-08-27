@@ -66,3 +66,43 @@ interfaces to the OSRM routing engine in the first instance.
 ## OSRM: basic
 
 ![](README_files/figure-commonmark/osrm-basic-1.png)
+
+## Locally hosted OSRM
+
+We can spin-up a local OSRM server to calculate routes as
+[follows](https://github.com/Project-OSRM/osrm-backend#using-docker):
+
+    [1] "/home/robinlovelace-ate/github/acteng/netgen/geofabrik_osm.pbf"
+
+Then with the system shell:
+
+``` bash
+docker run -t -v "${PWD}:/data" ghcr.io/project-osrm/osrm-backend osrm-extract -p /opt/car.lua /data/geofabrik_osm.pbf || echo "osrm-extract failed"
+docker run -t -v "${PWD}:/data" ghcr.io/project-osrm/osrm-backend osrm-extract -p /opt/car.lua /data/geofrabik_osm.osm.pbf || echo "osrm-extract failed"
+```
+
+That should generate something like:
+
+    [2024-08-27T15:00:31.786775132] [info] Expansion: 766813 nodes/sec and 382310 edges/sec
+    [2024-08-27T15:00:31.786776903] [info] To prepare the data for routing, run: ./osrm-contract "/data/geofabrik_osm"
+    [2024-08-27T15:00:31.836550204] [info] RAM: peak bytes used: 532934656
+
+Note the process used 532934656 bytes (532.9 MB) of RAM.
+
+Then:
+
+``` bash
+docker run -t -v "${PWD}:/data" ghcr.io/project-osrm/osrm-backend osrm-partition /data/geofabrik_osm.osrm || echo "osrm-partition failed"
+docker run -t -v "${PWD}:/data" ghcr.io/project-osrm/osrm-backend osrm-customize /data/geofabrik_osm.osrm || echo "osrm-customize failed"
+docker run -t -i -p 5000:5000 -v "${PWD}:/data" ghcr.io/project-osrm/osrm-backend osrm-routed --algorithm mld /data/geofabrik_osm
+```
+
+Check it is alive as follows:
+
+Now we can run all the routes:
+
+Let’s visualise the routes:
+
+![](README_files/figure-commonmark/osrm-locally-hosted-1.png)
+
+# Network generation

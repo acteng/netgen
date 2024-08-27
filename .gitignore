@@ -57,3 +57,4 @@ rsconnect/
 *.csv
 *.geojson
 *.xlsx
+geofabrik*

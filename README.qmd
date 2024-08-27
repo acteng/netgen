@@ -97,14 +97,20 @@ Let's do that with interfaces to the OSRM routing engine in the first instance.
 ## OSRM: basic
 
 ```{r}
+od_geo_top_100 = od_geo |>
+  slice_max(trips_modelled, n = 100) 
+```
+
+```{r}
+#| include: false
+system("gh release upload v0.1.0 routes_osrm_minimal.geojson")
+system("gh release download v0.1.0")
 routes_osrm_minimal_exists = file.exists("routes_osrm_minimal.geojson")
 ```
 
 ```{r eval=!routes_osrm_minimal_exists}
-od_geo_top_10 = od_geo |>
-  slice_max(trips_modelled, n = 10) 
 routes_osrm_minimal = stplanr::route(
-  l = od_geo_top_10,
+  l = od_geo_top_100,
   route_fun = stplanr::route_osrm,
   osrm.profile = "foot"
 )
@@ -123,23 +129,92 @@ routes_osrm_minimal = sf::read_sf("routes_osrm_minimal.geojson")
 #| label: osrm-basic
 routes_osrm_minimal |>
   ggplot() +
-  geom_sf(alpha = 0.3)
+  geom_sf(alpha = 0.3, size = 9)
 ```
+
+
+## Locally hosted OSRM
+
+We can spin-up a local OSRM server to calculate routes as [follows](https://github.com/Project-OSRM/osrm-backend#using-docker):
+
+
+```{r}
+location = osmextract::oe_match(
+  od_geo_top_100 |> sf::st_union()
+)
+osmextract::oe_download(
+    location$url,
+    file_basename = "osm.pbf",
+    download_directory = "."
+)
+```
+
+Then with the system shell:
+
+```bash
+docker run -t -v "${PWD}:/data" ghcr.io/project-osrm/osrm-backend osrm-extract -p /opt/car.lua /data/geofabrik_osm.pbf || echo "osrm-extract failed"
+docker run -t -v "${PWD}:/data" ghcr.io/project-osrm/osrm-backend osrm-extract -p /opt/car.lua /data/geofrabik_osm.osm.pbf || echo "osrm-extract failed"
+```
+
+That should generate something like:
+
+```
+[2024-08-27T15:00:31.786775132] [info] Expansion: 766813 nodes/sec and 382310 edges/sec
+[2024-08-27T15:00:31.786776903] [info] To prepare the data for routing, run: ./osrm-contract "/data/geofabrik_osm"
+[2024-08-27T15:00:31.836550204] [info] RAM: peak bytes used: 532934656
+```
+
+Note the process used 532934656 bytes (532.9 MB) of RAM.
+
+Then:
+
+```bash
+docker run -t -v "${PWD}:/data" ghcr.io/project-osrm/osrm-backend osrm-partition /data/geofabrik_osm.osrm || echo "osrm-partition failed"
+docker run -t -v "${PWD}:/data" ghcr.io/project-osrm/osrm-backend osrm-customize /data/geofabrik_osm.osrm || echo "osrm-customize failed"
+docker run -t -i -p 5000:5000 -v "${PWD}:/data" ghcr.io/project-osrm/osrm-backend osrm-routed --algorithm mld /data/geofabrik_osm
+```
+
+Check it is alive as follows:
 
 
 ```{r}
 #| eval: false
-routes_osrm_1 = stplanr::route(
+system('curl "http://127.0.0.1:5000/route/v1/driving/13.388860,52.517037;13.385983,52.496891?steps=true"')
+```
+
+Now we can run all the routes:
+
+
+```{r}
+#| eval: false
+routes_osrm_2 = stplanr::route(
   l = od_geo,
   route_fun = stplanr::route_osrm,
-  osrm.profile = "foot"
+  osrm.profile = "foot",
+  osrm.server = "http://127.0.0.1:5000/"
 )
 ```
 
 
 ```{r}
 #| eval: false
-#| label: save-routes
-sf::st_write(routes_osrm_1, "routes_osrm_1.geojson")
+#| label: save-routes-osrm
+sf::write_sf(routes_osrm_2, "routes_osrm_2.geojson", delete_dsn = TRUE) 
+system("gh release upload v0.1.0 routes_osrm_2.geojson")
 ```
 
+```{r}
+#| include: false
+routes_osrm_2 = sf::read_sf("routes_osrm_2.geojson")
+```
+
+Let's visualise the routes:
+
+```{r}
+#| label: osrm-locally-hosted
+routes_osrm_2 |>
+  ggplot() +
+  geom_sf(alpha = 0.3, size = 9)
+```
+
+# Network generation
