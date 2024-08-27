@@ -87,3 +87,20 @@ od.head()
 ```
 
 :::
+
+# Routing
+
+There are many ways to calculate routes.
+The simplest in many cases will be to calculate them with a routing engine.
+Let's do that with interfaces to the OSRM routing engine in the first instance.
+
+## OSRM
+
+
+```{r}
+routes_osrm_1 = stplanr::route(
+  l = od_geo,
+  route_fun = stplanr::route_osrm,
+  osrm_profile = "foot"
+)
+```
