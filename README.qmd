@@ -112,7 +112,7 @@ routes_osrm_minimal = stplanr::route(
 
 ```{r eval=!routes_osrm_minimal_exists}
 #| echo: false
-sf::write_sf(routes_osrm_minimal, "routes_osrm_minimal.geojson")
+sf::write_sf(routes_osrm_minimal, "routes_osrm_minimal.geojson", delete_dsn = TRUE)
 ```
 
 ```{r}
