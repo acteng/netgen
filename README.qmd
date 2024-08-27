@@ -94,13 +94,52 @@ There are many ways to calculate routes.
 The simplest in many cases will be to calculate them with a routing engine.
 Let's do that with interfaces to the OSRM routing engine in the first instance.
 
-## OSRM
+## OSRM: basic
+
+```{r}
+routes_osrm_minimal_exists = file.exists("routes_osrm_minimal.geojson")
+```
+
+```{r eval=!routes_osrm_minimal_exists}
+od_geo_top_10 = od_geo |>
+  slice_max(trips_modelled, n = 10) 
+routes_osrm_minimal = stplanr::route(
+  l = od_geo_top_10,
+  route_fun = stplanr::route_osrm,
+  osrm.profile = "foot"
+)
+```
+
+```{r eval=!routes_osrm_minimal_exists}
+#| echo: false
+sf::write_sf(routes_osrm_minimal, "routes_osrm_minimal.geojson")
+```
+
+```{r}
+routes_osrm_minimal = sf::read_sf("routes_osrm_minimal.geojson")
+```
+
+```{r}
+#| label: osrm-basic
+routes_osrm_minimal |>
+  ggplot() +
+  geom_sf(alpha = 0.3)
+```
 
 
 ```{r}
+#| eval: false
 routes_osrm_1 = stplanr::route(
   l = od_geo,
   route_fun = stplanr::route_osrm,
-  osrm_profile = "foot"
+  osrm.profile = "foot"
 )
 ```
+
+
+```{r}
+#| eval: false
+#| label: save-routes
+sf::st_write(routes_osrm_1, "routes_osrm_1.geojson")
+```
+

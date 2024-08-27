@@ -56,3 +56,13 @@ network generation stages.
     4  E01013339  121266        2.953231
 
 </div>
+
+# Routing
+
+There are many ways to calculate routes. The simplest in many cases will
+be to calculate them with a routing engine. Let’s do that with
+interfaces to the OSRM routing engine in the first instance.
+
+## OSRM: basic
+
+![](README_files/figure-commonmark/osrm-basic-1.png)
