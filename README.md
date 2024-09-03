@@ -89,7 +89,9 @@ od_geo |>
 
 There are many ways to calculate routes. The simplest in many cases will
 be to calculate them with a routing engine. Let’s do that with
-interfaces to the OSRM routing engine in the first instance.
+interfaces to the OSRM routing engine in the first instance. Note: if
+you use the `od2net` approach, you can do the routing and network
+generation stage in a single step, see below for more on that.
 
 ## OSRM: basic
 
@@ -189,6 +191,8 @@ routes_osrm_2 |>
 
 # Network generation
 
+## Overline
+
 The `overline()` function in the R package stplanr is one way to to
 generate route networks:
 
@@ -205,3 +209,49 @@ plot(rnet)
 ```
 
 ![](README_files/figure-commonmark/rnet-overline-basic-1.png)
+
+A disadvantage of this approach is that it’s computational
+resource-intensive and takes a long time. An in-progress is `od2net`.
+
+## od2net
+
+Building on code in the `od2net` and
+[nptscot/od2net-tests](https://github.com/nptscot/od2net-tests) repos,
+the code below prepares the input datasets and runs the
+network-generation code, generating output.geojson and output.pmtiles
+outputs:
+
+``` r
+source("R/setup.R")
+make_zones("input/zones_york.geojson")
+make_osm()
+make_origins()
+destinations = destinations_york # Provided in the R package
+names(destinations)[1] = "name"
+destinations = destinations[1]
+class(destinations$name) = "character"
+sf::write_sf(destinations, "input/destinations.geojson", delete_dsn = TRUE)
+# Save the OD dataset:
+od = od_geo |>
+  sf::st_drop_geometry() |>
+  transmute(from = O, to = as.character(D), count = round(trips_modelled))
+readr::write_csv(od, "input/od.csv", quote = "all")
+```
+
+Run the tool with Docker as follows:
+
+``` bash
+# Time it:
+sudo docker run -v $(pwd):/app ghcr.io/urban-analytics-technology-platform/od2net:main /app/config.json
+```
+
+After that you should see the following in the output folder:
+
+``` r
+fs::dir_tree("output")
+```
+
+    output
+    ├── counts.csv
+    ├── output.geojson
+    └── rnet.pmtiles
