@@ -8,3 +8,7 @@ cache
 ^docs$
 ^pkgdown$
 ^LICENSE\.md$
+input/
+output/
+intermediate/
+.pbf

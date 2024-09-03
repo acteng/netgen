@@ -35,9 +35,8 @@ make_elevation = function(
     base_url = "https://play.abstreet.org/dev/data/input/shared/elevation/"
     ) {
   if (is.null(url)) {
-    url = paste0(file, base_url)
+    url = paste0(base_url, file)
   }
-  browser()
   is_gzip = grepl(pattern = "gz", url)
   # Download the file
     if (!file.exists("input/elevation.tif") && is_gzip) {
