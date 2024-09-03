@@ -59,3 +59,8 @@ rsconnect/
 *.xlsx
 geofabrik*
 docs
+.pbf*
+.tif*
+intermediate/
+*.pbf
+*.tif

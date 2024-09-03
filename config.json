@@ -1,0 +1,17 @@
+{
+  "requests": {
+    "description": "Test data for SchoolRoutes project.",
+    "pattern": {
+      "BetweenZones": {
+        "zones_path": "zones.geojson",
+        "csv_path": "od.csv"
+      }
+    },
+    "origins_path": "buildings.geojson",
+    "destinations_path": "buildings.geojson"
+  },
+  "cost": "Distance",
+  "uptake": "Identity",
+  "lts": "BikeOttawa",
+  "elevation_geotiff": "elevation.tif"
+}
