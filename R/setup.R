@@ -12,36 +12,53 @@ getbbox_from_zones = function() {
   paste0(bbox, collapse = ",")
 }
 
-make_osm = function() {
-  # TODO: use osmextract to download the file?
-  if (!file.exists("input/input.pbf")) {
-    download.file(
-      url = "https://download.geofabrik.de/europe/great-britain/scotland-latest.osm.pbf",
-      destfile = "input/input-all.osm.pbf"
-    )
-  }
-  # Clip to Lisbon:
-  # TODO: use bbox from input/zones.geojson
+make_osm = function(force_download = FALSE) {
+  zones = sf::read_sf("input/zones.geojson")
+  zones_union = sf::st_union(zones)
+  osmextract_match = osmextract::oe_match(place = zones_union)
+  osmextract::oe_download(file_url = osmextract_match$url, download_directory = "input", force_download = force_download)
+  input_pbf = list.files(path = "input", pattern = basename(osmextract_match$url), full.names = TRUE)
   bb = getbbox_from_zones()
-  msg = paste0("osmium extract -b ", bb, " input/input-all.osm.pbf -o input/input.osm.pbf --overwrite")
+  msg = paste0("osmium extract -b ", bb, " ", input_pbf, " -o input/input.osm.pbf --overwrite")
   system(msg)
 }
 
-# make_elevation = function() {
-#     # Check you're in the right working directory and if not cd
-#     check_and_change_directory("examples/lisbon")
-#     # Download the file
-#     if (!file.exists("input/LisboaIST_10m_4326.tif")) {
-#       download.file(
-#           url = "https://assets.od2net.org/input/LisboaIST_10m_4326.tif",
-#           destfile = "input/LisboaIST_10m_4326.tif"
-#       )
-#     }
-# }
+#' Get elevation data
+#' 
+#' This function downloads elevation data from a source such as
+#' https://play.abstreet.org/dev/data/input/shared/elevation/UK-dem-50m-4326.tif.gz
+#' or https://assets.od2net.org/input/LisboaIST_10m_4326.tif
+#' 
+make_elevation = function(
+    url = NULL,
+    file = "UK-dem-50m-4326.tif.gz",
+    base_url = "https://play.abstreet.org/dev/data/input/shared/elevation/"
+    ) {
+  if (is.null(url)) {
+    url = paste0(file, base_url)
+  }
+  browser()
+  is_gzip = grepl(pattern = "gz", url)
+  # Download the file
+    if (!file.exists("input/elevation.tif") && is_gzip) {
+      download.file(
+          url = url,
+          destfile = "input/elevation.tif.gz"
+      )
+      R.utils::gunzip("input/elevation.tif.gz", destname = "input/elevation.tif")
+    } else {
+      download.file(
+        url = url,
+        destfile = "input/elevation.tif"
+      )
+    }
+}
 
 make_origins = function() {
   buildings = sf::read_sf("input/input.osm.pbf", query = "SELECT osm_id FROM multipolygons WHERE building IS NOT NULL")
+  use_sf = sf::sf_use_s2(FALSE)
   centroids = sf::st_centroid(buildings)
+  sf::sf_use_s2(use_sf)
   sf::write_sf(centroids, "input/buildings.geojson", delete_dsn = TRUE)
 }
 
