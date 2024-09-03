@@ -1,6 +1,14 @@
 # Aim: generate input data for od2net with R
 
-make_zones = function(file = "https://raw.githubusercontent.com/nptscot/npt/main/data-raw/zones_edinburgh.geojson") {
+#' Generate a 'zones.geojson' file
+#' 
+#' This function requires a zones file, e.g.
+#' "https://raw.githubusercontent.com/nptscot/npt/main/data-raw/zones_edinburgh.geojson"
+#' or a file on your computer.
+#' It will generate a file in the input/ folder
+#' 
+#' @param file Location or URL of zones file
+make_zones = function(file) {
   zones = sf::read_sf(file)[1]
   names(zones)[1] = "name"
   sf::write_sf(zones, "input/zones.geojson", delete_dsn = TRUE)
