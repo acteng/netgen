@@ -5,5 +5,7 @@ remotes::install_cran("available")
 available::available("netgen")
 devtools::check()
 usethis::use_github_action_check_standard()
+usethis::use_pkgdown()
+usethis::use_pkgdown_github_pages()
 ```
 

@@ -4,3 +4,6 @@
 geofabrik
 cache
 ^\.github$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
