@@ -256,7 +256,10 @@ destinations = destinations[1]
 class(destinations$name) = "character"
 sf::write_sf(destinations, "input/destinations.geojson", delete_dsn = TRUE)
 # Save the OD dataset:
-readr::write_csv(sf::st_drop_geometry(od_geo), "input/od.csv")
+od = od_geo |>
+  sf::st_drop_geometry() |>
+  transmute(from = O, to = as.character(D), count = round(trips_modelled))
+readr::write_csv(od, "input/od.csv", quote = "all")
 ```
 
 Run the tool with Docker as follows:
