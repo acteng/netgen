@@ -32,15 +32,13 @@ theme_set(theme_void())
 ## Python
 
 ``` python
-import pandas as pd
-import geopandas as gpd
-
-# Get the datasets we'll use with os and subprocess:
-import subprocess
-subprocess.run(["gh", "release", "download", "v0.1.0"])
+# import pandas as pd
+# import geopandas as gpd
+# 
+# # Get the datasets we'll use with os and subprocess:
+# import subprocess
+# subprocess.run(["gh", "release", "download", "v0.1.0"])
 ```
-
-    CompletedProcess(args=['gh', 'release', 'download', 'v0.1.0'], returncode=1)
 
 </div>
 
@@ -80,19 +78,9 @@ od_geo |>
 ## Python
 
 ``` python
-od = pd.read_csv("res_output.csv")
-od.head()
-```
-
-               O       D  trips_modelled
-    0  E01013335  121266        6.372102
-    1  E01013336  121266        3.264443
-    2  E01013337  121266        4.566013
-    3  E01013338  121266        6.463300
-    4  E01013339  121266        2.953231
-
-``` python
-# TBC
+# od = pd.read_csv("res_output.csv")
+# od.head()
+# # TBC
 ```
 
 </div>
@@ -116,10 +104,6 @@ routes_osrm_minimal = stplanr::route(
   route_fun = stplanr::route_osrm,
   osrm.profile = "foot"
 )
-```
-
-``` r
-routes_osrm_minimal = sf::read_sf("routes_osrm_minimal.geojson")
 ```
 
 ``` r
@@ -204,3 +188,20 @@ routes_osrm_2 |>
 ![](README_files/figure-commonmark/osrm-locally-hosted-1.png)
 
 # Network generation
+
+The `overline()` function in the R package stplanr is one way to to
+generate route networks:
+
+``` r
+names(routes_osrm_2)
+```
+
+    [1] "O"              "D"              "trips_modelled" "route_number"  
+    [5] "distance"       "duration"       "geometry"      
+
+``` r
+rnet = stplanr::overline(routes_osrm_2, attrib = "trips_modelled")
+plot(rnet)
+```
+
+![](README_files/figure-commonmark/rnet-overline-basic-1.png)

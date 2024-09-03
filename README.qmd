@@ -49,12 +49,12 @@ theme_set(theme_void())
 ## Python
 
 ```{python}
-import pandas as pd
-import geopandas as gpd
-
-# Get the datasets we'll use with os and subprocess:
-import subprocess
-subprocess.run(["gh", "release", "download", "v0.1.0"])
+# import pandas as pd
+# import geopandas as gpd
+# 
+# # Get the datasets we'll use with os and subprocess:
+# import subprocess
+# subprocess.run(["gh", "release", "download", "v0.1.0"])
 ```
 
 :::
@@ -80,9 +80,9 @@ od_geo |>
 ## Python
 
 ```{python}
-od = pd.read_csv("res_output.csv")
-od.head()
-# TBC
+# od = pd.read_csv("res_output.csv")
+# od.head()
+# # TBC
 ```
 
 :::
@@ -110,7 +110,8 @@ if (!routes_osrm_minimal_exists) {
 
 ```
 
-```{r eval=!routes_osrm_minimal_exists}
+```{r}
+#| eval: false
 routes_osrm_minimal = stplanr::route(
   l = od_geo_top_100,
   route_fun = stplanr::route_osrm,
@@ -118,12 +119,14 @@ routes_osrm_minimal = stplanr::route(
 )
 ```
 
-```{r eval=!routes_osrm_minimal_exists}
+```{r}
 #| echo: false
+#| eval: false
 sf::write_sf(routes_osrm_minimal, "routes_osrm_minimal.geojson", delete_dsn = TRUE)
 ```
 
 ```{r}
+#| echo: false
 routes_osrm_minimal = sf::read_sf("routes_osrm_minimal.geojson")
 ```
 
@@ -220,3 +223,13 @@ routes_osrm_2 |>
 ```
 
 # Network generation
+
+The `overline()` function in the R package stplanr is one way to to generate route networks:
+
+```{r}
+#| label: rnet-overline-basic
+names(routes_osrm_2)
+rnet = stplanr::overline(routes_osrm_2, attrib = "trips_modelled")
+plot(rnet)
+```
+
