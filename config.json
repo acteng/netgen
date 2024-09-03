@@ -2,7 +2,7 @@
   "requests": {
     "description": "Test data for SchoolRoutes project.",
     "pattern": {
-      "BetweenZones": {
+      "ZoneToPoint": {
         "zones_path": "zones.geojson",
         "csv_path": "od.csv"
       }
