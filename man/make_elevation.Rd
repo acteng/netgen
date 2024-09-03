@@ -10,6 +10,13 @@ make_elevation(
   base_url = "https://play.abstreet.org/dev/data/input/shared/elevation/"
 )
 }
+\arguments{
+\item{url}{Full URL of the elevation dataset if available}
+
+\item{file}{File name if hosted on a known site}
+
+\item{base_url}{Base URL associated with the 'file' argument}
+}
 \description{
 This function downloads elevation data from a source such as
 https://play.abstreet.org/dev/data/input/shared/elevation/UK-dem-50m-4326.tif.gz

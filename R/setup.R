@@ -29,6 +29,10 @@ make_osm = function(force_download = FALSE) {
 #' https://play.abstreet.org/dev/data/input/shared/elevation/UK-dem-50m-4326.tif.gz
 #' or https://assets.od2net.org/input/LisboaIST_10m_4326.tif
 #' 
+#' @param url Full URL of the elevation dataset if available
+#' @param file File name if hosted on a known site
+#' @param base_url Base URL associated with the 'file' argument
+#' 
 make_elevation = function(
     url = NULL,
     file = "UK-dem-50m-4326.tif.gz",
