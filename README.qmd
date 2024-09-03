@@ -250,6 +250,7 @@ source("R/setup.R")
 make_zones("input/zones_york.geojson")
 make_osm()
 make_origins()
+sf::write_sf(destinations_york, "input/destinations.geojson")
 ```
 
 Run the tool with Docker as follows:

@@ -8,7 +8,7 @@
       }
     },
     "origins_path": "buildings.geojson",
-    "destinations_path": "buildings.geojson"
+    "destinations_path": "destinations.geojson"
   },
   "cost": "Distance",
   "uptake": "Identity",
