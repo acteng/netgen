@@ -4,7 +4,9 @@
     "pattern": {
       "ZoneToPoint": {
         "zones_path": "zones.geojson",
-        "csv_path": "od.csv"
+        "destinations_path": "destinations.geojson",
+        "csv_path": "od.csv",
+         "origin_zone_centroid_fallback": false
       }
     },
     "origins_path": "buildings.geojson",
