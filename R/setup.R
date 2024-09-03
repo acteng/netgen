@@ -60,7 +60,3 @@ main = function() {
   make_origins()
   make_od()
 }
-
-
-
-main()
