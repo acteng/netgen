@@ -247,8 +247,9 @@ Building on code in the `od2net` and [nptscot/od2net-tests](https://github.com/n
 ```{r}
 #| eval: false
 source("R/setup.R")
-dir.create("input")
-zones = sf::read_sf("input/zones_york.geojson")
+make_zones("input/zones_york.geojson")
+make_osm()
+make_origins()
 ```
 
 Run the tool with Docker as follows:
@@ -257,7 +258,7 @@ Run the tool with Docker as follows:
 ```{bash}
 #| eval: false
 # Time it:
-docker run -v $(pwd):/app ghcr.io/urban-analytics-technology-platform/od2net:main /app/config.json
+sudo docker run -v $(pwd):/app ghcr.io/urban-analytics-technology-platform/od2net:main /app/config.json
 ```
 
 ```{r}
