@@ -250,7 +250,13 @@ source("R/setup.R")
 make_zones("input/zones_york.geojson")
 make_osm()
 make_origins()
-sf::write_sf(destinations_york, "input/destinations.geojson")
+destinations = destinations_york # Provided in the R package
+names(destinations)[1] = "name"
+destinations = destinations[1]
+class(destinations$name) = "character"
+sf::write_sf(destinations, "input/destinations.geojson", delete_dsn = TRUE)
+# Save the OD dataset:
+readr::write_csv(sf::st_drop_geometry(od_geo), "input/od.csv")
 ```
 
 Run the tool with Docker as follows:
