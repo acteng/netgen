@@ -92,6 +92,7 @@ od_geo |>
 There are many ways to calculate routes.
 The simplest in many cases will be to calculate them with a routing engine.
 Let's do that with interfaces to the OSRM routing engine in the first instance.
+Note: if you use the `od2net` approach, you can do the routing and network generation stage in a single step, see below for more on that.
 
 ## OSRM: basic
 
@@ -224,6 +225,8 @@ routes_osrm_2 |>
 
 # Network generation
 
+## Overline
+
 The `overline()` function in the R package stplanr is one way to to generate route networks:
 
 ```{r}
@@ -233,3 +236,37 @@ rnet = stplanr::overline(routes_osrm_2, attrib = "trips_modelled")
 plot(rnet)
 ```
 
+A disadvantage of this approach is that it's computational resource-intensive and takes a long time.
+An in-progress is `od2net`.
+
+## od2net
+
+Building on code in the `od2net` and [nptscot/od2net-tests](https://github.com/nptscot/od2net-tests) repos, the code below prepares the input datasets and runs the network-generation code, generating output.geojson and output.pmtiles outputs:
+
+
+```{r}
+#| eval: false
+source("R/setup.R")
+main()
+```
+
+Run the tool with Docker as follows:
+
+
+```{bash}
+#| eval: false
+# Time it:
+docker run -v $(pwd):/app ghcr.io/urban-analytics-technology-platform/od2net:main /app/config.json
+```
+
+```{r}
+#| eval: false
+#| echo: false
+system("docker run -v $(pwd):/app ghcr.io/urban-analytics-technology-platform/od2net:main /app/config.json")
+```
+
+After that you should see the following in the output folder:
+
+```{r}
+fs::dir_tree("output")
+```
