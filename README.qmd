@@ -102,9 +102,12 @@ od_geo_top_100 = od_geo |>
 
 ```{r}
 #| include: false
-system("gh release upload v0.1.0 routes_osrm_minimal.geojson")
-system("gh release download v0.1.0")
 routes_osrm_minimal_exists = file.exists("routes_osrm_minimal.geojson")
+if (!routes_osrm_minimal_exists) {
+  system("gh release upload v0.1.0 routes_osrm_minimal.geojson")
+  system("gh release download v0.1.0")  
+}
+
 ```
 
 ```{r eval=!routes_osrm_minimal_exists}
