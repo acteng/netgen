@@ -15,13 +15,16 @@ There are many sources of OD data, see [odgen](odgen.qmd) for a way to generate 
 
 ```{r}
 #| include: false
-pkgs = c("sf", "tidyverse", "tmap", "reticulate")
+pkgs = c("sf", "tidyverse", "tmap")
 pkgs_to_install = pkgs[!pkgs %in% installed.packages()]
 if (length(pkgs_to_install) > 0) {
   install.packages(pkgs_to_install)
 }
-# Install geopandas:
-reticulate::py_install("geopandas")
+```
+
+```{r}
+# # Install geopandas:
+# reticulate::py_install("geopandas")
 ```
 
 ::: {.panel-tabset group="language"}
