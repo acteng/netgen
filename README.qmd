@@ -253,6 +253,7 @@ source("R/setup.R")
 make_zones("input/zones_york.geojson")
 make_osm()
 make_origins()
+make_elevation()
 destinations = destinations_york # Provided in the R package
 names(destinations)[1] = "name"
 destinations = destinations[1]
@@ -270,8 +271,10 @@ Run the tool with Docker as follows:
 
 ```{bash}
 #| eval: false
-# Time it:
+# On Linux:
 sudo docker run -v $(pwd):/app ghcr.io/urban-analytics-technology-platform/od2net:main /app/config.json
+# or in Windows:
+sudo docker run -v ${pwd}:/app ghcr.io/urban-analytics-technology-platform/od2net:main /app/config.json
 ```
 
 ```{r}
@@ -285,3 +288,7 @@ After that you should see the following in the output folder:
 ```{r}
 fs::dir_tree("output")
 ```
+
+## Comparing the outputs
+
+
