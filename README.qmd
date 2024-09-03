@@ -247,7 +247,8 @@ Building on code in the `od2net` and [nptscot/od2net-tests](https://github.com/n
 ```{r}
 #| eval: false
 source("R/setup.R")
-main()
+dir.create("input")
+zones = sf::read_sf("input/zones_york.geojson")
 ```
 
 Run the tool with Docker as follows:

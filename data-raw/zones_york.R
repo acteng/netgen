@@ -54,3 +54,6 @@ destinations_york = destinations_york |>
   filter(!is.na(n_pupils))
 
 usethis::use_data(destinations_york, overwrite = TRUE)
+
+# Save to input folder
+sf::write_sf(zones_york, "input/zones_york.geojson")
