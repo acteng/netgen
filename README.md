@@ -8,9 +8,31 @@ use in the reproducible code below.
 
 # Setup
 
+To run the code below you need to have R and Docker installed. After you
+have installed R, you can install the packages we’ll use as follows:
+
 ``` r
-# # Install geopandas:
-# reticulate::py_install("geopandas")
+# Install pak if not already installed:
+if (!requireNamespace("pak", quietly = TRUE)) {
+  install.packages("pak")
+}
+pkgs = c("sf", "tidyverse", "tmap", "pak")
+pkgs_to_install = pkgs[!pkgs %in% installed.packages()]
+if (length(pkgs_to_install) > 0) {
+  pak::pkg_install(pkgs_to_install)
+}
+# Load the packages with vapply:
+vapply(pkgs, require, logical(1), character.only = TRUE)
+```
+
+           sf tidyverse      tmap       pak 
+         TRUE      TRUE      TRUE      TRUE 
+
+We will also install a couple of package that are not on CRAN:
+
+``` r
+pak::pkg_install("acteng/netgen")
+pak::pkg_install("Urban-Analytics-Technology-Platform/od2net/r")
 ```
 
 <div class="panel-tabset" group="language">
@@ -85,19 +107,24 @@ od_geo |>
 
 # od2net
 
-Building on code in the `od2net` and
-[nptscot/od2net-tests](https://github.com/nptscot/od2net-tests) repos,
-the code below prepares the input datasets and runs the
-network-generation code, generating output.geojson and output.pmtiles
-outputs:
+Building on code in the
+[od2net](https://urban-analytics-technology-platform.github.io/od2net/r/)
+R package, we can generate the files needed for the network generation
+stage.
+
+After you have installed the package, prepare the input datasets and run
+the network-generation code to generate output.geojson and
+output.pmtiles outputs:
 
 ``` r
-source("R/setup.R")
-make_zones("input/zones_york.geojson")
-make_osm()
-make_origins()
-make_elevation()
-destinations = destinations_york # Provided in the R package
+origin_zones = netgen::zones_york
+names(origin_zones)
+names(origin_zones)[1] = "name"
+sf::write_sf(zones, "input/zones_york.geojson", delete_dsn = TRUE)
+od2net::make_osm(zones_file = "input/zones_york.geojson")
+od2net::make_origins()
+netgen:::make_elevation()
+destinations = netgen::destinations_york # Provided in the R package
 names(destinations)[1] = "name"
 destinations = destinations[1]
 class(destinations$name) = "character"
@@ -125,7 +152,9 @@ fs::dir_tree("output")
 ```
 
     output
+    ├── counts.csv
     ├── output.geojson
+    ├── rnet.pmtiles
     └── rnet_output_osrm_overline.geojson
 
 An advantage of `od2net` is that it can generate the network and routes
