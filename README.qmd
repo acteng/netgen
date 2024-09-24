@@ -149,6 +149,15 @@ After that you should see the following in the output folder:
 fs::dir_tree("output")
 ```
 
+From that point you can visualise the pmtiles in the website at [od2net.org](https://od2net.org) or other front-end application, as shown below.
+
+## Adjusting uptake functions
+
+The example above visualises *all* trips to school, not just active travel trips.
+
+
+## Other approaches to network generation
+
 An advantage of `od2net` is that it can generate the network and routes in a single step.
 For other approaches, we need to calculate the routes first, as shown below.
 
@@ -211,6 +220,7 @@ routes_osrm_minimal |>
 We can spin-up a local OSRM server to calculate routes as [follows](https://github.com/Project-OSRM/osrm-backend#using-docker):
 
 ```{r}
+#| eval: false
 location = osmextract::oe_match(
   od_geo_top_100 |> sf::st_union()
 )
@@ -305,6 +315,6 @@ plot(rnet)
 A disadvantage of this approach is that it's computational resource-intensive and takes a long time.
 An in-progress is `od2net`.
 
-<!-- ## Comparing the outputs -->
-
 </details>
+
+# Comparing od2net and overline outputs

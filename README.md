@@ -157,6 +157,17 @@ fs::dir_tree("output")
     ├── rnet.pmtiles
     └── rnet_output_osrm_overline.geojson
 
+From that point you can visualise the pmtiles in the website at
+[od2net.org](https://od2net.org) or other front-end application, as
+shown below.
+
+## Adjusting uptake functions
+
+The example above visualises *all* trips to school, not just active
+travel trips.
+
+## Other approaches to network generation
+
 An advantage of `od2net` is that it can generate the network and routes
 in a single step. For other approaches, we need to calculate the routes
 first, as shown below.
@@ -209,8 +220,6 @@ osmextract::oe_download(
     download_directory = "."
 )
 ```
-
-    [1] "/home/robin/github/acteng/netgen/geofabrik_osm.pbf"
 
 Then with the system shell:
 
@@ -291,5 +300,6 @@ plot(rnet)
 A disadvantage of this approach is that it’s computational
 resource-intensive and takes a long time. An in-progress is `od2net`.
 
-<!-- ## Comparing the outputs -->
 </details>
+
+# Comparing od2net and overline outputs

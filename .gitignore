@@ -64,3 +64,5 @@ docs
 intermediate/
 *.pbf
 *.tif
+output/output.geojson
+output/*.pmtiles
