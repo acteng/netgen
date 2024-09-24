@@ -15,6 +15,5 @@
   "cost": "Distance",
   "uptake": "Identity",
   "lts": "BikeOttawa",
-  "elevation_geotiff": "elevation.tif",
-  "rng_seed": 42
+  "elevation_geotiff": "elevation.tif"
 }

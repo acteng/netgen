@@ -132,15 +132,7 @@ Run the tool with Docker as follows:
 ```{bash}
 #| eval: false
 # On Linux:
-sudo docker run -v $(pwd):/app ghcr.io/urban-analytics-technology-platform/od2net:main /app/config.json
-# or in Windows:
-sudo docker run -v ${pwd}:/app ghcr.io/urban-analytics-technology-platform/od2net:main /app/config.json
-```
-
-```{r}
-#| eval: false
-#| echo: false
-system("docker run -v $(pwd):/app ghcr.io/urban-analytics-technology-platform/od2net:main /app/config.json")
+sudo docker run -v $(pwd):/app ghcr.io/urban-analytics-technology-platform/od2net:main /app/config.json  --rng-seed 42
 ```
 
 After that you should see the following in the output folder:
@@ -150,6 +142,10 @@ fs::dir_tree("output")
 ```
 
 From that point you can visualise the pmtiles in the website at [od2net.org](https://od2net.org) or other front-end application, as shown below.
+
+## Minimal od2net example
+
+For the purposes of testing it's worth 
 
 ## Adjusting uptake functions
 
