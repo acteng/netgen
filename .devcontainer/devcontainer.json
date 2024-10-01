@@ -5,10 +5,6 @@
 		"vscode": {
 			"extensions": [
 				"reditorsupport.r",
-				"GitHub.copilot-chat",
-				"GitHub.copilot-labs",
-				"GitHub.copilot",
-				"yzhang.markdown-all-in-one",
 				"quarto.quarto"
 			]
 		}
