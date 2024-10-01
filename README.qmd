@@ -132,7 +132,7 @@ Run the tool with Docker as follows:
 ```{bash}
 #| eval: false
 # On Linux:
-sudo docker run -v $(pwd):/app ghcr.io/urban-analytics-technology-platform/od2net:main /app/config.json  --rng-seed 42
+sudo docker run -v $(pwd):/app ghcr.io/urban-analytics-technology-platform/od2net:main /app/config.json  --rng-seed 42 elevation_geotiff /app/input/elevation.tif
 ```
 
 After that you should see the following in the output folder:
