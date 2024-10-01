@@ -72,6 +72,21 @@ pak::pkg_install("Urban-Analytics-Technology-Platform/od2net/r")
 
 After getting the software installed, load packages we'll use as follows:
 
+```{bash}
+#| eval: false
+#| echo: false
+# Install gh if not already installed:
+if ! command -v gh &> /dev/null
+then
+  echo "gh could not be found"
+  echo "Installing gh..."
+  curl -sL https://cli.github.com/packages/githubcli-archive-keyring.gpg | gpg --dearmor -o /usr/share/keyrings/githubcli-archive-keyring.gpg
+  echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+  apt-get update
+  apt-get install gh
+fi
+```
+
 ```{r}
 library(sf)
 library(tidyverse)
