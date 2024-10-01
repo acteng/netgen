@@ -8,6 +8,24 @@ use in the reproducible code below.
 
 # Setup
 
+For reproduducibility, we have setup a Docker container with all the
+dependencies needed to run the code below. Pull the latest version of
+the container with the following:
+
+``` bash
+docker pull ghcr.io/geocompx/docker:rust
+```
+
+Then open the project with the [.devcontainer.json](.devcontainer) file
+in Visual Studio Code (see [VS Code
+docs](https://code.visualstudio.com/docs/devcontainers/containers) for
+more on this).
+
+If you haven’t got project running in a container, you can run the code
+below in your local environment.
+
+<details>
+
 To run the code below you need to have R and Docker installed. After you
 have installed R, you can install the packages we’ll use as follows:
 
@@ -35,23 +53,25 @@ pak::pkg_install("acteng/netgen")
 pak::pkg_install("Urban-Analytics-Technology-Platform/od2net/r")
 ```
 
-<div class="panel-tabset" group="language">
+<!-- ::: {.panel-tabset group="language"}
+&#10;## R -->
+</details>
 
-## R
+Load the packages we’ll use as follows:
 
 ``` r
 library(sf)
 library(tidyverse)
 library(tmap)
-# Get the datasets we'll use
-system("gh release download v0.1.0")
+# # Get the datasets, see: https://github.com/acteng/netgen/releases/tag/v0.1.0
+# Automate data download if you have gh installed and authorised with:
+# system("gh release download v0.1.0 --repo acteng/netgen")
 # theme void:
 theme_set(theme_void())
 ```
 
-## Python
-
-``` python
+<!-- ## Python
+&#10;```python
 # import pandas as pd
 # import geopandas as gpd
 # 
@@ -59,17 +79,23 @@ theme_set(theme_void())
 # import subprocess
 # subprocess.run(["gh", "release", "download", "v0.1.0"])
 ```
-
-</div>
+&#10;:::
+&#10;
+&#10;::: {.panel-tabset group="language"}
+&#10;## R
+&#10;## Python
+&#10;```python
+# od = pd.read_csv("res_output.csv")
+# od.head()
+# # TBC
+```
+&#10;:::
+&#10;-->
 
 # Data import and visualisation
 
 It’s worth importing and visualising the OD datasets before routing and
 network generation stages.
-
-<div class="panel-tabset" group="language">
-
-## R
 
 ``` r
 od = read_csv("res_output.csv")
@@ -95,16 +121,6 @@ od_geo |>
 
 ![](README_files/figure-commonmark/desire-lines-r-1.png)
 
-## Python
-
-``` python
-# od = pd.read_csv("res_output.csv")
-# od.head()
-# # TBC
-```
-
-</div>
-
 # od2net
 
 Building on code in the
@@ -120,10 +136,11 @@ output.pmtiles outputs:
 origin_zones = netgen::zones_york
 names(origin_zones)
 names(origin_zones)[1] = "name"
-sf::write_sf(zones, "input/zones_york.geojson", delete_dsn = TRUE)
+sf::write_sf(origin_zones, "input/zones_york.geojson", delete_dsn = TRUE)
 od2net::make_osm(zones_file = "input/zones_york.geojson")
 od2net::make_origins()
-netgen:::make_elevation()
+# Optionally, get elevation data:
+# netgen:::make_elevation()
 destinations = netgen::destinations_york # Provided in the R package
 names(destinations)[1] = "name"
 destinations = destinations[1]
@@ -136,14 +153,36 @@ od = od_geo |>
 readr::write_csv(od, "input/od.csv", quote = "all")
 ```
 
+If you are running the code in a container, you should already have the
+`od2net` package installed. Check this with the following:
+
+``` r
+system("od2net --version")
+```
+
+<!-- If you don't have it, you can copy the path /root/.cargo/bin/od2net to /usr/local/bin/ as follows: -->
+
+Then run the following code to generate the network:
+
+``` r
+system("od2net config.json --rng-seed 42")
+```
+
+See below how to run it with Docker if you’re not running these commands
+in the .devcontainer and you don’t have od2net installed.
+
+<details>
+
 Run the tool with Docker as follows:
 
 ``` bash
 # On Linux:
-sudo docker run -v $(pwd):/app ghcr.io/urban-analytics-technology-platform/od2net:main /app/config.json
-# or in Windows:
-sudo docker run -v ${pwd}:/app ghcr.io/urban-analytics-technology-platform/od2net:main /app/config.json
+sudo docker run -v $(pwd):/app ghcr.io/urban-analytics-technology-platform/od2net:main /app/config.json  --rng-seed 42
+# On Windows:
+docker run -v %cd%:/app ghcr.io/urban-analytics-technology-platform/od2net:main /app/config.json  --rng-seed 42
 ```
+
+</details>
 
 After that you should see the following in the output folder:
 
@@ -153,6 +192,7 @@ fs::dir_tree("output")
 
     output
     ├── counts.csv
+    ├── failed_requests.geojson
     ├── output.geojson
     ├── rnet.pmtiles
     └── rnet_output_osrm_overline.geojson
@@ -160,6 +200,10 @@ fs::dir_tree("output")
 From that point you can visualise the pmtiles in the website at
 [od2net.org](https://od2net.org) or other front-end application, as
 shown below.
+
+## Minimal od2net example
+
+For the purposes of testing it’s worth
 
 ## Adjusting uptake functions
 
@@ -285,17 +329,9 @@ generate route networks:
 
 ``` r
 names(routes_osrm_2)
-```
-
-    [1] "O"              "D"              "trips_modelled" "route_number"  
-    [5] "distance"       "duration"       "geometry"      
-
-``` r
 rnet = stplanr::overline(routes_osrm_2, attrib = "trips_modelled")
 plot(rnet)
 ```
-
-![](README_files/figure-commonmark/rnet-overline-basic-1.png)
 
 A disadvantage of this approach is that it’s computational
 resource-intensive and takes a long time. An in-progress is `od2net`.

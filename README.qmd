@@ -13,6 +13,19 @@ There are many sources of OD data, see [odgen](odgen.qmd) for a way to generate 
 
 # Setup
 
+For reproduducibility, we have setup a Docker container with all the dependencies needed to run the code below.
+Pull the latest version of the container with the following:
+
+```bash
+docker pull ghcr.io/geocompx/docker:rust
+```
+
+Then open the project with the [.devcontainer.json](.devcontainer) file in Visual Studio Code (see [VS Code docs](https://code.visualstudio.com/docs/devcontainers/containers) for more on this).
+
+If you haven't got project running in a container, you can run the code below in your local environment.
+
+<details>
+
 To run the code below you need to have R and Docker installed.
 After you have installed R, you can install the packages we'll use as follows:
 
@@ -43,9 +56,13 @@ pak::pkg_install("Urban-Analytics-Technology-Platform/od2net/r")
 # reticulate::py_install("geopandas")
 ```
 
-::: {.panel-tabset group="language"}
+<!-- ::: {.panel-tabset group="language"}
 
-## R
+## R -->
+
+</details>
+
+Load the packages we'll use as follows:
 
 ```{r}
 library(sf)
@@ -58,9 +75,9 @@ library(tmap)
 theme_set(theme_void())
 ```
 
-## Python
+<!-- ## Python
 
-```{python}
+```python
 # import pandas as pd
 # import geopandas as gpd
 # 
@@ -71,13 +88,28 @@ theme_set(theme_void())
 
 :::
 
-# Data import and visualisation
 
-It's worth importing and visualising the OD datasets before routing and network generation stages.
 
 ::: {.panel-tabset group="language"}
 
 ## R
+
+## Python
+
+```python
+# od = pd.read_csv("res_output.csv")
+# od.head()
+# # TBC
+```
+
+:::
+
+-->
+
+# Data import and visualisation
+
+It's worth importing and visualising the OD datasets before routing and network generation stages.
+
 
 ```{r}
 #| label: desire-lines-r
@@ -89,15 +121,7 @@ od_geo |>
   geom_sf(aes(alpha = trips_modelled))
 ```
 
-## Python
 
-```{python}
-# od = pd.read_csv("res_output.csv")
-# od.head()
-# # TBC
-```
-
-:::
 
 # od2net
 
@@ -135,12 +159,23 @@ Check this with the following:
 system("od2net --version")
 ```
 
-If you don't have it, you can copy the path /root/.cargo/bin/od2net to /usr/local/bin/ as follows:
+<!-- If you don't have it, you can copy the path /root/.cargo/bin/od2net to /usr/local/bin/ as follows: -->
 
 ```{bash}
 #| eval: false
+#| echo: false
 ln -s /root/.cargo/bin/od2net /usr/local/bin/od2net
 ```
+
+Then run the following code to generate the network:
+
+```{r}
+system("od2net config.json --rng-seed 42")
+```
+
+See below how to run it with Docker if you're not running these commands in the .devcontainer and you don't have od2net installed.
+
+<details>
 
 Run the tool with Docker as follows:
 
@@ -148,7 +183,11 @@ Run the tool with Docker as follows:
 #| eval: false
 # On Linux:
 sudo docker run -v $(pwd):/app ghcr.io/urban-analytics-technology-platform/od2net:main /app/config.json  --rng-seed 42
+# On Windows:
+docker run -v %cd%:/app ghcr.io/urban-analytics-technology-platform/od2net:main /app/config.json  --rng-seed 42
 ```
+
+</details>
 
 After that you should see the following in the output folder:
 
@@ -318,6 +357,7 @@ The `overline()` function in the R package stplanr is one way to to generate rou
 
 ```{r}
 #| label: rnet-overline-basic
+#| eval: false
 names(routes_osrm_2)
 rnet = stplanr::overline(routes_osrm_2, attrib = "trips_modelled")
 plot(rnet)
