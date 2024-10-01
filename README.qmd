@@ -14,7 +14,7 @@ There are many sources of OD data, see [odgen](odgen.qmd) for a way to generate 
 # Setup
 
 For reproduducibility, we have setup a Docker container with all the dependencies needed to run the code below.
-The easiest way to run the code and develop new code in this repo may be with GitHub Codespaces which can be accessed via links like this: https://github.com/codespaces/new?hide_repo_select=true&ref=24-package-all-software-in-single-image&repo=826170244&skip_quickstart=true&machine=standardLinux32gb&devcontainer_path=.devcontainer%2Fdevcontainer.json&geo=EuropeWest
+The easiest way to run the code and develop new code in this repo may be with GitHub Codespaces which can be accessed via [github.com/codespaces/new](https://github.com/codespaces/new?hide_repo_select=true&ref=24-package-all-software-in-single-image&repo=826170244&skip_quickstart=true&machine=standardLinux32gb&devcontainer_path=.devcontainer%2Fdevcontainer.json&geo=EuropeWest).
 
 
 Pull the latest version of the container with the following:
