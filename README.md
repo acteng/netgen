@@ -43,9 +43,6 @@ if (length(pkgs_to_install) > 0) {
 vapply(pkgs, require, logical(1), character.only = TRUE)
 ```
 
-           sf tidyverse      tmap       pak 
-         TRUE      TRUE      TRUE      TRUE 
-
 We will also install a couple of package that are not on CRAN:
 
 ``` r
@@ -57,7 +54,8 @@ pak::pkg_install("Urban-Analytics-Technology-Platform/od2net/r")
 &#10;## R -->
 </details>
 
-Load the packages we’ll use as follows:
+After getting the software installed, load packages we’ll use as
+follows:
 
 ``` r
 library(sf)

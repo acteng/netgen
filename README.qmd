@@ -8,6 +8,12 @@ execute:
   warning: false
 ---
 
+```{r}
+#| eval: false
+#| echo: false
+system("quarto render README.qmd")
+```
+
 The input of the network generation approaches demonstrated in this repo is origin-destionation data.
 There are many sources of OD data, see [odgen](odgen.qmd) for a way to generate synthetic OD data that we'll use in the reproducible code below.
 
@@ -30,6 +36,7 @@ To run the code below you need to have R and Docker installed.
 After you have installed R, you can install the packages we'll use as follows:
 
 ```{r}
+#| eval: false
 # Install pak if not already installed:
 if (!requireNamespace("pak", quietly = TRUE)) {
   install.packages("pak")
@@ -46,6 +53,7 @@ vapply(pkgs, require, logical(1), character.only = TRUE)
 We will also install a couple of package that are not on CRAN:
 
 ```{r}
+#| eval: false
 pak::pkg_install("acteng/netgen")
 pak::pkg_install("Urban-Analytics-Technology-Platform/od2net/r")
 ```
@@ -62,7 +70,7 @@ pak::pkg_install("Urban-Analytics-Technology-Platform/od2net/r")
 
 </details>
 
-Load the packages we'll use as follows:
+After getting the software installed, load packages we'll use as follows:
 
 ```{r}
 library(sf)
@@ -110,7 +118,6 @@ theme_set(theme_void())
 
 It's worth importing and visualising the OD datasets before routing and network generation stages.
 
-
 ```{r}
 #| label: desire-lines-r
 od = read_csv("res_output.csv")
@@ -120,8 +127,6 @@ od_geo |>
   ggplot() +
   geom_sf(aes(alpha = trips_modelled))
 ```
-
-
 
 # od2net
 
