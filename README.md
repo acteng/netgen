@@ -21,6 +21,13 @@ in Visual Studio Code (see [VS Code
 docs](https://code.visualstudio.com/docs/devcontainers/containers) for
 more on this).
 
+That should allow you to run the code in the README with the following
+command:
+
+``` r
+system("quarto preview README.qmd")
+```
+
 If you haven’t got project running in a container, you can run the code
 below in your local environment.
 
@@ -189,10 +196,6 @@ fs::dir_tree("output")
 ```
 
     output
-    ├── counts.csv
-    ├── failed_requests.geojson
-    ├── output.geojson
-    ├── rnet.pmtiles
     └── rnet_output_osrm_overline.geojson
 
 From that point you can visualise the pmtiles in the website at

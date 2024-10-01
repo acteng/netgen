@@ -8,18 +8,15 @@ execute:
   warning: false
 ---
 
-```{r}
-#| eval: false
-#| echo: false
-system("quarto render README.qmd")
-```
-
 The input of the network generation approaches demonstrated in this repo is origin-destionation data.
 There are many sources of OD data, see [odgen](odgen.qmd) for a way to generate synthetic OD data that we'll use in the reproducible code below.
 
 # Setup
 
 For reproduducibility, we have setup a Docker container with all the dependencies needed to run the code below.
+The easiest way to run the code and develop new code in this repo may be with GitHub Codespaces which can be accessed via links like this: https://github.com/codespaces/new?hide_repo_select=true&ref=24-package-all-software-in-single-image&repo=826170244&skip_quickstart=true&machine=standardLinux32gb&devcontainer_path=.devcontainer%2Fdevcontainer.json&geo=EuropeWest
+
+
 Pull the latest version of the container with the following:
 
 ```bash
@@ -27,6 +24,13 @@ docker pull ghcr.io/geocompx/docker:rust
 ```
 
 Then open the project with the [.devcontainer.json](.devcontainer) file in Visual Studio Code (see [VS Code docs](https://code.visualstudio.com/docs/devcontainers/containers) for more on this).
+
+That should allow you to run the code in the README with the following command:
+
+```{r}
+#| eval: false
+system("quarto preview README.qmd")
+```
 
 If you haven't got project running in a container, you can run the code below in your local environment.
 
