@@ -2,7 +2,7 @@ pandoc: 3.1.11
 pkgdown: 2.1.1
 pkgdown_sha: ~
 articles: {}
-last_built: 2024-10-01T16:48Z
+last_built: 2024-10-08T14:54Z
 urls:
   reference: https://acteng.github.io/netgen/reference
   article: https://acteng.github.io/netgen/articles
