@@ -76,11 +76,11 @@ pak::pkg_install("Urban-Analytics-Technology-Platform/od2net/r")
 
 After getting the software installed, load packages we'll use as follows:
 
-```{bash}
+```{r}
 #| eval: false
 #| echo: false
 # Install gh if not already installed:
-if ! command -v gh &> /dev/null
+system('if ! command -v gh &> /dev/null
 then
   echo "gh could not be found"
   echo "Installing gh..."
@@ -88,7 +88,8 @@ then
   echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | tee /etc/apt/sources.list.d/github-cli.list > /dev/null
   apt-get update
   apt-get install gh
-fi
+fi')
+system("gh release download v0.1.0 --repo acteng/netgen")
 ```
 
 ```{r}
@@ -97,7 +98,6 @@ library(tidyverse)
 library(tmap)
 # # Get the datasets, see: https://github.com/acteng/netgen/releases/tag/v0.1.0
 # Automate data download if you have gh installed and authorised with:
-# system("gh release download v0.1.0 --repo acteng/netgen")
 # theme void:
 theme_set(theme_void())
 ```
@@ -139,6 +139,7 @@ It's worth importing and visualising the OD datasets before routing and network 
 
 ```{r}
 #| label: desire-lines-r
+system("gh release list")
 od = read_csv("res_output.csv")
 head(od)
 od_geo = sf::read_sf("res_output.geojson")
