@@ -1,15 +1,15 @@
 Package: netgen
 Title: Generate Route Network Datasets from Origin-Destination Data
 Version: 0.0.0.9000
-Authors@R: c(
+Authors@R: 
     person("Robin", "Lovelace", , "rob00x@gmail.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0001-5679-6536"))
-  )
 Description: This package takes OD data and outputs route networks.
 License: MIT + file LICENSE
-Encoding: UTF-8
-Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.1
+URL: https://acteng.github.io/netgen/ https://github.com/acteng/netgen
+BugReports: https://github.com/acteng/netgen/issues
+Depends: 
+    R (>= 2.10)
 Imports: 
     dplyr,
     osmextract,
@@ -18,13 +18,14 @@ Imports:
     sf
 Suggests:
     knitr,
+    quarto,
     rmarkdown,
     simodels (>= 0.1.0),
-    quarto
-Depends: 
-    R (>= 2.10)
-LazyData: true
-BugReports: https://github.com/acteng/netgen/issues
-URL: https://acteng.github.io/netgen/ https://github.com/acteng/netgen
+    tidyverse,
+    tmap
 VignetteBuilder: 
     quarto
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.1
