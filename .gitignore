@@ -66,3 +66,4 @@ intermediate/
 *.tif
 output/output.geojson
 output/*.pmtiles
+README_files/execute-results/

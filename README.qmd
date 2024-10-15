@@ -6,6 +6,9 @@ format: gfm
 execute: 
   message: false
   warning: false
+knitr:
+  opts_chunk:
+    fig.path: "man/figures/"
 ---
 
 The input of the network generation approaches demonstrated in this repo is origin-destionation data.

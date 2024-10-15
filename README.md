@@ -131,7 +131,7 @@ od_geo |>
   geom_sf(aes(alpha = trips_modelled))
 ```
 
-![](README_files/figure-commonmark/desire-lines-r-1.png)
+![](man/figures/desire-lines-r-1.png)
 
 # od2net
 
@@ -277,7 +277,7 @@ routes_osrm_minimal |>
   geom_sf(alpha = 0.3, size = 9)
 ```
 
-![](README_files/figure-commonmark/osrm-basic-1.png)
+![](man/figures/osrm-basic-1.png)
 
 ## Locally hosted OSRM
 
@@ -348,7 +348,7 @@ routes_osrm_2 |>
   geom_sf(alpha = 0.3, size = 9)
 ```
 
-![](README_files/figure-commonmark/osrm-locally-hosted-1.png)
+![](man/figures/osrm-locally-hosted-1.png)
 
 # Network generation
 
