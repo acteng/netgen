@@ -1,6 +1,5 @@
 ---
 title: "SchoolRoutes demo"
-output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{SchoolRoutes demo}
   %\VignetteEngine{quarto::html}
