@@ -21,3 +21,5 @@ Depends:
     R (>= 2.10)
 LazyData: true
 URL: https://acteng.github.io/netgen/
+VignetteBuilder: 
+    quarto
