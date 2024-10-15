@@ -23,8 +23,7 @@ Suggests:
     simodels (>= 0.1.0),
     tidyverse,
     tmap
-VignetteBuilder: 
-    quarto
+VignetteBuilder: knitr
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
