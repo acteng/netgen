@@ -65,6 +65,24 @@ readLines("config_pct_govtarget.json") |> cat(sep = "\n")
 system("od2net config_pct_govtarget.json --rng-seed 42")
 ```
 
+You should see something like this:
+
+```
+Input: Test data for SchoolRoutes project.
+- Origins: 19,258
+- Destinations: 62
+- Requests: 25,515
+- Requests (succeeded): 25,364
+- Requests (failed because same endpoints): 12
+- Requests (failed because no path): 139
+- Edges with a count: 37,388
+- Total distance on not allowed roads: 2.4 km
+- Total distance on LTS 1 roads: 12868.2 km
+- Total distance on LTS 2 roads: 18057.4 km
+- Total distance on LTS 3 roads: 25217.0 km
+- Total distance on LTS 4 roads: 6634.4 km
+```
+
 ```{r}
 #| eval: false
 list.files("output")
