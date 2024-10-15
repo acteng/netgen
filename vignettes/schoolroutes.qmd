@@ -30,6 +30,7 @@ theme_set(theme_void())
 ```
 
 ```{r}
+#| eval: false
 origin_zones = netgen::zones_york
 names(origin_zones)
 names(origin_zones)[1] = "name"
