@@ -20,7 +20,8 @@ Imports:
 Suggests:
     knitr,
     rmarkdown,
-    simodels (>= 0.1.0)
+    simodels (>= 0.1.0),
+    quarto
 Depends: 
     R (>= 2.10)
 LazyData: true
