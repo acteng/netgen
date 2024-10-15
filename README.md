@@ -9,8 +9,12 @@ use in the reproducible code below.
 # Setup
 
 For reproduducibility, we have setup a Docker container with all the
-dependencies needed to run the code below. Pull the latest version of
-the container with the following:
+dependencies needed to run the code below. The easiest way to run the
+code and develop new code in this repo may be with GitHub Codespaces
+which can be accessed via
+[github.com/codespaces/new](https://github.com/codespaces/new?hide_repo_select=true&ref=24-package-all-software-in-single-image&repo=826170244&skip_quickstart=true&machine=standardLinux32gb&devcontainer_path=.devcontainer%2Fdevcontainer.json&geo=EuropeWest).
+
+Pull the latest version of the container with the following:
 
 ``` bash
 docker pull ghcr.io/geocompx/docker:rust
@@ -25,7 +29,7 @@ That should allow you to run the code in the README with the following
 command:
 
 ``` r
-system("quarto preview README.qmd")
+quarto::quarto_render("README.qmd")
 ```
 
 If you haven’t got project running in a container, you can run the code
@@ -50,6 +54,9 @@ if (length(pkgs_to_install) > 0) {
 vapply(pkgs, require, logical(1), character.only = TRUE)
 ```
 
+           sf tidyverse      tmap       pak 
+         TRUE      TRUE      TRUE      TRUE 
+
 We will also install a couple of package that are not on CRAN:
 
 ``` r
@@ -70,7 +77,6 @@ library(tidyverse)
 library(tmap)
 # # Get the datasets, see: https://github.com/acteng/netgen/releases/tag/v0.1.0
 # Automate data download if you have gh installed and authorised with:
-# system("gh release download v0.1.0 --repo acteng/netgen")
 # theme void:
 theme_set(theme_void())
 ```
@@ -103,6 +109,7 @@ It’s worth importing and visualising the OD datasets before routing and
 network generation stages.
 
 ``` r
+system("gh release list")
 od = read_csv("res_output.csv")
 head(od)
 ```
@@ -140,9 +147,27 @@ output.pmtiles outputs:
 ``` r
 origin_zones = netgen::zones_york
 names(origin_zones)
+```
+
+     [1] "LSOA21CD"     "LSOA21NM"     "total"        "f0_to_15"     "f16_to_29"   
+     [6] "f30_to_44"    "f45_to_64"    "f65_and_over" "m0_to_15"     "m16_to_29"   
+    [11] "m30_to_44"    "m45_to_64"    "m65_and_over" "geometry"    
+
+``` r
 names(origin_zones)[1] = "name"
 sf::write_sf(origin_zones, "input/zones_york.geojson", delete_dsn = TRUE)
 od2net::make_osm(zones_file = "input/zones_york.geojson")
+```
+
+    Reading layer `zones' from data source 
+      `/home/robin/github/acteng/netgen/input/zones.geojson' using driver `GeoJSON'
+    Simple feature collection with 121 features and 1 field
+    Geometry type: MULTIPOLYGON
+    Dimension:     XY
+    Bounding box:  xmin: -1.2237 ymin: 53.87459 xmax: -0.9196789 ymax: 54.05661
+    Geodetic CRS:  WGS 84
+
+``` r
 od2net::make_origins()
 # Optionally, get elevation data:
 # netgen:::make_elevation()
@@ -196,6 +221,10 @@ fs::dir_tree("output")
 ```
 
     output
+    ├── counts.csv
+    ├── failed_requests.geojson
+    ├── output.geojson
+    ├── rnet.pmtiles
     └── rnet_output_osrm_overline.geojson
 
 From that point you can visualise the pmtiles in the website at

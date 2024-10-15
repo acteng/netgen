@@ -29,7 +29,7 @@ That should allow you to run the code in the README with the following command:
 
 ```{r}
 #| eval: false
-system("quarto preview README.qmd")
+quarto::quarto_render("README.qmd")
 ```
 
 If you haven't got project running in a container, you can run the code below in your local environment.
@@ -40,7 +40,6 @@ To run the code below you need to have R and Docker installed.
 After you have installed R, you can install the packages we'll use as follows:
 
 ```{r}
-#| eval: false
 # Install pak if not already installed:
 if (!requireNamespace("pak", quietly = TRUE)) {
   install.packages("pak")
@@ -57,7 +56,6 @@ vapply(pkgs, require, logical(1), character.only = TRUE)
 We will also install a couple of package that are not on CRAN:
 
 ```{r}
-#| eval: false
 pak::pkg_install("acteng/netgen")
 pak::pkg_install("Urban-Analytics-Technology-Platform/od2net/r")
 ```
@@ -156,7 +154,6 @@ After you have installed the package, prepare the input datasets and run the net
 
 
 ```{r}
-#| eval: false
 origin_zones = netgen::zones_york
 names(origin_zones)
 names(origin_zones)[1] = "name"
