@@ -16,10 +16,11 @@ Imports:
     readr,
     sf
 Suggests:
+    knitr,
+    rmarkdown,
     simodels (>= 0.1.0)
 Depends: 
     R (>= 2.10)
 LazyData: true
 URL: https://acteng.github.io/netgen/
-VignetteBuilder: 
-    quarto
+VignetteBuilder: knitr
