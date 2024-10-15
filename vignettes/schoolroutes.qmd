@@ -40,7 +40,7 @@ od2net::make_origins()
 # Optionally, get elevation data:
 # netgen:::make_elevation()
 if (!file.exists("input/elevation.tif")) {
-    file.copy("../input/elevation.tif", "input/elevation.tif")
+    file.copy("../input/.tif", "input/elevation.tif")
 }
 destinations = netgen::destinations_york # Provided in the R package
 names(destinations)[1] = "name"
@@ -60,9 +60,39 @@ readLines("config_pct_govtarget.json") |> cat(sep = "\n")
 ```
 
 ```{r}
+#| eval: false
 system("od2net config_pct_govtarget.json --rng-seed 42")
 ```
 
 ```{r}
+#| eval: false
 list.files("output")
+#> [1] "counts.csv"              "failed_requests.geojson"
+#> [3] "output.geojson"          "rnet.pmtiles"
+```
+
+
+```{r}
+#| eval: false
+#| echo: false
+file.copy("vignettes/output/output.geojson", "output_pct_govtarget.geojson")
+system("gh release upload v0.1.0 output_pct_govtarget.geojson")
+```
+
+
+```{r}
+#| echo: false
+output_file = "https://github.com/acteng/netgen/releases/download/v0.1.0/output_pct_govtarget.geojson"
+```
+
+```{r}
+#| eval: false
+output_file = "output/output.geojson"
+```
+
+
+```{r}
+rnet_govtarget = sf::read_sf(output_file)
+names(rnet_govtarget)
+plot(rnet_govtarget["count"], logz = TRUE)
 ```
