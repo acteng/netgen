@@ -135,13 +135,27 @@
 <span><span class="co">#&gt; }</span></span></code></pre></div>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/system.html" class="external-link">system</a></span><span class="op">(</span><span class="st">"od2net config_pct_govtarget.json --rng-seed 42"</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<p>You should see something like this:</p>
+<pre><code>Input: Test data for SchoolRoutes project.
+- Origins: 19,258
+- Destinations: 62
+- Requests: 25,515
+- Requests (succeeded): 25,364
+- Requests (failed because same endpoints): 12
+- Requests (failed because no path): 139
+- Edges with a count: 37,388
+- Total distance on not allowed roads: 2.4 km
+- Total distance on LTS 1 roads: 12868.2 km
+- Total distance on LTS 2 roads: 18057.4 km
+- Total distance on LTS 3 roads: 25217.0 km
+- Total distance on LTS 4 roads: 6634.4 km</code></pre>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/list.files.html" class="external-link">list.files</a></span><span class="op">(</span><span class="st">"output"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "counts.csv"              "failed_requests.geojson"</span></span>
 <span><span class="co">#&gt; [3] "output.geojson"          "rnet.pmtiles"</span></span></code></pre></div>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">output_file</span> <span class="op">=</span> <span class="st">"output/output.geojson"</span></span></code></pre></div>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">output_file</span> <span class="op">=</span> <span class="st">"output/output.geojson"</span></span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">rnet_govtarget</span> <span class="op">=</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_read.html" class="external-link">read_sf</a></span><span class="op">(</span><span class="va">output_file</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">rnet_govtarget</span><span class="op">)</span></span>
 <span><span class="co">#&gt;  [1] "backward_cost"     "count"             "destination_count"</span></span>
