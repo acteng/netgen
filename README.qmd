@@ -177,6 +177,12 @@ od = od_geo |>
 readr::write_csv(od, "input/od.csv", quote = "all")
 ```
 
+To install the `od2net` package, run the following:
+
+```shell
+cargo install --locked --git https://github.com/Urban-Analytics-Technology-Platform/od2net
+```
+
 If you are running the code in a container, you should already have the `od2net` package installed.
 Check this with the following:
 
@@ -190,6 +196,13 @@ system("od2net --version")
 #| eval: false
 #| echo: false
 ln -s /root/.cargo/bin/od2net /usr/local/bin/od2net
+sudo ln -s ~/.cargo/bin/od2net /usr/bin/od2net
+```
+
+The config file is as follows:
+
+```{r}
+readLines("config.json") |> cat(sep = "\n")
 ```
 
 Then run the following code to generate the network:

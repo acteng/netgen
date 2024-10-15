@@ -17,3 +17,52 @@ knitr::opts_chunk$set(
 ```{r setup}
 library(netgen)
 ```
+
+
+```{r}
+library(sf)
+library(tidyverse)
+library(tmap)
+# # Get the datasets, see: https://github.com/acteng/netgen/releases/tag/v0.1.0
+# Automate data download if you have gh installed and authorised with:
+# theme void:
+theme_set(theme_void())
+```
+
+```{r}
+origin_zones = netgen::zones_york
+names(origin_zones)
+names(origin_zones)[1] = "name"
+dir.create("input", showWarnings = FALSE)
+sf::write_sf(origin_zones, "input/zones.geojson", delete_dsn = TRUE)
+od2net::make_osm(zones_file = "input/zones.geojson")
+od2net::make_origins()
+# Optionally, get elevation data:
+# netgen:::make_elevation()
+if (!file.exists("input/elevation.tif")) {
+    file.copy("../input/elevation.tif", "input/elevation.tif")
+}
+destinations = netgen::destinations_york # Provided in the R package
+names(destinations)[1] = "name"
+destinations = destinations[1]
+class(destinations$name) = "character"
+sf::write_sf(destinations, "input/destinations.geojson", delete_dsn = TRUE)
+# Save the OD dataset:
+od_geo = sf::read_sf("https://github.com/acteng/netgen/releases/download/v0.1.0/res_output.geojson")
+od = od_geo |>
+  sf::st_drop_geometry() |>
+  transmute(from = O, to = as.character(D), count = round(trips_modelled))
+readr::write_csv(od, "input/od.csv", quote = "all")
+```
+
+```{r}
+readLines("config_pct_govtarget.json") |> cat(sep = "\n")
+```
+
+```{r}
+system("od2net config_pct_govtarget.json --rng-seed 42")
+```
+
+```{r}
+list.files("output")
+```
