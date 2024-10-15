@@ -26,4 +26,5 @@ Depends:
 LazyData: true
 BugReports: https://github.com/acteng/netgen/issues
 URL: https://acteng.github.io/netgen/ https://github.com/acteng/netgen
-VignetteBuilder: knitr
+VignetteBuilder: 
+    quarto
