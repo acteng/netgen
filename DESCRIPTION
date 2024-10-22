@@ -20,6 +20,7 @@ Suggests:
     jsonlite,
     knitr,
     quarto,
+    remotes,
     rmarkdown,
     simodels (>= 0.1.0),
     tidyverse,
