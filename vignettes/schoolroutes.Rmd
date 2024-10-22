@@ -121,6 +121,55 @@ output_file = "output/output.geojson"
 
 ```{r}
 rnet_govtarget = sf::read_sf(output_file)
+nrow(rnet_govtarget)
 names(rnet_govtarget)
 plot(rnet_govtarget["count"], logz = TRUE)
+```
+
+The output above shows that the object has the following variables:
+
+```
+ [1] "backward_cost"     "count"             "destination_count"
+ [4] "forward_cost"      "length"            "lts"              
+ [7] "nearby_amenities"  "node1"             "node2"            
+[10] "origin_count"      "osm_tags"          "way"              
+[13] "geometry" 
+```
+
+Of these, `count`, `lts`, `osm_tags`, and `way` are the most relevant. Let's take a look at these for a sample of 3 rows:
+
+```{r}
+set.seed(42)
+rnet_govtarget |>
+  dplyr::slice_sample(n = 3) |>
+  dplyr::select(count, lts, osm_tags, way)
+```
+
+As shown above, the `osm_tags` field has all the OSM tags in JSON format, which can be read-in with `jsonlite::fromJSON`:
+
+```{r}
+rnet_govtarget$osm_tags[1]
+jsonlite::fromJSON(rnet_govtarget$osm_tags[1])
+```
+
+Let's create a slightly more sophisticated map with `tmap`, and let's make it interactive, by first filtering only the top segments:
+
+```{r}
+library(tmap)
+rnet_govtarget_top = rnet_govtarget |>
+  dplyr::transmute()
+  dplyr::slice_max(count, n = 5000) 
+tmap_mode("view")
+m = tm_shape(rnet_govtarget_top) +
+  tm_lines(col = "count", col.scale = tm_scale(values = "viridis", breaks = c(0, 10, 20, 40, 80, 200)), lwd = 9)
+m
+```
+
+You can save and view the map as follows:
+
+```{r}
+#| eval: false
+tmap_save(m, "output_pct_govtarget.html")
+system("gh release upload v0.1.0 output_pct_govtarget.html")
+browseURL("output_pct_govtarget.html")
 ```

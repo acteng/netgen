@@ -17,6 +17,7 @@ Imports:
     readr,
     sf
 Suggests:
+    jsonlite,
     knitr,
     quarto,
     rmarkdown,
