@@ -1,16 +1,17 @@
 ---
 title: "SchoolRoutes: An approach for data-driven investment in safe routes to school"
-output: 
-# output: 
-#   bookdown::html_document2:
-#       base_format: rmarkdown::html_vignette
+output:
+  bookdown::html_vignette2:
 author:
    - name: Robin Lovelace
      affiliation: Active Travel England and University of Leeds, UK
 vignette: >
-  %\VignetteIndexEntry{SchoolRoutes: An approach for data-driven investment in safe routes to school}
-  %\VignetteEngine{quarto::html}
+  %\VignetteIndexEntry{schoolroutes}
+  %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+pkgdown:
+  as_is: true
+  set_null_theme: false
 bibliography: references.bib
 ---
 
