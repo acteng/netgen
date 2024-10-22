@@ -4,7 +4,7 @@ output:
   bookdown::html_vignette2:
 author:
    - name: Robin Lovelace
-     affiliation: Institute for Transport Studies and Leeds Institute for Data Analytics, University of Leeds, UK
+     affiliation: Active Travel England and University of Leeds, UK
 vignette: >
   %\VignetteIndexEntry{ClockBoard: a zoning system for urban analysis}
   %\VignetteEngine{knitr::rmarkdown}
