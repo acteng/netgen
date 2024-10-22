@@ -29,13 +29,20 @@ library(tmap)
 theme_set(theme_void())
 ```
 
+We'll start by saving the `zones` data in the `input` folder:
+
 ```{r}
-#| eval: false
 origin_zones = netgen::zones_york
 names(origin_zones)
 names(origin_zones)[1] = "name"
 dir.create("input", showWarnings = FALSE)
 sf::write_sf(origin_zones, "input/zones.geojson", delete_dsn = TRUE)
+```
+
+Then we will use the `od2net` R package to generate the origins and destinations:
+
+```{r}
+#| eval: false
 od2net::make_osm(zones_file = "input/zones.geojson")
 od2net::make_origins()
 # Optionally, get elevation data:
@@ -45,6 +52,11 @@ names(destinations)[1] = "name"
 destinations = destinations[1]
 class(destinations$name) = "character"
 sf::write_sf(destinations, "input/destinations.geojson", delete_dsn = TRUE)
+```
+
+Finally we'll save the OD dataset:
+
+```{r}
 # Save the OD dataset:
 od_geo = sf::read_sf("https://github.com/acteng/netgen/releases/download/v0.1.0/res_output.geojson")
 od = od_geo |>
@@ -52,6 +64,8 @@ od = od_geo |>
   transmute(from = O, to = as.character(D), count = round(trips_modelled))
 readr::write_csv(od, "input/od.csv", quote = "all")
 ```
+
+The `od2net` package requires a configuration file to run. We will use the following configuration file:
 
 ```{r}
 readLines("config_pct_govtarget.json") |> cat(sep = "\n")
