@@ -23,6 +23,8 @@ Suggests:
     simodels (>= 0.1.0),
     tidyverse,
     tmap
+Remotes: 
+    r-tmap/tmap
 VignetteBuilder: knitr
 Encoding: UTF-8
 LazyData: true
