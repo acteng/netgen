@@ -175,7 +175,7 @@ Let's create a minimal version of the dataset for future plots:
 
 ```{r}
 rnet_govtarget_top = rnet_govtarget |>
-  dplyr::transmute(count = as.integer(count), way) |>
+  dplyr::transmute(count = as.integer(count), way, lts = as.character(lts)) |>
   dplyr::slice_max(count, n = 5000) |>
   dplyr::arrange(count)
 ```
@@ -185,8 +185,8 @@ We can create a map with `ggplot2` as follows:
 ```{r}
 library(ggplot2)
 ggplot(rnet_govtarget_top) +
-  geom_sf(aes(color = count), size = 9) +
-  scale_colour_viridis_b(breaks = c(0, 10, 20, 50, 200)) +
+  geom_sf(aes(color = lts, linewidth = count)) +
+  scale_colour_viridis_d(direction = -1) +
   theme_void()
 ```
 
@@ -194,10 +194,6 @@ Let's create an interactive map with `tmap`:
 
 ```{r}
 library(tmap)
-rnet_govtarget_top = rnet_govtarget |>
-  dplyr::transmute(count = as.integer(count), way) |>
-  dplyr::slice_max(count, n = 5000) |>
-  dplyr::arrange(count)
 tmap_mode("view")
 m = tm_shape(rnet_govtarget_top) +
   tm_lines(col = "count", col.scale = tm_scale(values = "viridis", breaks = c(0, 10, 20, 50, 200)), lwd = 9)
@@ -229,6 +225,10 @@ tmap_save(m, "output_pct_govtarget.html")
 browseURL("output_pct_govtarget.html")
 system("gh release upload v0.1.0 output_pct_govtarget.html")
 ```
+
+# Prioritising investment
+
+
 
 # Sense checking the results
 
