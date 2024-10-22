@@ -14,6 +14,10 @@ knitr::opts_chunk$set(
 )
 ```
 
+```{r, include = FALSE}
+install.packages("tmap", repos = c("https://r-tmap.r-universe.dev", "https://cloud.r-project.org"))
+```
+
 ```{r setup}
 library(netgen)
 ```
@@ -175,6 +179,23 @@ rnet_govtarget_top = rnet_govtarget |>
   dplyr::slice_max(count, n = 5000) |>
   dplyr::arrange(count)
 tmap_mode("view")
+m = tm_shape(rnet_govtarget_top) +
+  tm_lines(col = "count", col.scale = tm_scale(values = "viridis", breaks = c(0, 10, 20, 50, 200)), lwd = 9)
+m
+```
+
+```{r}
+#| eval: false
+#| echo: false
+#| label: reprex
+remotes::install_github("r-tmap/tmap")
+library(tmap)
+output_file = "https://github.com/acteng/netgen/releases/download/v0.1.0/output_pct_govtarget.geojson"
+rnet_govtarget = sf::read_sf(output_file)
+rnet_govtarget_top = rnet_govtarget |>
+  dplyr::transmute(count = as.integer(count), way) |>
+  dplyr::slice_max(count, n = 5000) |>
+  dplyr::arrange(count)
 m = tm_shape(rnet_govtarget_top) +
   tm_lines(col = "count", col.scale = tm_scale(values = "viridis", breaks = c(0, 10, 20, 50, 200)), lwd = 9)
 m
