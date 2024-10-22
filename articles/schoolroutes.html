@@ -5,12 +5,12 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>SchoolRoutes: An approach for data-driven investment in active travel infrastructure around schools • netgen</title>
+<title>SchoolRoutes: An approach for data-driven investment in safe routes to school • netgen</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.4.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="SchoolRoutes: An approach for data-driven investment in active travel infrastructure around schools">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="SchoolRoutes: An approach for data-driven investment in safe routes to school">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -33,7 +33,7 @@
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/schoolroutes.html">SchoolRoutes: An approach for data-driven investment in active travel infrastructure around schools</a></li>
+<li><a class="dropdown-item" href="../articles/schoolroutes.html">SchoolRoutes: An approach for data-driven investment in safe routes to school</a></li>
   </ul>
 </li>
       </ul>
@@ -53,7 +53,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
 
-      <h1>SchoolRoutes: An approach for data-driven investment in active travel infrastructure around schools</h1>
+      <h1>SchoolRoutes: An approach for data-driven investment in safe routes to school</h1>
                         <h4 data-toc-skip class="author">Robin Lovelace</h4>
             <address class="author_afil">
       Active Travel England and University of Leeds, UK<br><small class="dont-index">Source: <a href="https://github.com/acteng/netgen/blob/main/vignettes/schoolroutes.Rmd" class="external-link"><code>vignettes/schoolroutes.Rmd</code></a></small>
@@ -73,10 +73,16 @@ Three broad factors make this is a timely topic:</p>
 <ul>
 <li>School catchments and travel patterns have changed substantially since the 2010/2011 data on which <span class="citation">Goodman et al. (2019)</span> was based. More recent travel data can overcome a major limitation of that study by presenting current transport patterns to school.</li>
 <li>The travel to school layer in the PCT described by <span class="citation">Goodman et al. (2019)</span> provided only a single metric for segments on the road network: cycling potential (under a range of scenarios), without reference to key infrastructure datasets that could be vital when prioritising local interventions and identifying where ‘pinch points’ are in the network.</li>
-<li>The pandemic has seen an <a href="https://twitter.com/TheMooreLab/status/1492883858450169857" class="external-link">alarming increase in childhood obesity rates and inequalities</a>, as shown in Figure <a href="#fig:obesdep"><strong>??</strong></a>. This has pushed active travel for kids up the political agenda.</li>
+<li>The pandemic has seen an <a href="https://twitter.com/TheMooreLab/status/1492883858450169857" class="external-link">alarming increase in childhood obesity rates and inequalities</a>, as shown in Figure <a href="#fig:obesdep">1</a>. This has pushed active travel for kids up the political agenda.</li>
 <li>The travel to school layer in the original PCT resulted in a sparse network in some places. This can be overcome using new methods for disaggregating OD pairs to show diffuse residential networks <span class="citation">(Lovelace, Félix, and Carlino 2022)</span>.</li>
 </ul>
 <p>A broader reason for focussing on cycling potential and infrastructure for young people is that prioritisation of fixing weak links in quiet/beginner networks rather than a ‘skeleton’ of arterial routes can support more inclusive design.</p>
+<div class="figure">
+<span style="display:block;" id="fig:obesdep"></span>
+<img src="schoolroutes_files/figure-html/obesdep-1.png" alt="Childhood obesity rates in most and least deprived areas over time. Source: National Child Measurement Programme"><p class="caption">
+Figure 1: Childhood obesity rates in most and least deprived areas over time. Source: National Child Measurement Programme
+</p>
+</div>
 </div>
 <div class="section level2">
 <h2 id="case-study-york">Case study: York<a class="anchor" aria-label="anchor" href="#case-study-york"></a>
@@ -144,11 +150,11 @@ Three broad factors make this is a timely topic:</p>
 <code>failed_requests.geojson</code>: a geojson file with the failed requests (i.e. those that could not be routed).</li>
 </ul>
 <p>The most relevant of these is the ‘output.geojson’ file, which is also provided as a compressed <code>pmtiles</code> file.
-You can visualise the results in the web app hosted at <a href="https://od2net.org" class="external-link">od2net.org</a> by uploading the <code>output.pmtiles</code> file, resulting in an interactive map of the routes, as shown in Figure <a href="#fig:od2net">1</a>.</p>
+You can visualise the results in the web app hosted at <a href="https://od2net.org" class="external-link">od2net.org</a> by uploading the <code>output.pmtiles</code> file, resulting in an interactive map of the routes, as shown in Figure <a href="#fig:od2net">2</a>.</p>
 <div class="figure">
 <span style="display:block;" id="fig:od2net"></span>
 <img src="od2net.png" alt="Routes generated by the SchoolRoutes project." width="1264"><p class="caption">
-Figure 1: Routes generated by the SchoolRoutes project.
+Figure 2: Routes generated by the SchoolRoutes project.
 </p>
 </div>
 <p>We can also visualise the data with the following code in R:</p>
@@ -237,7 +243,7 @@ Figure 1: Routes generated by the SchoolRoutes project.
 <span><span class="co">#&gt; $surface</span></span>
 <span><span class="co">#&gt; [1] "asphalt"</span></span></code></pre></div>
 <!-- Let's create a minimal version of the dataset for future plots: -->
-<p>The output dataset can be visualised with well-known data science tools, such as the <code>ggplot2</code> R package, as follows shown in Figure <a href="#fig:rnet-ggplot">2</a>, which is generated with the reproducible code below:</p>
+<p>The output dataset can be visualised with well-known data science tools, such as the <code>ggplot2</code> R package, as follows shown in Figure <a href="#fig:rnet-ggplot">3</a>, which is generated with the reproducible code below:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">rnet_govtarget_top</span><span class="op">)</span> <span class="op">+</span></span>
@@ -247,7 +253,7 @@ Figure 1: Routes generated by the SchoolRoutes project.
 <div class="figure">
 <span style="display:block;" id="fig:rnet-ggplot"></span>
 <img src="schoolroutes_files/figure-html/rnet-ggplot-1.png" alt="Routes with the highest number of trips under the Government Target scenario."><p class="caption">
-Figure 2: Routes with the highest number of trips under the Government Target scenario.
+Figure 3: Routes with the highest number of trips under the Government Target scenario.
 </p>
 </div>
 <p>Let’s create an interactive map with <code>tmap</code>:</p>
