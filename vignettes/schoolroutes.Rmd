@@ -15,7 +15,8 @@ knitr::opts_chunk$set(
 ```
 
 ```{r, include = FALSE}
-install.packages("tmap", repos = c("https://r-tmap.r-universe.dev", "https://cloud.r-project.org"))
+# See https://github.com/r-tmap/tmap/issues/863
+remotes::install_github("r-tmap/tmap@aefe37f")
 ```
 
 ```{r setup}
