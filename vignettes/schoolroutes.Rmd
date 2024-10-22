@@ -59,7 +59,7 @@ class(destinations$name) = "character"
 sf::write_sf(destinations, "input/destinations.geojson", delete_dsn = TRUE)
 ```
 
-Finally we'll save the OD dataset:
+We'll save the OD dataset in the required format:
 
 ```{r}
 # Save the OD dataset:
@@ -171,7 +171,26 @@ rnet_govtarget$osm_tags[1]
 jsonlite::fromJSON(rnet_govtarget$osm_tags[1])
 ```
 
-Let's create a slightly more sophisticated map with `tmap`, and let's make it interactive, by first filtering only the top segments:
+Let's create a minimal version of the dataset for future plots:
+
+```{r}
+rnet_govtarget_top = rnet_govtarget |>
+  dplyr::transmute(count = as.integer(count), way) |>
+  dplyr::slice_max(count, n = 5000) |>
+  dplyr::arrange(count)
+```
+
+We can create a map with `ggplot2` as follows:
+
+```{r}
+library(ggplot2)
+ggplot(rnet_govtarget_top) +
+  geom_sf(aes(color = count), size = 9) +
+  scale_colour_viridis_b(breaks = c(0, 10, 20, 50, 200)) +
+  theme_void()
+```
+
+Let's create an interactive map with `tmap`:
 
 ```{r}
 library(tmap)
