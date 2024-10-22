@@ -1,12 +1,12 @@
 ---
-title: "SchoolRoutes: An approach for data-driven investment in active travel infrastructure around schools"
+title: "SchoolRoutes: An approach for data-driven investment in safe routes to school"
 output:
   bookdown::html_vignette2:
 author:
    - name: Robin Lovelace
      affiliation: Active Travel England and University of Leeds, UK
 vignette: >
-  %\VignetteIndexEntry{ClockBoard: a zoning system for urban analysis}
+  %\VignetteIndexEntry{schoolroutes}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 pkgdown:
@@ -59,6 +59,46 @@ Three broad factors make this is a timely topic:
 -   The travel to school layer in the original PCT resulted in a sparse network in some places. This can be overcome using new methods for disaggregating OD pairs to show diffuse residential networks [@lovelace_jittering_2022b].
 
 A broader reason for focussing on cycling potential and infrastructure for young people is that prioritisation of fixing weak links in quiet/beginner networks rather than a 'skeleton' of arterial routes can support more inclusive design.
+
+
+```{r obesdep, fig.height=3, fig.cap="Childhood obesity rates in most and least deprived areas over time. Source: National Child Measurement Programme"}
+# t11_raw = readxl::read_excel("../../schoolroutes_10ds/nat-chil-meas-prog-eng-2020-2021-tab.xlsx", sheet = "Table 11", skip = 13)
+# t11_raw = readr::read_csv("nat-chil-meas-prog-eng-2020-2021-tab.csv", skip = 13)
+# t11 = t11_raw %>% 
+#   janitor::clean_names()
+# # names(t11)
+# names(t11)[2:3] = c("class", "year")
+# t11_most_deprived = t11 %>%
+#   select(class, year, prevalence_4) %>%
+#   fill(class) %>% 
+#   filter(str_detect(string = class, pattern = "Reception|Year")) %>% 
+#   slice(-c(1:2)) %>% 
+#   mutate(year = as.numeric(str_sub(string = year, start = 1, end = 4))) %>% 
+#   mutate(`IMD decile` = "Most deprived IMD decile")
+# t11_least_deprived = t11 %>%
+#   select(class, year, prevalence_4 = x7) %>% 
+#   fill(class) %>% 
+#   filter(str_detect(string = class, pattern = "Reception|Year")) %>% 
+#   slice(-c(1:2)) %>% 
+#   mutate(year = as.numeric(str_sub(string = year, start = 1, end = 4))) %>% 
+#   mutate(`IMD decile` = "Least deprived IMD decile")
+# t11_most_least = bind_rows(t11_most_deprived, t11_least_deprived)
+# readr::write_csv(t11_most_least, "t11_most_least.csv")
+
+t11_most_least = readr::read_csv("t11_most_least.csv")
+# t11$class
+t11_most_least %>% 
+  ggplot(aes(year, prevalence_4, colour = class)) +
+  geom_line() +
+  geom_vline(xintercept = 2019, colour = "grey", lty = 2) +
+  xlab("Academic year starting") +
+  ylab("% Obese") +
+  ylim(c(0, NA)) +
+  # Rotate x-axis labels:
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  scale_x_continuous(breaks = seq(from = 2006, to = 2020, by = 2)) +
+  facet_grid(~ `IMD decile`)
+```
 
 # Case study: York
 
