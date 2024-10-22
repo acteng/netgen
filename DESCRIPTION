@@ -29,7 +29,7 @@ Suggests:
     tmap
 Remotes: 
     r-tmap/tmap@aefe37f
-VignetteBuilder: knitr
+VignetteBuilder: quarto
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
