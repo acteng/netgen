@@ -1,4 +1,4 @@
-class,year,prevalence_4,IMD decile
+class,year,Prevalence,IMD decile
 Reception,2007,11.8,Most deprived IMD decile
 Reception,2008,12.1,Most deprived IMD decile
 Reception,2009,12.5,Most deprived IMD decile
@@ -31,35 +31,35 @@ Year 6,2018,26.9,Most deprived IMD decile
 Year 6,2019,27.2,Most deprived IMD decile
 Year 6,2020,32.1,Most deprived IMD decile
 Year 6,NA,NA,Most deprived IMD decile
-Reception,2007,NA,Least deprived IMD decile
-Reception,2008,NA,Least deprived IMD decile
-Reception,2009,NA,Least deprived IMD decile
-Reception,2010,NA,Least deprived IMD decile
-Reception,2011,NA,Least deprived IMD decile
-Reception,2012,NA,Least deprived IMD decile
-Reception,2013,NA,Least deprived IMD decile
-Reception,2014,NA,Least deprived IMD decile
-Reception,2015,NA,Least deprived IMD decile
-Reception,2016,NA,Least deprived IMD decile
-Reception,2017,NA,Least deprived IMD decile
-Reception,2018,NA,Least deprived IMD decile
-Reception,2019,NA,Least deprived IMD decile
-Reception,2020,NA,Least deprived IMD decile
+Reception,2007,7.2,Least deprived IMD decile
+Reception,2008,7.1,Least deprived IMD decile
+Reception,2009,7.2,Least deprived IMD decile
+Reception,2010,6.9,Least deprived IMD decile
+Reception,2011,6.8,Least deprived IMD decile
+Reception,2012,6.4,Least deprived IMD decile
+Reception,2013,6.6,Least deprived IMD decile
+Reception,2014,6.3,Least deprived IMD decile
+Reception,2015,6.2,Least deprived IMD decile
+Reception,2016,6.6,Least deprived IMD decile
+Reception,2017,6.4,Least deprived IMD decile
+Reception,2018,6.4,Least deprived IMD decile
+Reception,2019,6.7,Least deprived IMD decile
+Reception,2020,9.1,Least deprived IMD decile
 Reception,NA,NA,Least deprived IMD decile
 Year 6,NA,NA,Least deprived IMD decile
-Year 6,2006,NA,Least deprived IMD decile
-Year 6,2007,NA,Least deprived IMD decile
-Year 6,2008,NA,Least deprived IMD decile
-Year 6,2009,NA,Least deprived IMD decile
-Year 6,2010,NA,Least deprived IMD decile
-Year 6,2011,NA,Least deprived IMD decile
-Year 6,2012,NA,Least deprived IMD decile
-Year 6,2013,NA,Least deprived IMD decile
-Year 6,2014,NA,Least deprived IMD decile
-Year 6,2015,NA,Least deprived IMD decile
-Year 6,2016,NA,Least deprived IMD decile
-Year 6,2017,NA,Least deprived IMD decile
-Year 6,2018,NA,Least deprived IMD decile
-Year 6,2019,NA,Least deprived IMD decile
-Year 6,2020,NA,Least deprived IMD decile
+Year 6,2006,13,Least deprived IMD decile
+Year 6,2007,13.6,Least deprived IMD decile
+Year 6,2008,13.3,Least deprived IMD decile
+Year 6,2009,13.6,Least deprived IMD decile
+Year 6,2010,13.8,Least deprived IMD decile
+Year 6,2011,13.7,Least deprived IMD decile
+Year 6,2012,13,Least deprived IMD decile
+Year 6,2013,13.1,Least deprived IMD decile
+Year 6,2014,12.7,Least deprived IMD decile
+Year 6,2015,13.3,Least deprived IMD decile
+Year 6,2016,12.8,Least deprived IMD decile
+Year 6,2017,13.3,Least deprived IMD decile
+Year 6,2018,13,Least deprived IMD decile
+Year 6,2019,13.9,Least deprived IMD decile
+Year 6,2020,15.5,Least deprived IMD decile
 Year 6,NA,NA,Least deprived IMD decile
