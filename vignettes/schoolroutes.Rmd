@@ -157,11 +157,12 @@ Let's create a slightly more sophisticated map with `tmap`, and let's make it in
 ```{r}
 library(tmap)
 rnet_govtarget_top = rnet_govtarget |>
-  dplyr::transmute()
-  dplyr::slice_max(count, n = 5000) 
+  dplyr::transmute(count = as.integer(count), way) |>
+  dplyr::slice_max(count, n = 5000) |>
+  dplyr::arrange(count)
 tmap_mode("view")
 m = tm_shape(rnet_govtarget_top) +
-  tm_lines(col = "count", col.scale = tm_scale(values = "viridis", breaks = c(0, 10, 20, 40, 80, 200)), lwd = 9)
+  tm_lines(col = "count", col.scale = tm_scale(values = "viridis", breaks = c(0, 10, 20, 50, 200)), lwd = 9)
 m
 ```
 
@@ -170,6 +171,6 @@ You can save and view the map as follows:
 ```{r}
 #| eval: false
 tmap_save(m, "output_pct_govtarget.html")
-system("gh release upload v0.1.0 output_pct_govtarget.html")
 browseURL("output_pct_govtarget.html")
+system("gh release upload v0.1.0 output_pct_govtarget.html")
 ```
