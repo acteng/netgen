@@ -12,6 +12,7 @@ vignette: >
 pkgdown:
   as_is: true
   set_null_theme: false
+bibliography: references.bib
 ---
 
 ```{r, include = FALSE}
