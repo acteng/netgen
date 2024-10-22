@@ -1,6 +1,6 @@
 ---
 title: "SchoolRoutes demo"
-output: rmarkdown::html_vignette
+output: bookdown::html_vignette2
 vignette: >
   %\VignetteIndexEntry{SchoolRoutes demo}
   %\VignetteEngine{knitr::rmarkdown}
@@ -114,6 +114,9 @@ list.files("output")
 #| echo: false
 file.copy("vignettes/output/output.geojson", "output_pct_govtarget.geojson")
 system("gh release upload v0.1.0 output_pct_govtarget.geojson")
+# Same with pmtiles:
+file.copy("vignettes/output/rnet.pmtiles", "output_pct_govtarget.pmtiles")
+system("gh release upload v0.1.0 output_pct_govtarget.pmtiles")
 ```
 
 The most relevant of these is the 'output.geojson' file, which is also provided as a compressed `pmtiles` file.
@@ -228,7 +231,8 @@ system("gh release upload v0.1.0 output_pct_govtarget.html")
 
 # Prioritising investment
 
-
+A simple way to prioritise investment based on the route network outputs shown above is to find the LTS3 and LTS4 roads with the greatest potential.
+A key output from the tool will be a 
 
 # Sense checking the results
 
