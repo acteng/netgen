@@ -53,8 +53,11 @@ While the PCT --- and associated website which provides data downloads and evide
 -   The travel to school layer in the PCT described by @goodman_scenarios_2019 provided only a single metric for segments on the road network: cycling potential (under a range of scenarios), without reference to key infrastructure datasets that could be vital when prioritising local interventions and identifying where 'pinch points' are in the network.
 -   The pandemic has seen an [alarming increase in childhood obesity rates and inequalities](https://twitter.com/TheMooreLab/status/1492883858450169857), as shown in Figure 1. This has pushed active travel for kids up the political agenda.
 -   The travel to school layer in the original PCT resulted in a sparse network in some places. This can be overcome using new methods for disaggregating OD pairs to show diffuse residential networks [@lovelace_jittering_2022b].
+- Perhaps most importantly, evidence presented in the PCT omitted the potential for walking to school, which is likely to be more important for shorter trips and for younger children, especially in the near term.
 
-A broader reason for focussing on cycling potential and infrastructure for young people is that prioritisation of fixing weak links in quiet/beginner networks rather than a 'skeleton' of arterial routes can support more inclusive design.
+On the policy side, and as part of the UK Government's Health Mission, health and wellbeing for young people has risen up the political agenda.
+'School Streets' interventions featured prominently in all rounds of the Active Travel Fund (ATF) bids, yet there is a lack of evidence to support safe routes to school and where they should be located at the local level.
+More broadly, strategic active travel networks have already largely been designed, as part of the LCWIP process, while cost-effective interventions that fix 'weak links' in quiet/beginner networks have received less attention.
 
 
 ```{r obesdep, fig.height=3, fig.cap="Childhood obesity rates in most and least deprived areas over time. Source: National Child Measurement Programme", fig.width=6}
@@ -98,12 +101,25 @@ t11_most_least %>%
 theme_set(theme_void())
 ```
 
+# Data and methods
+
+The approach outlined in this paper use the following datasets:
+
+- Origin-destination (OD) data on travel to school from the Department for Education (DfE) from Lower Super Output Area (LSOA) to schools (non-sensitive simulated OD datasets are used in the open access version of this paper).
+- Data on state-run schools, including their locations, type (primarily primary, secondary), and other characteristics, from the Get Information about Schools (GIAS) service.
+- OpenStreetMap (OSM) data for the road network, with value-added by routing software such as `od2net` to pre-process the data and generate route networks.
+- Elevation data, enabling hilliness to be factored into walking and cycling potential estimates.
+- Datasets from the Modeshift Stars programme, which provides data on the number of trips to school by mode for a sample of schools in England (not currently used).
+
+A methodological limitation of the PCT approach was that it used only zone centroids as trip origins, which can lead to a 'spider's web' of routes that do not reflect the actual routes taken by children to school.
+To overcome this, the approach taken in this paper is to disaggregate the OD data, modelling multiple origins or 'subpoints' within each zone, to better represent the geographic distribution of trips to school.
+
+For each OD pair, the number of trips that could be walked or cycled is estimated based on route characteristics.
+TODO: describe and develop uptake functions for walking and cycling to school.
+
 # Case study: York
 
-In the case study for York below, we use Lower Super Output Area (LSOA) data as the basis of the origin-destination data and the `od2net` package to generate the routes.
-
-
-```{r}
+```{r, include=FALSE}
 # We'll start by saving the `zones` data in the `input` folder:
 origin_zones = netgen::zones_york
 names(origin_zones)
@@ -112,6 +128,7 @@ dir.create("input", showWarnings = FALSE)
 sf::write_sf(origin_zones, "input/zones.geojson", delete_dsn = TRUE)
 ```
 
+The following case study demonstrates how the approach works in practice, using the city of York as an example.
 The following code was used to prepare the data with the `od2net` R package (see the paper's [source code](https://github.com/acteng/netgen/blob/main/vignettes/schoolroutes.Rmd) for full reproducible details):
 
 ```{r}
@@ -144,7 +161,7 @@ After saving necessary files in the `input` folder, as required by the `od2net` 
 <!-- The `od2net` package requires a configuration file to run. We will use the following configuration file: -->
 
 ```{r}
-readLines("config_pct_govtarget.json") |> cat(sep = "\n")
+readLines("config_pct_godutch_schools.json") |> cat(sep = "\n")
 ```
 
 ```{r}
@@ -154,8 +171,13 @@ system("od2net config_pct_govtarget.json --rng-seed 42")
 
 If the previous lines of code run successfully and you have `od2net` installed, the route network dataset can be generated with the following command, which generates the following message:
 
-```sh
-od2net run config_pct_govtarget.json
+```{r, engine='bash', eval=FALSE, echo=FALSE}
+od2net config_pct_govtarget.json
+mv output output_govtarget
+```
+
+```{r, engine='bash', eval=FALSE, echo=TRUE}
+od2net config_pct_godutch_schools.json
 ```
 
 ```
@@ -390,6 +412,8 @@ total_euclidean_cycled # just over 3,000 km
 The equivalent for the route network output is:
 
 ```{r}
+output_file = "output_govtarget/output.geojson"
+rnet_govtarget = sf::read_sf(output_file)
 rnet_govtarget$length = sf::st_length(rnet_govtarget) |> as.numeric()
 total_rnet = sum(rnet_govtarget$count * rnet_govtarget$length, na.rm = TRUE)
 round(total_rnet / 1e3) # A bit over 4,000 km
