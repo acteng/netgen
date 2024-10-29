@@ -510,23 +510,24 @@ We'll find out by comparing the total number of trips and distance travelled rep
 od_geo$length = sf::st_length(od_geo) |> as.numeric()
 sum(od_geo$trips_modelled) # 26k
 distance_euclidean_total = sum(od_geo$length * od_geo$trips_modelled)
-distance_euclidean_total # 49,000 km
+# distance_euclidean_total # 49,000 km
 ```
 
-Let's do a sense check of the weighted average trip distance:
+The total distance travelled according to the OD data is `r round(distance_euclidean_total / 1000)` km.
 
 ```{r}
-weighted.mean(od_geo$length, od_geo$trips_modelled) # 1.9 km
+wm = weighted.mean(od_geo$length, od_geo$trips_modelled) # 1.9 km
 ```
 
-Assuming a trip diversion factor of 1.3 and that 5% of the trips are made by cycling under the Government Target scenario for the short distances travelled to school, we can estimate the total number of trips and distance travelled:
+
+The weighted mean distance travelled is `r round(wm, 1)` km.
 
 ```{r}
 total_euclidean_cycled = distance_euclidean_total * 1.3 * 0.05
-total_euclidean_cycled # just over 3,000 km
+# total_euclidean_cycled # just over 3,000 km
 ```
 
-The equivalent for the route network output is:
+Assuming a trip diversion factor of 1.3 and that 5% of the trips are made by cycling under the Government Target scenario for the short distances travelled to school, we can estimate the total number of trips and distance travelled, as `r round(total_euclidean_cycled / 1000)` km.
 
 ```{r}
 rnet_godutch = sf::read_sf(output_file_godutch)
@@ -535,14 +536,17 @@ total_rnet = sum(rnet_godutch$count * rnet_godutch$length, na.rm = TRUE)
 round(total_rnet / 1e3)
 ```
 
-Let's compare with the number who cycle under the less ambitious Government Target scenario:
+The equivalent for the route network output is `r round(total_rnet / 1e3)` km.
+
 
 ```{r}
 output_file_govtarget = "https://github.com/acteng/netgen/releases/download/v0.1.0/output_pct_govtarget.geojson"
 rnet_govtarget = sf::read_sf(output_file_govtarget)
 rnet_govtarget$length = sf::st_length(rnet_govtarget) |> as.numeric()
 total_rnet_govtarget = sum(rnet_govtarget$count * rnet_govtarget$length, na.rm = TRUE)
-round(total_rnet_govtarget / 1e3) 
 ```
+
+Let's compare with the number who cycle under the less ambitious Government Target scenario:
+The total distance travelled under the Government Target scenario is `r round(total_rnet_govtarget / 1e3)` km.
 
 # References
