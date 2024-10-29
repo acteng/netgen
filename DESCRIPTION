@@ -14,6 +14,7 @@ Authors@R: c(
            comment = c(affiliation = "Active Travel England and The Alan Turing Institute")),
     person("Active Travel England", role = "fnd")
   )
+Description: This package takes OD data and outputs route networks. It can be used in conjunction with the 'simodels' package or other tools for generating origin-destionation data.
 License: MIT + file LICENSE
 URL: https://acteng.github.io/netgen/ https://github.com/acteng/netgen
 BugReports: https://github.com/acteng/netgen/issues
