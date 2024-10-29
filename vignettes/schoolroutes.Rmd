@@ -521,20 +521,20 @@ wm = weighted.mean(od_geo$length, od_geo$trips_modelled) # 1.9 km
 ```
 
 
-The weighted mean distance travelled is `r round(wm, 1)` km.
+The weighted mean distance travelled is `r round(wm / 1000, 1)` km.
 
 ```{r}
 total_euclidean_cycled = distance_euclidean_total * 1.3 * 0.5
 # total_euclidean_cycled # just over 3,000 km
 ```
 
-Assuming a trip diversion factor of 1.3 and that 50% of the trips are made by cycling under the Government Target scenario for the short distances travelled to school, we can estimate the total number of trips and distance travelled, as `r round(total_euclidean_cycled / 1000)` km.
+Assuming a trip diversion factor of 1.4 and that on average 50% of the trips are made by cycling under the Government Target scenario for the short distances travelled to school, we can estimate the total number distance travelled by bike to school on a typical school day as `r round(total_euclidean_cycled / 1000) |> format(big.mark = ",")` km.
 
 ```{r}
 rnet_godutch = sf::read_sf(output_file_godutch)
 rnet_godutch$length = sf::st_length(rnet_godutch) |> as.numeric()
 total_rnet = sum(rnet_godutch$count * rnet_godutch$length, na.rm = TRUE)
-round(total_rnet / 1e3)
+# round(total_rnet / 1e3)
 ```
 
 ```{r}
@@ -544,10 +544,12 @@ rnet_govtarget$length = sf::st_length(rnet_govtarget) |> as.numeric()
 total_rnet_govtarget = sum(rnet_govtarget$count * rnet_govtarget$length, na.rm = TRUE)
 ```
 
-The equivalent for the route network output under the Go Dutch scenario is `r round(total_rnet / 1e3)` km.
-
+The equivalent for the route network output under the Go Dutch scenario is `r round(total_rnet / 1e3) |> format(big.mark = ",")` km.
+Note that the values presented above are based on *synthetic* OD data, which may not be representative of the actual travel patterns in York.
 
 Let's compare with the number who cycle under the less ambitious Government Target scenario:
-The total distance travelled under the Government Target scenario is `r round(total_rnet_govtarget / 1e3)` km.
+The total distance travelled under the Government Target scenario is `r round(total_rnet_govtarget / 1e3) |> format(big.mark = ",")` km.
+
+## Comparing with PCT data
 
 # References
