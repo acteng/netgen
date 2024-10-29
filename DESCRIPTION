@@ -1,15 +1,17 @@
 Package: netgen
 Title: Generate Route Network Datasets from Origin-Destination Data
 Version: 0.0.0.9000
-Authors@R: 
-    c(
+Authors@R: c(
     person("Robin", "Lovelace", , "rob00x@gmail.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0001-5679-6536")),
-        person("Sam", "Holder", role = "aut", comment = c(affiliation = "Active Travel England")),
-        person("Emma", "Vinter", role = "aut", comment = c(affiliation = "Active Travel England")),
-        person("Chris", "Conlan", role = "aut", comment = c(affiliation = "Active Travel England and the Alan Turing Institute"))
-        person("Active Travel England", role = "fnd")
-    )
+    person("Sam", "Holder", role = "aut",
+           comment = c(affiliation = "Active Travel England")),
+    person("Emma", "Vinter", role = "aut",
+           comment = c(affiliation = "Active Travel England")),
+    person("Chris", "Conlan", role = "aut",
+           comment = c(affiliation = "Active Travel England and the Alan Turing Institute")),
+    person("Active Travel England", role = "fnd")
+  )
 License: MIT + file LICENSE
 URL: https://acteng.github.io/netgen/ https://github.com/acteng/netgen
 BugReports: https://github.com/acteng/netgen/issues
@@ -32,9 +34,10 @@ Suggests:
     simodels (>= 0.1.0),
     tidyverse,
     tmap
+VignetteBuilder: 
+    knitr
 Remotes: 
     r-tmap/tmap@aefe37f
-VignetteBuilder: knitr
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
