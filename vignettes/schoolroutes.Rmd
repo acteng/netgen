@@ -33,6 +33,7 @@ library(netgen)
 library(sf)
 library(tidyverse)
 library(tmap)
+library(ggplot2)
 # # Get the datasets, see: https://github.com/acteng/netgen/releases/tag/v0.1.0
 # Automate data download if you have gh installed and authorised with:
 ```
@@ -116,7 +117,32 @@ For cycling, the proportion of trips that can be cycled is based on the Go Dutch
 These uptake functions are illustrated in the figures below.
 
 ```{r decay-walk, fig.cap="Uptake functions for walking to school, by distance, in baseline and Go Active scenarios.", fig.height=3, out.width="50%", fig.show="hold"}
-
+uptake_walk_school_baseline = function(distance, upper_limit = 0.7, exponent = 1.3) {
+  p = exp(-distance * exponent)
+  p[p > upper_limit] = upper_limit
+  p
+}
+uptake_walk_school_goactive = function(distance, upper_limit = 0.9, exponent = 0.8) {
+  uptake_walk_school_baseline(distance, upper_limit, exponent)
+}
+distance = seq(0, 5, by = 0.1)
+uptake_df = data.frame(
+  distance = distance
+)
+p_baseline_school = uptake_walk_school_baseline(distance)
+p_goactive_school = uptake_walk_school_goactive(distance)
+uptake_df = rbind(
+  cbind(uptake_df, scenario = "Baseline", pwalk = p_baseline_school),
+  cbind(uptake_df, scenario = "Go Active", pwalk = p_goactive_school)
+)
+ggplot(uptake_df) +
+  geom_line(aes(
+    distance,
+    pwalk,
+    linetype = scenario
+  )) +
+  scale_x_continuous("Distance (km)") +
+  scale_y_continuous("Proportion of trips made by walking", labels = scales::percent)
 ```
 
 ```{r decay-cycle, fig.cap="Uptake functions for cycling to school, by distance and hilliness, in baseline and Go Dutch scenarios.", fig.height=3, out.width="50%", fig.show="hold"}
@@ -142,7 +168,6 @@ uptake_df = rbind(
   cbind(uptake_df, scenario = "Go Dutch", pcycle = p_godutch_school),
   cbind(uptake_df, scenario = "Baseline", pcycle = p_godutch)
 )
-library(ggplot2)
 ggplot(uptake_df) +
   geom_line(aes(
     distances,
