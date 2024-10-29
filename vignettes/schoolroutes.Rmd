@@ -119,7 +119,77 @@ These uptake functions are illustrated in the figures below.
 
 ```
 
+The uptake levels produced by Go Dutch scenarios, for commuting and travel to school are illustrated in the graph below:
 
+```{r decay}
+library(pct)
+max_distance = 20
+distances = 1:max_distance
+max_hilliness = 5
+hilliness = 0:max_hilliness
+uptake_df = data.frame(
+  distances = rep(distances, times = max_hilliness + 1),
+  hilliness = rep(hilliness, each = max_distance)
+)
+p_godutch_school = uptake_pct_godutch_school2(
+    distance = uptake_df$distances,
+    gradient = uptake_df$hilliness
+    )
+p_godutch = uptake_pct_godutch_2020(
+    distance = uptake_df$distances,
+    gradient = uptake_df$hilliness
+    )
+uptake_df = rbind(
+  cbind(uptake_df, scenario = "Go Dutch (school)", pcycle = p_godutch_school),
+  cbind(uptake_df, scenario = "Go Dutch (commute)", pcycle = p_godutch)
+)
+library(ggplot2)
+ggplot(uptake_df) +
+  geom_line(aes(
+    distances,
+    pcycle,
+    linetype = scenario,
+    colour = as.character(hilliness)
+  )) +
+  scale_x_continuous("Distance (km)") +
+  scale_y_continuous("Proportion of trips made by cycling", labels = scales::percent) +
+  scale_color_discrete("Gradient (%)")
+```
+
+The proportion of trips made by cycling along each origin-destination (OD) pair therefore depends on the trip distance and hilliness.
+The equivalent plot for hilliness is as follows:
+
+```{r decayhills}
+distances = c(3, 6, 10)
+hilliness = seq(0, 10, by = 0.2)
+uptake_df = 
+  data.frame(
+    expand.grid(distances, hilliness)
+  )
+names(uptake_df) = c("distances", "hilliness")
+p_godutch_school = uptake_pct_godutch_school2(
+    distance = uptake_df$distances,
+    gradient = uptake_df$hilliness
+    )
+p_godutch = uptake_pct_godutch_2020(
+    distance = uptake_df$distances,
+    gradient = uptake_df$hilliness
+    )
+uptake_df = rbind(
+  cbind(uptake_df, scenario = "Go Dutch (school)", pcycle = p_godutch_school),
+  cbind(uptake_df, scenario = "Go Dutch (commute)", pcycle = p_godutch)
+)
+ggplot(uptake_df) +
+  geom_line(aes(
+    hilliness,
+    pcycle,
+    linetype = scenario,
+    colour = formatC(distances, flag = "0", width = 2)
+  )) +
+  scale_x_continuous("Gradient (%)") +
+  scale_y_continuous("Proportion of trips made by cycling", labels = scales::percent) +
+  scale_color_discrete("Distance (km)")
+```
 
 # Case study: York
 
