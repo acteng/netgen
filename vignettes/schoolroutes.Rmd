@@ -211,15 +211,10 @@ ggplot(uptake_df) +
   scale_color_discrete("Distance (km)")
 ```
 
-
-```{r decay}
-```
-
-The proportion of trips made by cycling along each origin-destination (OD) pair therefore depends on the trip distance and hilliness.
-The equivalent plot for hilliness is as follows:
-
-```{r decayhills}
-```
+The figures above show that the proportion of trips made by walking and cycling for each OD pair depends on a function of distance for walking, and a function of the trip distance and hilliness for cycling.
+It is important to apply these function to the *route* distance and hilliness rather than the Euclidean distance, as the actual distance travelled can be much longer than the Euclidean distance, especially in areas with complex road networks or hilly terrain.
+After calculating the proportion of trips walked or cycled per route, the proportion is multiplied by the estimated *total* number of trips by *all modes* to estimate the number of trips that could be walked or cycled along each route.
+The route-level counts are then aggregated in a process that can be referred to as "travel flow aggregation" [@morgan_travel_2020].
 
 # Case study: York
 
