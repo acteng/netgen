@@ -514,7 +514,7 @@ distance_euclidean_total = sum(od_geo$length * od_geo$trips_modelled)
 # distance_euclidean_total # 49,000 km
 ```
 
-The total distance travelled according to the OD data is `r round(distance_euclidean_total / 1000)` km.
+The total distance travelled according to the OD data is `r round(distance_euclidean_total / 1000)` |> format(big.mark = ",") km.
 
 ```{r}
 wm = weighted.mean(od_geo$length, od_geo$trips_modelled) # 1.9 km
