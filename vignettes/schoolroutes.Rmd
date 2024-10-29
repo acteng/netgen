@@ -416,3 +416,5 @@ rnet_govtarget$length = sf::st_length(rnet_govtarget) |> as.numeric()
 total_rnet_govtarget = sum(rnet_govtarget$count * rnet_govtarget$length, na.rm = TRUE)
 round(total_rnet_govtarget / 1e3) 
 ```
+
+# References
