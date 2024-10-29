@@ -12,7 +12,7 @@ knitr:
 ---
 
 The input of the network generation approaches demonstrated in this repo is origin-destionation data.
-There are many sources of OD data, see [odgen](odgen.qmd) for a way to generate synthetic OD data that we'll use in the reproducible code below.
+There are many sources of OD data, see the documentation in the [odgen.qmd](data-raw/odgen.qmd) for a way to generate synthetic OD data that we'll use in the reproducible code below.
 
 # Setup
 

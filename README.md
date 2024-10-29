@@ -2,9 +2,10 @@
 
 
 The input of the network generation approaches demonstrated in this repo
-is origin-destionation data. There are many sources of OD data, see
-[odgen](odgen.qmd) for a way to generate synthetic OD data that we’ll
-use in the reproducible code below.
+is origin-destionation data. There are many sources of OD data, see the
+documentation in the [odgen.qmd](data-raw/odgen.qmd) for a way to
+generate synthetic OD data that we’ll use in the reproducible code
+below.
 
 # Setup
 
@@ -161,7 +162,7 @@ od2net::make_osm(zones_file = "input/zones_york.geojson")
 
     Reading layer `zones' from data source 
       `/home/robin/github/acteng/netgen/input/zones.geojson' using driver `GeoJSON'
-    Simple feature collection with 121 features and 1 field
+    Simple feature collection with 121 features and 13 fields
     Geometry type: MULTIPOLYGON
     Dimension:     XY
     Bounding box:  xmin: -1.2237 ymin: 53.87459 xmax: -0.9196789 ymax: 54.05661
@@ -183,6 +184,12 @@ od = od_geo |>
 readr::write_csv(od, "input/od.csv", quote = "all")
 ```
 
+To install the `od2net` package, run the following:
+
+``` shell
+cargo install --locked --git https://github.com/Urban-Analytics-Technology-Platform/od2net
+```
+
 If you are running the code in a container, you should already have the
 `od2net` package installed. Check this with the following:
 
@@ -191,6 +198,31 @@ system("od2net --version")
 ```
 
 <!-- If you don't have it, you can copy the path /root/.cargo/bin/od2net to /usr/local/bin/ as follows: -->
+
+The config file is as follows:
+
+``` r
+readLines("config.json") |> cat(sep = "\n")
+```
+
+    {
+      "requests": {
+        "description": "Test data for SchoolRoutes project.",
+        "pattern": {
+          "ZoneToPoint": {
+            "zones_path": "zones.geojson",
+            "destinations_path": "destinations.geojson",
+            "csv_path": "od.csv",
+             "origin_zone_centroid_fallback": false
+          }
+        },
+        "origins_path": "buildings.geojson",
+        "destinations_path": "destinations.geojson"
+      },
+      "cost": "Distance",
+      "uptake": "Identity",
+      "lts": "BikeOttawa"
+    }
 
 Then run the following code to generate the network:
 
