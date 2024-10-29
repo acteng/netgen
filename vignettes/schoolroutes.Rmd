@@ -1,6 +1,8 @@
 ---
 title: "SchoolRoutes: An approach for data-driven investment in safe routes to school"
-output: rmarkdown::html_vignette
+output:
+  rmarkdown::html_vignette:
+    number_sections: true
 vignette: >
   %\VignetteIndexEntry{SchoolRoutes: An approach for data-driven investment in safe routes to school}
   %\VignetteEngine{knitr::rmarkdown}
@@ -36,7 +38,6 @@ library(tmap)
 ```
 
 # Introduction
-
 
 There is a large and growing body of evidence on the relationships between active travel, physical activity, and positive environmental, economic, social and health outcomes.
 Research supporting the Propensity to Cycle Tool (PCT) project, based on 2010/2011 English travel to school data, with the number of trips by mode at the origin-destination level, for example found that there was substantial unmet potential for cycling to school.
@@ -110,7 +111,15 @@ A methodological limitation of the PCT approach was that it used only zone centr
 To overcome this, the approach taken in this paper is to disaggregate the OD data, modelling multiple origins or 'subpoints' within each zone, to better represent the geographic distribution of trips to school.
 
 For each OD pair, the number of trips that could be walked or cycled is estimated based on route characteristics.
-TODO: describe and develop uptake functions for walking and cycling to school.
+For walking, the proportion of trips that can be walked is modelled as a simple as a simple function of distance.
+For cycling, the proportion of trips that can be cycled is based on the Go Dutch scenario in the Propensity to Cycle Tool (PCT) project [@goodman_scenarios_2019].
+These uptake functions are illustrated in the figures below.
+
+```{r, fig.cap="Uptake functions for walking and cycling to school, based on distance and the Go Dutch scenario.", fig.height=3}
+
+```
+
+
 
 # Case study: York
 
