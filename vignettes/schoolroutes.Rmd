@@ -1,6 +1,8 @@
 ---
 title: "SchoolRoutes: An approach for data-driven investment in safe routes to school"
-output: rmarkdown::html_vignette
+output:
+  rmarkdown::html_vignette:
+    number_sections: true
 vignette: >
   %\VignetteIndexEntry{SchoolRoutes: An approach for data-driven investment in safe routes to school}
   %\VignetteEngine{knitr::rmarkdown}
@@ -18,7 +20,9 @@ knitr::opts_chunk$set(
   warning = FALSE,
   collapse = TRUE,
   comment = "#>",
-  fig.width = 6
+  fig.width = 6,
+  # Figures centre:
+  fig.align = "center"
 )
 ```
 
@@ -31,12 +35,12 @@ library(netgen)
 library(sf)
 library(tidyverse)
 library(tmap)
+library(ggplot2)
 # # Get the datasets, see: https://github.com/acteng/netgen/releases/tag/v0.1.0
 # Automate data download if you have gh installed and authorised with:
 ```
 
 # Introduction
-
 
 There is a large and growing body of evidence on the relationships between active travel, physical activity, and positive environmental, economic, social and health outcomes.
 Research supporting the Propensity to Cycle Tool (PCT) project, based on 2010/2011 English travel to school data, with the number of trips by mode at the origin-destination level, for example found that there was substantial unmet potential for cycling to school.
@@ -93,7 +97,6 @@ t11_most_least %>%
   scale_x_continuous(breaks = seq(from = 2006, to = 2020, by = 2)) +
   facet_grid(~ `IMD decile`)
 # theme void:
-theme_set(theme_void())
 ```
 
 # Data and methods
@@ -110,7 +113,108 @@ A methodological limitation of the PCT approach was that it used only zone centr
 To overcome this, the approach taken in this paper is to disaggregate the OD data, modelling multiple origins or 'subpoints' within each zone, to better represent the geographic distribution of trips to school.
 
 For each OD pair, the number of trips that could be walked or cycled is estimated based on route characteristics.
-TODO: describe and develop uptake functions for walking and cycling to school.
+For walking, the proportion of trips that can be walked is modelled as a simple as a simple function of distance.
+For cycling, the proportion of trips that can be cycled is based on the Go Dutch scenario in the Propensity to Cycle Tool (PCT) project [@goodman_scenarios_2019].
+These uptake functions are illustrated in the figures below.
+
+```{r decay-walk, fig.cap="Uptake functions for walking to school, by distance, in baseline and Go Active scenarios.", fig.height=3, out.width="75%", fig.show="hold"}
+uptake_walk_school_baseline = function(distance, upper_limit = 0.7, exponent = 1.3) {
+  p = exp(-distance * exponent)
+  p[p > upper_limit] = upper_limit
+  p
+}
+uptake_walk_school_goactive = function(distance, upper_limit = 0.9, exponent = 0.8) {
+  uptake_walk_school_baseline(distance, upper_limit, exponent)
+}
+distance = seq(0, 5, by = 0.1)
+uptake_df = data.frame(
+  distance = distance
+)
+p_baseline_school = uptake_walk_school_baseline(distance)
+p_goactive_school = uptake_walk_school_goactive(distance)
+uptake_df = rbind(
+  cbind(uptake_df, scenario = "Baseline", pwalk = p_baseline_school),
+  cbind(uptake_df, scenario = "Go Active", pwalk = p_goactive_school)
+)
+ggplot(uptake_df) +
+  geom_line(aes(
+    distance,
+    pwalk,
+    linetype = scenario
+  )) +
+  scale_x_continuous("Distance (km)") +
+  scale_y_continuous("Proportion of trips made by walking", labels = scales::percent)
+```
+
+```{r decay-cycle, fig.cap="Uptake functions for cycling to school, by distance and hilliness, in baseline and Go Dutch scenarios.", fig.height=3, out.width="50%", fig.show="hold"}
+
+library(pct)
+max_distance = 20
+distances = 1:max_distance
+max_hilliness = 5
+hilliness = 0:max_hilliness
+uptake_df = data.frame(
+  distances = rep(distances, times = max_hilliness + 1),
+  hilliness = rep(hilliness, each = max_distance)
+)
+p_godutch_school = uptake_pct_godutch_school2(
+    distance = uptake_df$distances,
+    gradient = uptake_df$hilliness
+    )
+p_godutch = uptake_pct_govtarget_school2(
+    distance = uptake_df$distances,
+    gradient = uptake_df$hilliness
+    )
+uptake_df = rbind(
+  cbind(uptake_df, scenario = "Go Dutch", pcycle = p_godutch_school),
+  cbind(uptake_df, scenario = "Baseline", pcycle = p_godutch)
+)
+ggplot(uptake_df) +
+  geom_line(aes(
+    distances,
+    pcycle,
+    linetype = scenario,
+    colour = as.character(hilliness)
+  )) +
+  scale_x_continuous("Distance (km)") +
+  scale_y_continuous("Proportion of trips made by cycling", labels = scales::percent) +
+  scale_color_discrete("Gradient (%)")
+
+distances = c(3, 6, 10)
+hilliness = seq(0, 10, by = 0.2)
+uptake_df = 
+  data.frame(
+    expand.grid(distances, hilliness)
+  )
+names(uptake_df) = c("distances", "hilliness")
+p_godutch_school = uptake_pct_godutch_school2(
+    distance = uptake_df$distances,
+    gradient = uptake_df$hilliness
+    )
+p_godutch = uptake_pct_govtarget_school2(
+    distance = uptake_df$distances,
+    gradient = uptake_df$hilliness
+    )
+uptake_df = rbind(
+  cbind(uptake_df, scenario = "Go Dutch", pcycle = p_godutch_school),
+  cbind(uptake_df, scenario = "Baseline", pcycle = p_godutch)
+)
+ggplot(uptake_df) +
+  geom_line(aes(
+    hilliness,
+    pcycle,
+    linetype = scenario,
+    colour = formatC(distances, flag = "0", width = 2)
+  )) +
+  scale_x_continuous("Gradient (%)") +
+  scale_y_continuous("Proportion of trips made by cycling", labels = scales::percent) +
+  scale_color_discrete("Distance (km)")
+```
+
+The figures above show that the proportion of trips made by walking and cycling for each OD pair depends on a function of distance for walking, and a function of the trip distance and hilliness for cycling.
+It is important to apply these function to the *route* distance and hilliness rather than the Euclidean distance, as the actual distance travelled can be much longer than the Euclidean distance, especially in areas with complex road networks or hilly terrain.
+After calculating the proportion of trips walked or cycled per route, the proportion is multiplied by the estimated *total* number of trips by *all modes* to estimate the number of trips that could be walked or cycled along each route.
+The route-level counts are then aggregated in a process that can be referred to as "travel flow aggregation" [@morgan_travel_2020].
 
 # Case study: York
 
@@ -305,6 +409,7 @@ Figure below, which is generated with the reproducible code below:
 
 ```{r rnet-ggplot, fig.cap="Routes with the highest number of trips under the Government Target scenario.", echo=TRUE}
 library(ggplot2)
+theme_set(theme_void())
 ggplot(rnet_godutch_top) +
   geom_sf(aes(color = lts, linewidth = count)) +
   scale_colour_viridis_d(direction = -1) +
