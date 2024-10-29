@@ -13,6 +13,6 @@
     "destinations_path": "destinations.geojson"
   },
   "cost": "Distance",
-  "uptake": "GoDutchPCT",
+  "uptake": "GoDutchSchool",
   "lts": "BikeOttawa"
 }
