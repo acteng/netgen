@@ -3,7 +3,7 @@ pkgdown: 2.1.1
 pkgdown_sha: ~
 articles:
   schoolroutes: schoolroutes.html
-last_built: 2024-10-29T11:12Z
+last_built: 2024-10-29T11:20Z
 urls:
   reference: https://acteng.github.io/netgen/reference
   article: https://acteng.github.io/netgen/articles
