@@ -103,7 +103,7 @@ theme_set(theme_void())
 
 # Data and methods
 
-The approach outlined in this paper use the following datasets:
+The approach outlined in this paper uses the following datasets:
 
 - Origin-destination (OD) data on travel to school from the Department for Education (DfE) from Lower Super Output Area (LSOA) to schools (non-sensitive simulated OD datasets are used in the open access version of this paper).
 - Data on state-run schools, including their locations, type (primarily primary, secondary), and other characteristics, from the Get Information about Schools (GIAS) service.
