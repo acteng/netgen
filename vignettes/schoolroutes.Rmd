@@ -219,6 +219,21 @@ ggplot(uptake_df) +
   scale_color_discrete("Distance (km)")
 ```
 
+```{r, include=FALSE}
+# Spot checks:
+# See https://github.com/ITSLeeds/pct/blob/e630464efeaef539b18647b10745b863c9cd9948/R/uptake.R
+#' # Take an origin destination (OD) pair between an LSOA centroid and a
+#' # secondary school. In this OD pair, 30 secondary school children travel, of
+#' # whom 3 currently cycle. The fastest route distance is 3.51 km and the
+#' # gradient is 1.11%. The
+#' # gradient as centred on Dutch hilliness levels is 1.11 – 0.63 = 0.48%.
+#' # The observed number of cyclists is 2. ... Modelled baseline= 30 * .0558 = 1.8.
+#' uptake_pct_govtarget_school2(3.51, 1.11)
+#' [1] 0.05584607
+#' #' # pcycle = exp(1.953)/(1 + exp(1.953)) = .8758, or 87.58%.
+#' uptake_pct_godutch_school2(3.51, 1.11)
+```
+
 The figures above show that the proportion of trips made by walking and cycling for each OD pair depends on a function of distance for walking, and a function of the trip distance and hilliness for cycling.
 It is important to apply these function to the *route* distance and hilliness rather than the Euclidean distance, as the actual distance travelled can be much longer than the Euclidean distance, especially in areas with complex road networks or hilly terrain.
 After calculating the proportion of trips walked or cycled per route, the proportion is multiplied by the estimated *total* number of trips by *all modes* to estimate the number of trips that could be walked or cycled along each route.
