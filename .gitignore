@@ -69,3 +69,4 @@ output/*.pmtiles
 README_files/execute-results/
 inst/doc
 vignettes/output/
+*.pmtiles
