@@ -115,13 +115,12 @@ For walking, the proportion of trips that can be walked is modelled as a simple 
 For cycling, the proportion of trips that can be cycled is based on the Go Dutch scenario in the Propensity to Cycle Tool (PCT) project [@goodman_scenarios_2019].
 These uptake functions are illustrated in the figures below.
 
-```{r, fig.cap="Uptake functions for walking and cycling to school, based on distance and the Go Dutch scenario.", fig.height=3}
+```{r decay-walk, fig.cap="Uptake functions for walking to school, by distance, in baseline and Go Active scenarios.", fig.height=3, out.width="50%", fig.show="hold"}
 
 ```
 
-The uptake levels produced by Go Dutch scenarios, for commuting and travel to school are illustrated in the graph below:
+```{r decay-cycle, fig.cap="Uptake functions for cycling to school, by distance and hilliness, in baseline and Go Dutch scenarios.", fig.height=3, out.width="50%", fig.show="hold"}
 
-```{r decay}
 library(pct)
 max_distance = 20
 distances = 1:max_distance
@@ -135,13 +134,13 @@ p_godutch_school = uptake_pct_godutch_school2(
     distance = uptake_df$distances,
     gradient = uptake_df$hilliness
     )
-p_godutch = uptake_pct_godutch_2020(
+p_godutch = uptake_pct_govtarget_school2(
     distance = uptake_df$distances,
     gradient = uptake_df$hilliness
     )
 uptake_df = rbind(
-  cbind(uptake_df, scenario = "Go Dutch (school)", pcycle = p_godutch_school),
-  cbind(uptake_df, scenario = "Go Dutch (commute)", pcycle = p_godutch)
+  cbind(uptake_df, scenario = "Go Dutch", pcycle = p_godutch_school),
+  cbind(uptake_df, scenario = "Baseline", pcycle = p_godutch)
 )
 library(ggplot2)
 ggplot(uptake_df) +
@@ -154,12 +153,7 @@ ggplot(uptake_df) +
   scale_x_continuous("Distance (km)") +
   scale_y_continuous("Proportion of trips made by cycling", labels = scales::percent) +
   scale_color_discrete("Gradient (%)")
-```
 
-The proportion of trips made by cycling along each origin-destination (OD) pair therefore depends on the trip distance and hilliness.
-The equivalent plot for hilliness is as follows:
-
-```{r decayhills}
 distances = c(3, 6, 10)
 hilliness = seq(0, 10, by = 0.2)
 uptake_df = 
@@ -171,13 +165,13 @@ p_godutch_school = uptake_pct_godutch_school2(
     distance = uptake_df$distances,
     gradient = uptake_df$hilliness
     )
-p_godutch = uptake_pct_godutch_2020(
+p_godutch = uptake_pct_govtarget_school2(
     distance = uptake_df$distances,
     gradient = uptake_df$hilliness
     )
 uptake_df = rbind(
-  cbind(uptake_df, scenario = "Go Dutch (school)", pcycle = p_godutch_school),
-  cbind(uptake_df, scenario = "Go Dutch (commute)", pcycle = p_godutch)
+  cbind(uptake_df, scenario = "Go Dutch", pcycle = p_godutch_school),
+  cbind(uptake_df, scenario = "Baseline", pcycle = p_godutch)
 )
 ggplot(uptake_df) +
   geom_line(aes(
@@ -189,6 +183,16 @@ ggplot(uptake_df) +
   scale_x_continuous("Gradient (%)") +
   scale_y_continuous("Proportion of trips made by cycling", labels = scales::percent) +
   scale_color_discrete("Distance (km)")
+```
+
+
+```{r decay}
+```
+
+The proportion of trips made by cycling along each origin-destination (OD) pair therefore depends on the trip distance and hilliness.
+The equivalent plot for hilliness is as follows:
+
+```{r decayhills}
 ```
 
 # Case study: York
