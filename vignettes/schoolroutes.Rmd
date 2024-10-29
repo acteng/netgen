@@ -11,6 +11,14 @@ bibliography: references.bib
 author:
    - name: Robin Lovelace
      affiliation: Active Travel England and University of Leeds, UK
+   - name: Sam Holder
+     affiliation: Active Travel England
+   - name: Emma Vinter
+     affiliation: Active Travel England
+   - name: Chris Conlan
+     affiliation: Active Travel England and The Alan Turing Institute
+   - name: Dustin Carlino
+     affiliation: Active Travel England and The Alan Turing Institute
 ---
 
 ```{r, include = FALSE}
