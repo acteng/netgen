@@ -20,7 +20,9 @@ knitr::opts_chunk$set(
   warning = FALSE,
   collapse = TRUE,
   comment = "#>",
-  fig.width = 6
+  fig.width = 6,
+  # Figures centre:
+  fig.align = "center"
 )
 ```
 
@@ -95,7 +97,6 @@ t11_most_least %>%
   scale_x_continuous(breaks = seq(from = 2006, to = 2020, by = 2)) +
   facet_grid(~ `IMD decile`)
 # theme void:
-theme_set(theme_void())
 ```
 
 # Data and methods
@@ -116,7 +117,7 @@ For walking, the proportion of trips that can be walked is modelled as a simple 
 For cycling, the proportion of trips that can be cycled is based on the Go Dutch scenario in the Propensity to Cycle Tool (PCT) project [@goodman_scenarios_2019].
 These uptake functions are illustrated in the figures below.
 
-```{r decay-walk, fig.cap="Uptake functions for walking to school, by distance, in baseline and Go Active scenarios.", fig.height=3, out.width="50%", fig.show="hold"}
+```{r decay-walk, fig.cap="Uptake functions for walking to school, by distance, in baseline and Go Active scenarios.", fig.height=3, out.width="75%", fig.show="hold"}
 uptake_walk_school_baseline = function(distance, upper_limit = 0.7, exponent = 1.3) {
   p = exp(-distance * exponent)
   p[p > upper_limit] = upper_limit
@@ -413,6 +414,7 @@ Figure below, which is generated with the reproducible code below:
 
 ```{r rnet-ggplot, fig.cap="Routes with the highest number of trips under the Government Target scenario.", echo=TRUE}
 library(ggplot2)
+theme_set(theme_void())
 ggplot(rnet_godutch_top) +
   geom_sf(aes(color = lts, linewidth = count)) +
   scale_colour_viridis_d(direction = -1) +
