@@ -509,7 +509,7 @@ We'll do some initial checks by finding by comparing the total number of trips a
 
 ```{r}
 od_geo$length = sf::st_length(od_geo) |> as.numeric()
-sum(od_geo$trips_modelled) # 26k
+# sum(od_geo$trips_modelled) # 26k
 distance_euclidean_total = sum(od_geo$length * od_geo$trips_modelled)
 # distance_euclidean_total # 49,000 km
 ```
@@ -521,7 +521,7 @@ wm = weighted.mean(od_geo$length, od_geo$trips_modelled) # 1.9 km
 ```
 
 
-The weighted mean distance travelled is `r round(wm / 1000, 1)` km.
+The weighted mean distance travelled is `r round(wm / 1000, 1) |> format(big.mark = ",")` km.
 
 ```{r}
 total_euclidean_cycled = distance_euclidean_total * 1.3 * 0.5
