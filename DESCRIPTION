@@ -9,7 +9,9 @@ Authors@R: c(
     person("Emma", "Vinter", role = "aut",
            comment = c(affiliation = "Active Travel England")),
     person("Chris", "Conlan", role = "aut",
-           comment = c(affiliation = "Active Travel England and the Alan Turing Institute")),
+           comment = c(affiliation = "Active Travel England and The Alan Turing Institute")),
+    person("Dustin", "Carlino", role = "aut",
+           comment = c(affiliation = "Active Travel England and The Alan Turing Institute")),
     person("Active Travel England", role = "fnd")
   )
 License: MIT + file LICENSE
