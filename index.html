@@ -54,7 +54,7 @@
   <main id="main" class="col-md-9"><div class="section level1">
 <div class="page-header"><h1 id="generate-origin-destination-data-for-route-network-generation">Generate origin-destination data for route network generation<a class="anchor" aria-label="anchor" href="#generate-origin-destination-data-for-route-network-generation"></a>
 </h1></div>
-<p>The input of the network generation approaches demonstrated in this repo is origin-destionation data. There are many sources of OD data, see <a href="odgen.qmd">odgen</a> for a way to generate synthetic OD data that we’ll use in the reproducible code below.</p>
+<p>The input of the network generation approaches demonstrated in this repo is origin-destionation data. There are many sources of OD data, see the documentation in the <a href="data-raw/odgen.qmd">odgen.qmd</a> for a way to generate synthetic OD data that we’ll use in the reproducible code below.</p>
 </div>
 <div class="section level1">
 <h1 id="setup">Setup<a class="anchor" aria-label="anchor" href="#setup"></a>
@@ -160,7 +160,7 @@
 <span><span class="fu">od2net</span><span class="fu">::</span><span class="fu">make_osm</span><span class="op">(</span>zones_file <span class="op">=</span> <span class="st">"input/zones_york.geojson"</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb13"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a>Reading layer <span class="st">`</span><span class="at">zones' from data source </span></span>
 <span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a><span class="at">  </span><span class="st">`</span><span class="sc">/</span>home<span class="sc">/</span>robin<span class="sc">/</span>github<span class="sc">/</span>acteng<span class="sc">/</span>netgen<span class="sc">/</span>input<span class="sc">/</span>zones.geojson<span class="st">' using driver `GeoJSON'</span></span>
-<span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a>Simple feature collection with <span class="dv">121</span> features and <span class="dv">1</span> field</span>
+<span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a>Simple feature collection with <span class="dv">121</span> features and <span class="dv">13</span> fields</span>
 <span id="cb13-4"><a href="#cb13-4" tabindex="-1"></a>Geometry type<span class="sc">:</span> MULTIPOLYGON</span>
 <span id="cb13-5"><a href="#cb13-5" tabindex="-1"></a>Dimension<span class="sc">:</span>     XY</span>
 <span id="cb13-6"><a href="#cb13-6" tabindex="-1"></a>Bounding box<span class="sc">:</span>  xmin<span class="sc">:</span> <span class="sc">-</span><span class="fl">1.2237</span> ymin<span class="sc">:</span> <span class="fl">53.87459</span> xmax<span class="sc">:</span> <span class="sc">-</span><span class="fl">0.9196789</span> ymax<span class="sc">:</span> <span class="fl">54.05661</span></span>
@@ -179,28 +179,51 @@
 <span>  <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_geometry.html" class="external-link">st_drop_geometry</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/transmute.html" class="external-link">transmute</a></span><span class="op">(</span>from <span class="op">=</span> <span class="va">O</span>, to <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">D</span><span class="op">)</span>, count <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">trips_modelled</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu">readr</span><span class="fu">::</span><span class="fu"><a href="https://readr.tidyverse.org/reference/write_delim.html" class="external-link">write_csv</a></span><span class="op">(</span><span class="va">od</span>, <span class="st">"input/od.csv"</span>, quote <span class="op">=</span> <span class="st">"all"</span><span class="op">)</span></span></code></pre></div>
+<p>To install the <code>od2net</code> package, run the following:</p>
+<pre class="shell"><code>cargo install --locked --git https://github.com/Urban-Analytics-Technology-Platform/od2net</code></pre>
 <p>If you are running the code in a container, you should already have the <code>od2net</code> package installed. Check this with the following:</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/system.html" class="external-link">system</a></span><span class="op">(</span><span class="st">"od2net --version"</span><span class="op">)</span></span></code></pre></div>
 <!-- If you don't have it, you can copy the path /root/.cargo/bin/od2net to /usr/local/bin/ as follows: -->
+<p>The config file is as follows:</p>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/readLines.html" class="external-link">readLines</a></span><span class="op">(</span><span class="st">"config.json"</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span>sep <span class="op">=</span> <span class="st">"\n"</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" tabindex="-1"></a>{</span>
+<span id="cb18-2"><a href="#cb18-2" tabindex="-1"></a>  <span class="st">"requests"</span><span class="sc">:</span> {</span>
+<span id="cb18-3"><a href="#cb18-3" tabindex="-1"></a>    <span class="st">"description"</span><span class="sc">:</span> <span class="st">"Test data for SchoolRoutes project."</span>,</span>
+<span id="cb18-4"><a href="#cb18-4" tabindex="-1"></a>    <span class="st">"pattern"</span><span class="sc">:</span> {</span>
+<span id="cb18-5"><a href="#cb18-5" tabindex="-1"></a>      <span class="st">"ZoneToPoint"</span><span class="sc">:</span> {</span>
+<span id="cb18-6"><a href="#cb18-6" tabindex="-1"></a>        <span class="st">"zones_path"</span><span class="sc">:</span> <span class="st">"zones.geojson"</span>,</span>
+<span id="cb18-7"><a href="#cb18-7" tabindex="-1"></a>        <span class="st">"destinations_path"</span><span class="sc">:</span> <span class="st">"destinations.geojson"</span>,</span>
+<span id="cb18-8"><a href="#cb18-8" tabindex="-1"></a>        <span class="st">"csv_path"</span><span class="sc">:</span> <span class="st">"od.csv"</span>,</span>
+<span id="cb18-9"><a href="#cb18-9" tabindex="-1"></a>         <span class="st">"origin_zone_centroid_fallback"</span><span class="sc">:</span> false</span>
+<span id="cb18-10"><a href="#cb18-10" tabindex="-1"></a>      }</span>
+<span id="cb18-11"><a href="#cb18-11" tabindex="-1"></a>    },</span>
+<span id="cb18-12"><a href="#cb18-12" tabindex="-1"></a>    <span class="st">"origins_path"</span><span class="sc">:</span> <span class="st">"buildings.geojson"</span>,</span>
+<span id="cb18-13"><a href="#cb18-13" tabindex="-1"></a>    <span class="st">"destinations_path"</span><span class="sc">:</span> <span class="st">"destinations.geojson"</span></span>
+<span id="cb18-14"><a href="#cb18-14" tabindex="-1"></a>  },</span>
+<span id="cb18-15"><a href="#cb18-15" tabindex="-1"></a>  <span class="st">"cost"</span><span class="sc">:</span> <span class="st">"Distance"</span>,</span>
+<span id="cb18-16"><a href="#cb18-16" tabindex="-1"></a>  <span class="st">"uptake"</span><span class="sc">:</span> <span class="st">"Identity"</span>,</span>
+<span id="cb18-17"><a href="#cb18-17" tabindex="-1"></a>  <span class="st">"lts"</span><span class="sc">:</span> <span class="st">"BikeOttawa"</span></span>
+<span id="cb18-18"><a href="#cb18-18" tabindex="-1"></a>}</span></code></pre></div>
 <p>Then run the following code to generate the network:</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/system.html" class="external-link">system</a></span><span class="op">(</span><span class="st">"od2net config.json --rng-seed 42"</span><span class="op">)</span></span></code></pre></div>
 <p>See below how to run it with Docker if you’re not running these commands in the .devcontainer and you don’t have od2net installed.</p>
 <details><p>Run the tool with Docker as follows:</p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a><span class="co"># On Linux:</span></span>
-<span id="cb17-2"><a href="#cb17-2" tabindex="-1"></a><span class="fu">sudo</span> docker run <span class="at">-v</span> <span class="va">$(</span><span class="bu">pwd</span><span class="va">)</span>:/app ghcr.io/urban-analytics-technology-platform/od2net:main /app/config.json  <span class="at">--rng-seed</span> 42</span>
-<span id="cb17-3"><a href="#cb17-3" tabindex="-1"></a><span class="co"># On Windows:</span></span>
-<span id="cb17-4"><a href="#cb17-4" tabindex="-1"></a><span class="ex">docker</span> run <span class="at">-v</span> %cd%:/app ghcr.io/urban-analytics-technology-platform/od2net:main /app/config.json  <span class="at">--rng-seed</span> 42</span></code></pre></div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb20-1"><a href="#cb20-1" tabindex="-1"></a><span class="co"># On Linux:</span></span>
+<span id="cb20-2"><a href="#cb20-2" tabindex="-1"></a><span class="fu">sudo</span> docker run <span class="at">-v</span> <span class="va">$(</span><span class="bu">pwd</span><span class="va">)</span>:/app ghcr.io/urban-analytics-technology-platform/od2net:main /app/config.json  <span class="at">--rng-seed</span> 42</span>
+<span id="cb20-3"><a href="#cb20-3" tabindex="-1"></a><span class="co"># On Windows:</span></span>
+<span id="cb20-4"><a href="#cb20-4" tabindex="-1"></a><span class="ex">docker</span> run <span class="at">-v</span> %cd%:/app ghcr.io/urban-analytics-technology-platform/od2net:main /app/config.json  <span class="at">--rng-seed</span> 42</span></code></pre></div>
 </details><p>After that you should see the following in the output folder:</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">fs</span><span class="fu">::</span><span class="fu"><a href="https://fs.r-lib.org/reference/dir_tree.html" class="external-link">dir_tree</a></span><span class="op">(</span><span class="st">"output"</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb19"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" tabindex="-1"></a>output</span>
-<span id="cb19-2"><a href="#cb19-2" tabindex="-1"></a>├── counts.csv</span>
-<span id="cb19-3"><a href="#cb19-3" tabindex="-1"></a>├── failed_requests.geojson</span>
-<span id="cb19-4"><a href="#cb19-4" tabindex="-1"></a>├── output.geojson</span>
-<span id="cb19-5"><a href="#cb19-5" tabindex="-1"></a>├── rnet.pmtiles</span>
-<span id="cb19-6"><a href="#cb19-6" tabindex="-1"></a>└── rnet_output_osrm_overline.geojson</span></code></pre></div>
+<div class="sourceCode" id="cb22"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" tabindex="-1"></a>output</span>
+<span id="cb22-2"><a href="#cb22-2" tabindex="-1"></a>├── counts.csv</span>
+<span id="cb22-3"><a href="#cb22-3" tabindex="-1"></a>├── failed_requests.geojson</span>
+<span id="cb22-4"><a href="#cb22-4" tabindex="-1"></a>├── output.geojson</span>
+<span id="cb22-5"><a href="#cb22-5" tabindex="-1"></a>├── rnet.pmtiles</span>
+<span id="cb22-6"><a href="#cb22-6" tabindex="-1"></a>└── rnet_output_osrm_overline.geojson</span></code></pre></div>
 <p>From that point you can visualise the pmtiles in the website at <a href="https://od2net.org" class="external-link">od2net.org</a> or other front-end application, as shown below.</p>
 <div class="section level2">
 <h2 id="minimal-od2net-example">Minimal od2net example<a class="anchor" aria-label="anchor" href="#minimal-od2net-example"></a>
@@ -226,16 +249,16 @@
 <div class="section level2">
 <h2 id="osrm-basic">OSRM: basic<a class="anchor" aria-label="anchor" href="#osrm-basic"></a>
 </h2>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">od_geo_top_100</span> <span class="op">=</span> <span class="va">od_geo</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/slice.html" class="external-link">slice_max</a></span><span class="op">(</span><span class="va">trips_modelled</span>, n <span class="op">=</span> <span class="fl">100</span><span class="op">)</span> </span></code></pre></div>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">routes_osrm_minimal</span> <span class="op">=</span> <span class="fu">stplanr</span><span class="fu">::</span><span class="fu">route</span><span class="op">(</span></span>
 <span>  l <span class="op">=</span> <span class="va">od_geo_top_100</span>,</span>
 <span>  route_fun <span class="op">=</span> <span class="fu">stplanr</span><span class="fu">::</span><span class="va">route_osrm</span>,</span>
 <span>  osrm.profile <span class="op">=</span> <span class="st">"foot"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">routes_osrm_minimal</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span>alpha <span class="op">=</span> <span class="fl">0.3</span>, size <span class="op">=</span> <span class="fl">9</span><span class="op">)</span></span></code></pre></div>
@@ -245,7 +268,7 @@
 <h2 id="locally-hosted-osrm">Locally hosted OSRM<a class="anchor" aria-label="anchor" href="#locally-hosted-osrm"></a>
 </h2>
 <p>We can spin-up a local OSRM server to calculate routes as <a href="https://github.com/Project-OSRM/osrm-backend#using-docker" class="external-link">follows</a>:</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">location</span> <span class="op">=</span> <span class="fu">osmextract</span><span class="fu">::</span><span class="fu"><a href="https://docs.ropensci.org/osmextract/reference/oe_match.html" class="external-link">oe_match</a></span><span class="op">(</span></span>
 <span>  <span class="va">od_geo_top_100</span> <span class="op">|&gt;</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/geos_combine.html" class="external-link">st_union</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
@@ -255,33 +278,33 @@
 <span>    download_directory <span class="op">=</span> <span class="st">"."</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>Then with the system shell:</p>
-<div class="sourceCode" id="cb24"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb24-1"><a href="#cb24-1" tabindex="-1"></a><span class="ex">docker</span> run <span class="at">-t</span> <span class="at">-v</span> <span class="st">"</span><span class="va">${PWD}</span><span class="st">:/data"</span> ghcr.io/project-osrm/osrm-backend osrm-extract <span class="at">-p</span> /opt/car.lua /data/geofabrik_osm.pbf <span class="kw">||</span> <span class="bu">echo</span> <span class="st">"osrm-extract failed"</span></span>
-<span id="cb24-2"><a href="#cb24-2" tabindex="-1"></a><span class="ex">docker</span> run <span class="at">-t</span> <span class="at">-v</span> <span class="st">"</span><span class="va">${PWD}</span><span class="st">:/data"</span> ghcr.io/project-osrm/osrm-backend osrm-extract <span class="at">-p</span> /opt/car.lua /data/geofrabik_osm.osm.pbf <span class="kw">||</span> <span class="bu">echo</span> <span class="st">"osrm-extract failed"</span></span></code></pre></div>
+<div class="sourceCode" id="cb27"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb27-1"><a href="#cb27-1" tabindex="-1"></a><span class="ex">docker</span> run <span class="at">-t</span> <span class="at">-v</span> <span class="st">"</span><span class="va">${PWD}</span><span class="st">:/data"</span> ghcr.io/project-osrm/osrm-backend osrm-extract <span class="at">-p</span> /opt/car.lua /data/geofabrik_osm.pbf <span class="kw">||</span> <span class="bu">echo</span> <span class="st">"osrm-extract failed"</span></span>
+<span id="cb27-2"><a href="#cb27-2" tabindex="-1"></a><span class="ex">docker</span> run <span class="at">-t</span> <span class="at">-v</span> <span class="st">"</span><span class="va">${PWD}</span><span class="st">:/data"</span> ghcr.io/project-osrm/osrm-backend osrm-extract <span class="at">-p</span> /opt/car.lua /data/geofrabik_osm.osm.pbf <span class="kw">||</span> <span class="bu">echo</span> <span class="st">"osrm-extract failed"</span></span></code></pre></div>
 <p>That should generate something like:</p>
-<div class="sourceCode" id="cb25"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" tabindex="-1"></a>[<span class="dv">2024-08-27</span>T15<span class="sc">:</span><span class="dv">00</span><span class="sc">:</span><span class="fl">31.786775132</span>] [info] Expansion<span class="sc">:</span> <span class="dv">766813</span> nodes<span class="sc">/</span>sec and <span class="dv">382310</span> edges<span class="sc">/</span>sec</span>
-<span id="cb25-2"><a href="#cb25-2" tabindex="-1"></a>[<span class="dv">2024-08-27</span>T15<span class="sc">:</span><span class="dv">00</span><span class="sc">:</span><span class="fl">31.786776903</span>] [info] To prepare the data <span class="cf">for</span> routing, run<span class="sc">:</span> .<span class="sc">/</span>osrm<span class="sc">-</span>contract <span class="st">"/data/geofabrik_osm"</span></span>
-<span id="cb25-3"><a href="#cb25-3" tabindex="-1"></a>[<span class="dv">2024-08-27</span>T15<span class="sc">:</span><span class="dv">00</span><span class="sc">:</span><span class="fl">31.836550204</span>] [info] RAM<span class="sc">:</span> peak bytes used<span class="sc">:</span> <span class="dv">532934656</span></span></code></pre></div>
+<div class="sourceCode" id="cb28"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" tabindex="-1"></a>[<span class="dv">2024-08-27</span>T15<span class="sc">:</span><span class="dv">00</span><span class="sc">:</span><span class="fl">31.786775132</span>] [info] Expansion<span class="sc">:</span> <span class="dv">766813</span> nodes<span class="sc">/</span>sec and <span class="dv">382310</span> edges<span class="sc">/</span>sec</span>
+<span id="cb28-2"><a href="#cb28-2" tabindex="-1"></a>[<span class="dv">2024-08-27</span>T15<span class="sc">:</span><span class="dv">00</span><span class="sc">:</span><span class="fl">31.786776903</span>] [info] To prepare the data <span class="cf">for</span> routing, run<span class="sc">:</span> .<span class="sc">/</span>osrm<span class="sc">-</span>contract <span class="st">"/data/geofabrik_osm"</span></span>
+<span id="cb28-3"><a href="#cb28-3" tabindex="-1"></a>[<span class="dv">2024-08-27</span>T15<span class="sc">:</span><span class="dv">00</span><span class="sc">:</span><span class="fl">31.836550204</span>] [info] RAM<span class="sc">:</span> peak bytes used<span class="sc">:</span> <span class="dv">532934656</span></span></code></pre></div>
 <p>Note the process used 532934656 bytes (532.9 MB) of RAM.</p>
 <p>Then:</p>
-<div class="sourceCode" id="cb26"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb26-1"><a href="#cb26-1" tabindex="-1"></a><span class="ex">docker</span> run <span class="at">-t</span> <span class="at">-v</span> <span class="st">"</span><span class="va">${PWD}</span><span class="st">:/data"</span> ghcr.io/project-osrm/osrm-backend osrm-partition /data/geofabrik_osm.osrm <span class="kw">||</span> <span class="bu">echo</span> <span class="st">"osrm-partition failed"</span></span>
-<span id="cb26-2"><a href="#cb26-2" tabindex="-1"></a><span class="ex">docker</span> run <span class="at">-t</span> <span class="at">-v</span> <span class="st">"</span><span class="va">${PWD}</span><span class="st">:/data"</span> ghcr.io/project-osrm/osrm-backend osrm-customize /data/geofabrik_osm.osrm <span class="kw">||</span> <span class="bu">echo</span> <span class="st">"osrm-customize failed"</span></span>
-<span id="cb26-3"><a href="#cb26-3" tabindex="-1"></a><span class="ex">docker</span> run <span class="at">-t</span> <span class="at">-i</span> <span class="at">-p</span> 5000:5000 <span class="at">-v</span> <span class="st">"</span><span class="va">${PWD}</span><span class="st">:/data"</span> ghcr.io/project-osrm/osrm-backend osrm-routed <span class="at">--algorithm</span> mld /data/geofabrik_osm</span></code></pre></div>
+<div class="sourceCode" id="cb29"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb29-1"><a href="#cb29-1" tabindex="-1"></a><span class="ex">docker</span> run <span class="at">-t</span> <span class="at">-v</span> <span class="st">"</span><span class="va">${PWD}</span><span class="st">:/data"</span> ghcr.io/project-osrm/osrm-backend osrm-partition /data/geofabrik_osm.osrm <span class="kw">||</span> <span class="bu">echo</span> <span class="st">"osrm-partition failed"</span></span>
+<span id="cb29-2"><a href="#cb29-2" tabindex="-1"></a><span class="ex">docker</span> run <span class="at">-t</span> <span class="at">-v</span> <span class="st">"</span><span class="va">${PWD}</span><span class="st">:/data"</span> ghcr.io/project-osrm/osrm-backend osrm-customize /data/geofabrik_osm.osrm <span class="kw">||</span> <span class="bu">echo</span> <span class="st">"osrm-customize failed"</span></span>
+<span id="cb29-3"><a href="#cb29-3" tabindex="-1"></a><span class="ex">docker</span> run <span class="at">-t</span> <span class="at">-i</span> <span class="at">-p</span> 5000:5000 <span class="at">-v</span> <span class="st">"</span><span class="va">${PWD}</span><span class="st">:/data"</span> ghcr.io/project-osrm/osrm-backend osrm-routed <span class="at">--algorithm</span> mld /data/geofabrik_osm</span></code></pre></div>
 <p>Check it is alive as follows:</p>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/system.html" class="external-link">system</a></span><span class="op">(</span><span class="st">'curl "http://127.0.0.1:5000/route/v1/driving/13.388860,52.517037;13.385983,52.496891?steps=true"'</span><span class="op">)</span></span></code></pre></div>
 <p>Now we can run all the routes:</p>
-<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">routes_osrm_2</span> <span class="op">=</span> <span class="fu">stplanr</span><span class="fu">::</span><span class="fu">route</span><span class="op">(</span></span>
 <span>  l <span class="op">=</span> <span class="va">od_geo</span>,</span>
 <span>  route_fun <span class="op">=</span> <span class="fu">stplanr</span><span class="fu">::</span><span class="va">route_osrm</span>,</span>
 <span>  osrm.profile <span class="op">=</span> <span class="st">"foot"</span>,</span>
 <span>  osrm.server <span class="op">=</span> <span class="st">"http://127.0.0.1:5000/"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_write.html" class="external-link">write_sf</a></span><span class="op">(</span><span class="va">routes_osrm_2</span>, <span class="st">"routes_osrm_2.geojson"</span>, delete_dsn <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> </span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/system.html" class="external-link">system</a></span><span class="op">(</span><span class="st">"gh release upload v0.1.0 routes_osrm_2.geojson"</span><span class="op">)</span></span></code></pre></div>
 <p>Let’s visualise the routes:</p>
-<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">routes_osrm_2</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span>alpha <span class="op">=</span> <span class="fl">0.3</span>, size <span class="op">=</span> <span class="fl">9</span><span class="op">)</span></span></code></pre></div>
@@ -295,7 +318,7 @@
 <h2 id="overline">Overline<a class="anchor" aria-label="anchor" href="#overline"></a>
 </h2>
 <p>The <code>overline()</code> function in the R package stplanr is one way to to generate route networks:</p>
-<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">routes_osrm_2</span><span class="op">)</span></span>
 <span><span class="va">rnet</span> <span class="op">=</span> <span class="fu">stplanr</span><span class="fu">::</span><span class="fu">overline</span><span class="op">(</span><span class="va">routes_osrm_2</span>, attrib <span class="op">=</span> <span class="st">"trips_modelled"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">rnet</span><span class="op">)</span></span></code></pre></div>
