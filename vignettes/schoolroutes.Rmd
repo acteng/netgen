@@ -465,8 +465,15 @@ mapview::mapview(rnet_godutch_top, zcol = "count", linewidth = rnet_godutch$coun
 library(tmap)
 tmap_mode("view")
 m = tm_shape(rnet_godutch_top) +
+  # tmap v3 style:
+  # tm_lines(
+  #   col = "lts",
+  #   # col.scale = tm_scale(values = "viridis", breaks = c(0, 10, 20, 50, 200)*10),
+  #   lwd = "count"
+  #   ) +
+  # tm_scale(9) # fails
   # tmap v2 style:
-  tm_lines(col = "lts", palette = "-viridis", breaks = c(0, 10, 20, 50, 200)*10, lwd = "count", scale = 9)
+  tm_lines(col = "lts", palette = "-viridis", breaks = c(0, 10, 20, 50, 200)*10, lwd = "count", scale = 9) 
 # m = qtm(rnet_godutch_top)
 ```
 
@@ -505,9 +512,15 @@ rnet_godutch_top_5 = rnet_godutch_lts4_named |>
 m = tm_shape(rnet_godutch_top_5) +
   tm_lines(
     col = "Total (km)",
-    col.scale = tm_scale(values = "viridis", breaks = c(0, 10, 20, 50, 200)),
-    lwd = 9
+    palette = "-viridis",
+    lwd = 9,
+    scale = 9
   )
+  # tm_lines(
+  #   col = "Total (km)",
+  #   col.scale = tm_scale(values = "viridis", breaks = c(0, 10, 20, 50, 200)),
+  #   lwd = 9
+  # )
 m
 ```
 
