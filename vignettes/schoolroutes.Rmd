@@ -1,12 +1,12 @@
 ---
 title: "SchoolRoutes: An approach for data-driven investment in safe routes to school"
-output:
-  rmarkdown::html_vignette:
-    number_sections: true
-vignette: >
-  %\VignetteIndexEntry{SchoolRoutes: An approach for data-driven investment in safe routes to school}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
+# output:
+#   rmarkdown::html_vignette:
+#     number_sections: true
+# vignette: >
+#   %\VignetteIndexEntry{SchoolRoutes: An approach for data-driven investment in safe routes to school}
+#   %\VignetteEngine{knitr::rmarkdown}
+#   %\VignetteEncoding{UTF-8}
 bibliography: references.bib
 author:
    - name: Robin Lovelace
