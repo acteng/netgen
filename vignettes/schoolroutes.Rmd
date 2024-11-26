@@ -1,5 +1,11 @@
 ---
 title: "SchoolRoutes: An approach for data-driven investment in safe routes to school"
+# For Quarto version:
+format: html
+#   html:
+#     embed-resources: true
+# execute: 
+#   cache: true
 # output:
 #   rmarkdown::html_vignette:
 #     number_sections: true
@@ -8,20 +14,21 @@ title: "SchoolRoutes: An approach for data-driven investment in safe routes to s
 #   %\VignetteEngine{knitr::rmarkdown}
 #   %\VignetteEncoding{UTF-8}
 bibliography: references.bib
-author:
-   - name: Robin Lovelace
-     affiliation: Active Travel England and University of Leeds, UK
-   - name: Sam Holder
-     affiliation: Active Travel England
-   - name: Emma Vinter
-     affiliation: Active Travel England
-   - name: Chris Conlan
-     affiliation: Active Travel England and The Alan Turing Institute
-   - name: Dustin Carlino
-     affiliation: Active Travel England and The Alan Turing Institute
+# author:
+#    - name: Robin Lovelace
+#      affiliation: Active Travel England and University of Leeds, UK
+#    - name: Sam Holder
+#      affiliation: Active Travel England
+#    - name: Emma Vinter
+#      affiliation: Active Travel England
+#    - name: Chris Conlan
+#      affiliation: Active Travel England and The Alan Turing Institute
+#    - name: Dustin Carlino
+#      affiliation: Active Travel England and The Alan Turing Institute
 ---
 
 ```{r, eval=FALSE}
+#| eval: false
 # View the results with:
 browseURL("schoolroutes.html")
 # In website:
@@ -30,6 +37,7 @@ browseURL("../docs/articles/schoolroutes.html")
 ```
 
 ```{r, include = FALSE}
+#| eval: false
 knitr::opts_chunk$set(
   echo = FALSE,
   message = FALSE,
@@ -303,12 +311,14 @@ system("od2net --version")
 If the previous lines of code run successfully and you have `od2net` installed, the route network dataset can be generated with the following command, which generates the following message:
 
 ```{r, engine='bash', eval=FALSE, echo=FALSE}
+#| eval: false
 od2net config_pct_govtarget.json
 mv output output_govtarget
 mkdir output
 ```
 
 ```{r, engine='bash', eval=FALSE, echo=TRUE}
+#| eval: false
 od2net config_pct_godutch_schools.json
 ```
 
@@ -455,10 +465,10 @@ ggplot(rnet_godutch_top) +
   theme_void()
 ```
 
-Let's create an interactive map:
+From the data we can create interactive maps, showing both the 
 
 ```{r}
-mapview::mapview(rnet_godutch_top, zcol = "count", linewidth = rnet_godutch$count)
+# mapview::mapview(rnet_godutch_top, zcol = "count", linewidth = rnet_godutch$count)
 ```
 
 ```{r}
@@ -475,6 +485,7 @@ m = tm_shape(rnet_godutch_top) +
   # tmap v2 style:
   tm_lines(col = "lts", palette = "-viridis", breaks = c(0, 10, 20, 50, 200)*10, lwd = "count", scale = 9) 
 # m = qtm(rnet_godutch_top)
+# m
 ```
 
 
@@ -504,7 +515,11 @@ rnet_godutch_lts4_named = rnet_godutch_clean |>
   dplyr::mutate(name = purrr::map_chr(osm_tags_list, ~ .x$name)) |>
   dplyr::filter(lts %in% c("4")) |>
   dplyr::arrange(desc(count))
+min_count = 100
 rnet_godutch_top_5 = rnet_godutch_lts4_named |>
+  dplyr::filter(count > min_count) |>
+  # Exclude name = ring road:
+  dplyr::filter(!str_detect(name, "Ring Road")) |>
   dplyr::group_by(name) |>
   dplyr::summarise(`Total (km)` = sum(count * length) / 1000, .groups = "drop") |>
   dplyr::arrange(desc(`Total (km)`)) |>
@@ -513,15 +528,25 @@ m = tm_shape(rnet_godutch_top_5) +
   tm_lines(
     col = "Total (km)",
     palette = "-viridis",
-    lwd = 9,
-    scale = 9
-  )
+    lwd = 9
+  ) +
+  # Add schools:
+  tm_shape(destinations) +
+  tm_dots(col = "black", size = 0.5) +
+  tm_scale_bar()
   # tm_lines(
   #   col = "Total (km)",
   #   col.scale = tm_scale(values = "viridis", breaks = c(0, 10, 20, 50, 200)),
   #   lwd = 9
   # )
-m
+# m
+```
+
+```{r, eval=FALSE}
+#| eval: false
+tmap_save(m, "output_pct_godutch_top5.html")
+browseURL("output_pct_godutch_top5.html")
+system("gh release upload v0.1.0 output_pct_godutch_top5.html --clobber")
 ```
 
 ```{r rnet-godutch-top5, tab.cap="Top 5 routes with the highest number of trips under the Government Target scenario.", echo=TRUE}
@@ -530,12 +555,6 @@ rnet_godutch_top_5 |>
   knitr::kable()
 ```
 
-
-```{r, eval=FALSE}
-tmap_save(m, "output_pct_godutch_top5.html")
-browseURL("output_pct_godutch_top5.html")
-system("gh release upload v0.1.0 output_pct_godutch_top5.html")
-```
 
 # Sense checking the results
 
