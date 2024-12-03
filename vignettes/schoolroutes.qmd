@@ -84,7 +84,9 @@ On the policy side, and as part of the UK Government's Health Mission, health an
 'School Streets' interventions featured prominently in all rounds of the Active Travel Fund (ATF) bids, yet there is a lack of evidence to support safe routes to school and where they should be located at the local level.
 More broadly, strategic active travel networks have already largely been designed, as part of the LCWIP process, while cost-effective interventions that fix 'weak links' in quiet/beginner networks have received less attention.
 
-```{r obesdep, fig.height=3, fig.cap="Childhood obesity rates in most and least deprived areas over time. Source: National Child Measurement Programme", fig.width=6}
+```{r obesdep, fig.height=3, fig.width=6}
+#| label: fig-obesdep
+#| fig-cap: "Childhood obesity rates in most and least deprived areas over time. Source: National Child Measurement Programme."
 # t11_raw = readxl::read_excel("../../schoolroutes_10ds/nat-chil-meas-prog-eng-2020-2021-tab.xlsx", sheet = "Table 11", skip = 13)
 # t11_raw = readr::read_csv("nat-chil-meas-prog-eng-2020-2021-tab.csv", skip = 13)
 # t11 = t11_raw %>% 
@@ -176,8 +178,11 @@ ggplot(uptake_df) +
   scale_y_continuous("Proportion of trips made by walking", labels = scales::percent)
 ```
 
-```{r decay-cycle, fig.cap="Uptake functions for cycling to school, by distance and hilliness, in baseline and Go Dutch scenarios.", fig.height=3, out.width="50%", fig.show="hold"}
-
+```{r}
+#| fig-cap: Uptake functions for cycling to school, by distance and hilliness, in baseline and Go Dutch scenarios.
+#| layout-ncol: 2
+# Previous info:
+# r decay-cycle, fig.height=3, out.width="50%", fig.show="hold"
 library(pct)
 max_distance = 20
 distances = 1:max_distance
