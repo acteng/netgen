@@ -149,7 +149,9 @@ $$
 For cycling, the proportion of trips that can be cycled is based on the Go Dutch scenario in the Propensity to Cycle Tool (PCT) project [@goodman_scenarios_2019].
 These uptake functions are illustrated in the figures below.
 
-```{r decay-walk, fig.cap="Uptake functions for walking to school, by distance, in baseline and Go Active scenarios.", fig.height=3, out.width="75%", fig.show="hold"}
+```{r decay-walk, fig.height=3, out.width="75%", fig.show="hold"}
+#| label: fig-decay-walk
+#| fig-cap: Uptake functions for walking to school, by distance, in baseline and Go Active scenarios.
 uptake_walk_school_baseline = function(distance, upper_limit = 0.7, exponent = 1.3) {
   p = exp(-distance * exponent)
   p[p > upper_limit] = upper_limit
