@@ -13,6 +13,9 @@
     "destinations_path": "destinations.geojson"
   },
   "cost": "Distance",
-  "uptake": "GovTargetPCT",
-  "lts": "BikeOttawa"
+  "WalkToSchool": {
+    "upper_limit": 0.7,
+    "exponent": 1.3
+ },
+ "lts": "BikeOttawa"
 }
