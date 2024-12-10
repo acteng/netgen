@@ -508,8 +508,16 @@ system("gh release upload v0.1.0 output_pct_godutch.html")
 
 The same approach can be used to estimate walking to school potential, based on the all-mode flows to school contained in the OD data.
 
-```{r}
+```{r, engine='bash', eval=FALSE, echo=FALSE}
 #| eval: false
+od2net config_pct_govtarget.json
+mv output output_walking
+mkdir output
+```
+
+```{r, engine='bash', eval=FALSE, echo=TRUE}
+#| eval: false
+od2net config_pct_godutch_schools.json
 ```
 
 # Prioritising investment
