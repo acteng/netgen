@@ -508,6 +508,10 @@ system("gh release upload v0.1.0 output_pct_godutch.html")
 
 The same approach can be used to estimate walking to school potential, based on the all-mode flows to school contained in the OD data.
 
+```{r}
+#| eval: false
+```
+
 # Prioritising investment
 
 A simple way to prioritise investment based on the route network outputs shown above is to find the LTS3 and LTS4 roads with the greatest potential.
