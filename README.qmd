@@ -141,6 +141,7 @@ It's worth importing and visualising the OD datasets before routing and network 
 ```{r}
 #| label: desire-lines-r
 system("gh release list")
+system("gh release download v0.1.0")
 od = read_csv("res_output.csv")
 head(od)
 od_geo = sf::read_sf("res_output.geojson")
