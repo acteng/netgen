@@ -520,6 +520,39 @@ mkdir output
 od2net config_pct_godutch_schools.json
 ```
 
+```{r}
+# setwd("vignettes")
+output_file_walking = "output_walking/output.geojson"
+rnet_walking = sf::read_sf(output_file_walking)
+rnet_walking$length_m = sf::st_length(rnet_walking) |>
+  as.numeric()
+
+rnet_walking_cycling = bind_rows(
+  rnet_godutch |>
+    dplyr::mutate(mode = "cycling"),
+  rnet_walking |>
+    dplyr::mutate(mode = "walking")
+)
+
+# Plot for small region:
+stratford_way_buffer_2km = st_buffer(stratford_way, 2000)
+rnet_walking_cycling_stratford = rnet_walking_cycling[stratford_way_buffer_2km, op = st_within]
+table(rnet_walking_cycling_stratford$mode)
+
+# Plot with tmap and facets:
+m = tm_shape(rnet_walking_cycling_stratford) +
+  tm_lines(
+    col = "lts",
+    palette = "-viridis",
+    lwd = "count",
+    lwd.legend = tm_legend(show = FALSE),
+    scale = 9
+  ) +
+  tm_facets("mode")
+tmap_mode("plot")
+m
+```
+
 # Prioritising investment
 
 A simple way to prioritise investment based on the route network outputs shown above is to find the LTS3 and LTS4 roads with the greatest potential.
