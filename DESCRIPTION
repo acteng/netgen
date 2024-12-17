@@ -39,7 +39,7 @@ Suggests:
     tidyverse,
     tmap
 VignetteBuilder: 
-    knitr
+    quarto
 Remotes: 
     r-tmap/tmap
     itsleeds/pct
