@@ -291,7 +291,7 @@ sf::write_sf(origin_zones, "input/zones.geojson", delete_dsn = TRUE)
 <!-- The following code was used to prepare the data with the `od2net` R package (see the paper's [source code](https://github.com/acteng/netgen/blob/main/vignettes/schoolroutes.Rmd) for full reproducible details): -->
 
 ```{r}
-#| include: false
+#| eval: false
 od2net::make_osm(zones_file = "input/zones.geojson")
 od2net::make_origins()
 # Optionally, get elevation data:
