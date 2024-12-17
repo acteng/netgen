@@ -291,12 +291,15 @@ sf::write_sf(origin_zones, "input/zones.geojson", delete_dsn = TRUE)
 <!-- The following code was used to prepare the data with the `od2net` R package (see the paper's [source code](https://github.com/acteng/netgen/blob/main/vignettes/schoolroutes.Rmd) for full reproducible details): -->
 
 ```{r}
+destinations = netgen::destinations_york # Provided in the R package
+```
+
+```{r}
 #| eval: false
 od2net::make_osm(zones_file = "input/zones.geojson")
 od2net::make_origins()
 # Optionally, get elevation data:
 # netgen:::make_elevation()
-destinations = netgen::destinations_york # Provided in the R package
 names(destinations)[1] = "name"
 destinations = destinations[1]
 class(destinations$name) = "character"
@@ -457,9 +460,12 @@ rnet_godutch |>
   knitr::kable(caption = "Sample of the route network dataset.")
 ```
 
-As shown above, the `osm_tags` field has all the OSM tags in JSON format, which can be extrated as follows with `jsonlite::fromJSON`:
+As shown above, the `osm_tags` field has all the OSM tags in JSON format,
+enabling detailed analysis of the road network and adding value to the resulting files for publication.
+ <!-- which can be extrated as follows with `jsonlite::fromJSON`: -->
 
-```{r, echo=TRUE}
+```{r}
+#| include: false
 rnet_godutch$osm_tags[1]
 jsonlite::fromJSON(rnet_godutch$osm_tags[1])
 ```
@@ -474,9 +480,13 @@ rnet_godutch_top = rnet_godutch_clean |>
   dplyr::arrange(count)
 ```
 
-The output dataset can be visualised with well-known data science tools, such as the `ggplot2` R package, as follows shown in <!-- Figure @ref(fig:rnet-ggplot), --> Figure below, which is generated with the reproducible code below:
+The output dataset can be visualised with well-known data science tools, such as the `ggplot2` R package.
+ <!-- as follows shown in  -->
+ <!-- Figure @ref(fig:rnet-ggplot), -->
+ <!-- Figure below, which is generated with the reproducible code below: -->
 
-```{r rnet-ggplot, fig.cap="Routes with the highest number of trips under the Government Target scenario.", echo=TRUE}
+```{r rnet-ggplot, fig.cap="Routes with the highest number of trips under the Government Target scenario."}
+#| label: fig-rnet-ggplot
 library(ggplot2)
 theme_set(theme_void())
 ggplot(rnet_godutch_top) +
