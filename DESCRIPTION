@@ -37,11 +37,13 @@ Suggests:
     rmarkdown,
     simodels (>= 0.1.0),
     tidyverse,
-    tmap
+    tmap,
+    od2net
 VignetteBuilder: quarto
 Remotes: 
     r-tmap/tmap
     itsleeds/pct
+    Urban-Analytics-Technology-Platform/od2net/r
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)

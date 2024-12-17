@@ -12,3 +12,5 @@ input/
 output/
 intermediate/
 .pbfodgen
+^vignettes/*_files$
+^vignettes/*\.json$

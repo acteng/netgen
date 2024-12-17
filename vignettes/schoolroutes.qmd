@@ -5,9 +5,13 @@ title: "SchoolRoutes: An approach for data-driven investment in safe routes to s
 #   html:
 #     embed-resources: true
 # For pkg:
+format: 
+  html:
+    toc: true
+    html-math-method: mathjax
 vignette: >
-  %\VignetteIndexEntry{SchoolRoutes: An approach for data-driven investment in safe routes to school}
-  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{Vignette's Title}
+  %\VignetteEngine{quarto::html}
   %\VignetteEncoding{UTF-8}
 execute:
   echo: false
