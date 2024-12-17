@@ -544,39 +544,43 @@ rnet_walking_cycling = bind_rows(
     dplyr::mutate(mode = "walking")
 )
 
+
 # Plot for small region:
 stratford_way_buffer_2km = st_buffer(stratford_way, 2000)
-rnet_walking_cycling_stratford = rnet_walking_cycling[stratford_way_buffer_2km, op = st_within]
-table(rnet_walking_cycling_stratford$mode)
+rnet_wc = rnet_walking_cycling[stratford_way_buffer_2km, op = st_within]
+
+reprex::reprex({
+library(tmap)
+library(tidyverse)
+rnet_wc = bind_rows(
+  rivers |>
+    mutate(
+      mode = "walking",
+      count = runif(n(), 0, 100),
+      lts =  sample(1:4, n(), replace = TRUE)
+   ),
+  rivers |>
+    mutate(
+      mode = "cycling",
+      count = runif(n(), 0, 200),
+      lts =  sample(1:4, n(), replace = TRUE)
+    )
+)
 
 # Plot with tmap and facets:
-m = tm_shape(rnet_walking_cycling_stratford) +
+m = tm_shape(rnet_wc) +
   tm_lines(
     col = "lts",
-    palette = "-viridis",
+    col.scale = tm_scale_categorical(values = "-RdBu"),
     lwd = "count",
     lwd.legend = NULL,
-    scale = 9
+    lwd.scale = tm_scale_continuous(values.scale = 9),
+    legend = tm_legend(position = "right")
   ) +
   tm_facets("mode")
 tmap_mode("plot")
 m
-
-# Debugging with reprex:
-# https://github.com/r-tmap/tmap/issues/983
-reprex::reprex({
-remotes::install_dev("tmap")
-library(tmap)
-# Works:
-tm_shape(rivers) +
-	tm_lines(lwd = "strokelwd", col = "type", lwd.legend = NULL)
-# Fails when there is a scale arg:
-tm_shape(rivers) +
-	tm_lines(lwd = "strokelwd", col = "type", lwd.legend = NULL, scale = 9)
 })
-
-
-
 ```
 
 # Prioritising investment
