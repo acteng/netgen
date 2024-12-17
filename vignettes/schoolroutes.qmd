@@ -358,10 +358,6 @@ od2net config_pct_godutch_schools.json
 # - Total distance on LTS 4 roads: 6634.4 km
 ```
 
-```         
-
-```
-
 ```{r}
 #| eval: false
 #| echo: false
@@ -541,14 +537,27 @@ mkdir output
 ```
 
 ```{r}
+#| eval: false
+#| label: upload-walking-govtarget-files
+# Upload files to GitHub:
+file.copy("output_govtarget/output.geojson", "output_govtarget.geojson", overwrite = TRUE)
+system("gh release upload v0.1.0 output_govtarget.geojson --clobber")
+file.copy("output_walking/output.geojson", "output_walking.geojson", overwrite = TRUE)
+system("gh release upload v0.1.0 output_walking.geojson --clobber")
+```
+
+```{r}
 # setwd("vignettes")
 
 output_file_walking = "output_walking/output.geojson"
+output_file_walking = "https://github.com/acteng/netgen/releases/download/v0.1.0/output_walking.geojson"
 rnet_walking = sf::read_sf(output_file_walking)
 rnet_walking$length_m = sf::st_length(rnet_walking) |>
   as.numeric()
 
-rnet_govtarget = sf::read_sf("output_govtarget/output.geojson")
+output_file_govtarget = "output_govtarget/output.geojson"
+output_file_govtarget = "https://github.com/acteng/netgen/releases/download/v0.1.0/output_govtarget.geojson"
+rnet_govtarget = sf::read_sf(output_file_govtarget)
 rnet_govtarget$length_m = sf::st_length(rnet_govtarget) |>
   as.numeric()
 
