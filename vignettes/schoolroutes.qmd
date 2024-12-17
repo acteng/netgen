@@ -555,12 +555,28 @@ m = tm_shape(rnet_walking_cycling_stratford) +
     col = "lts",
     palette = "-viridis",
     lwd = "count",
-    lwd.legend = tm_legend(show = FALSE),
+    lwd.legend = NULL,
     scale = 9
   ) +
   tm_facets("mode")
 tmap_mode("plot")
 m
+
+# Debugging with reprex:
+# https://github.com/r-tmap/tmap/issues/983
+reprex::reprex({
+remotes::install_dev("tmap")
+library(tmap)
+# Works:
+tm_shape(rivers) +
+	tm_lines(lwd = "strokelwd", col = "type", lwd.legend = NULL)
+# Fails when there is a scale arg:
+tm_shape(rivers) +
+	tm_lines(lwd = "strokelwd", col = "type", lwd.legend = NULL, scale = 9)
+})
+
+
+
 ```
 
 # Prioritising investment
