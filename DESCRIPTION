@@ -41,8 +41,8 @@ Suggests:
     od2net
 VignetteBuilder: quarto
 Remotes: 
-    r-tmap/tmap
-    itsleeds/pct
+    r-tmap/tmap,
+    itsleeds/pct,
     Urban-Analytics-Technology-Platform/od2net/r
 Encoding: UTF-8
 LazyData: true
