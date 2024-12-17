@@ -67,6 +67,7 @@ pak::pkg_install("Urban-Analytics-Technology-Platform/od2net/r")
 
 <!-- ::: {.panel-tabset group="language"}
 &#10;## R -->
+
 </details>
 
 After getting the software installed, load packages we’ll use as
@@ -111,6 +112,7 @@ network generation stages.
 
 ``` r
 system("gh release list")
+system("gh release download v0.1.0")
 od = read_csv("res_output.csv")
 head(od)
 ```
@@ -253,10 +255,6 @@ fs::dir_tree("output")
 ```
 
     output
-    ├── counts.csv
-    ├── failed_requests.geojson
-    ├── output.geojson
-    ├── rnet.pmtiles
     └── rnet_output_osrm_overline.geojson
 
 From that point you can visualise the pmtiles in the website at

@@ -1,4 +1,3 @@
-*.html
-*.R
-
-/.quarto/
+# Ignore everything except .qmd files:
+/*
+!*.qmd
