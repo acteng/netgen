@@ -332,22 +332,24 @@ mkdir output
 ```{r, engine='bash', eval=FALSE, echo=TRUE}
 #| eval: false
 od2net config_pct_godutch_schools.json
+# Outputs:
+# Input: Test data for SchoolRoutes project.
+# - Origins: 19,258
+# - Destinations: 62
+# - Requests: 25,515
+# - Requests (succeeded): 25,364
+# - Requests (failed because same endpoints): 12
+# - Requests (failed because no path): 139
+# - Edges with a count: 37,388
+# - Total distance on not allowed roads: 2.4 km
+# - Total distance on LTS 1 roads: 12868.2 km
+# - Total distance on LTS 2 roads: 18057.4 km
+# - Total distance on LTS 3 roads: 25217.0 km
+# - Total distance on LTS 4 roads: 6634.4 km
 ```
 
 ```         
-Input: Test data for SchoolRoutes project.
-- Origins: 19,258
-- Destinations: 62
-- Requests: 25,515
-- Requests (succeeded): 25,364
-- Requests (failed because same endpoints): 12
-- Requests (failed because no path): 139
-- Edges with a count: 37,388
-- Total distance on not allowed roads: 2.4 km
-- Total distance on LTS 1 roads: 12868.2 km
-- Total distance on LTS 2 roads: 18057.4 km
-- Total distance on LTS 3 roads: 25217.0 km
-- Total distance on LTS 4 roads: 6634.4 km
+
 ```
 
 ```{r}
@@ -511,24 +513,32 @@ The same approach can be used to estimate walking to school potential, based on 
 ```{r, engine='bash', eval=FALSE, echo=FALSE}
 #| eval: false
 od2net config_pct_govtarget.json
-mv output output_walking
+mv output output_govtarget
 mkdir output
 ```
 
 ```{r, engine='bash', eval=FALSE, echo=TRUE}
 #| eval: false
-od2net config_pct_godutch_schools.json
+# Create walking network:
+od2net config_walking.json
+mv output output_walking
+mkdir output
 ```
 
 ```{r}
 # setwd("vignettes")
+
 output_file_walking = "output_walking/output.geojson"
 rnet_walking = sf::read_sf(output_file_walking)
 rnet_walking$length_m = sf::st_length(rnet_walking) |>
   as.numeric()
 
+rnet_govtarget = sf::read_sf("output_govtarget/output.geojson")
+rnet_govtarget$length_m = sf::st_length(rnet_govtarget) |>
+  as.numeric()
+
 rnet_walking_cycling = bind_rows(
-  rnet_godutch |>
+  rnet_govtarget |>
     dplyr::mutate(mode = "cycling"),
   rnet_walking |>
     dplyr::mutate(mode = "walking")
@@ -656,5 +666,9 @@ Note that the values presented above are based on *synthetic* OD data, which may
 Let's compare with the number who cycle under the less ambitious Government Target scenario: The total distance travelled under the Government Target scenario is `r round(total_rnet_govtarget / 1e3) |> format(big.mark = ",")` km.
 
 ## Comparing with PCT data
+
+# Conclusions and next steps
+
+
 
 # References
