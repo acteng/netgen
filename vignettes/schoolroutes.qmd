@@ -710,16 +710,19 @@ To deploy the project at scale there is a substantial amount of work to do, incl
 
 -  Detailed quantitative comparison of results for York with Propensity to Cycle Tool outputs (2 days)
 -  Validating the results against ground truth data for a single local authority (5 days)
--  Refining the parameters in the walking uptake (and potentially cycling uptake) functions (5-10 days)
--  Sense-checking results based on local knowledge with input from inspectors and/or local authority staff (5 days)
-- Running the tool for every local authority in England (10 days)
-- Development of front-end tools for visualising the results (10 days)
+-  Refining the parameters in the walking uptake (and potentially cycling uptake) functions (5-30 days)
+-  Integration of ModeShift Stars data and Census data to generate better baseline data (10-30 days)
+- Inclusion of gradient data (5-10 days)
+-  Sense-checking results based on local knowledge with input from inspectors and/or local authority staff (5-10 days)
+- Running the tool for every local authority in England (10-20 days)
+- Development of front-end tools for visualising the results (5-50 days depending on level of sophistication)
 - Presenting results to stakeholders in workshops (5 days)
 - Writing case studies of how to use the tool in collaboration with local authorities (10 days)
 - Training local authority staff to use the tool (5 days)
 - Integration into the browse tool in the [`atip`](https://github.com/acteng/atip)
 -  Writing up the results in a peer-reviewed journal article (10 days)
 
-In total, the project would require around 60 days of work to complete, with the potential to have a substantial impact on active travel to school in England.
+In total, the project would require around 70-200 days of work, depending on the project's ambition and scope.
+With the potential to have a substantial impact on active travel to school in England, the project is well worth pursuing.
 
 # References
