@@ -699,11 +699,11 @@ The equivalent for the route network output under the Go Dutch scenario is `r ro
 Note that the values presented above are based on *synthetic* OD data, which may not be representative of the actual travel patterns in York.
 
 Let's compare with the number who cycle under the less ambitious Government Target scenario: The total distance travelled under the Government Target scenario is `r round(total_rnet_govtarget / 1e3) |> format(big.mark = ",")` km.
-These numbers make sense and align well with the peer-reviewed results of the Propensity to Cycle Tool project [@goodman_scenarios_2019].
+These numbers make sense and align well with the peer-reviewed results of the Propensity to Cycle Tool project.
 
 # Conclusions and next steps
 
-The report has outlined a new approach to estimating the potential for active travel to school, based on disaggregated OD data and route network outputs, building on but going beyond the Propensity to Cycle Tool project.
+The report has outlined a new approach to estimating the potential for active travel to school, based on disaggregated OD data and route network outputs, building on but going beyond the Propensity to Cycle Tool project [@goodman_scenarios_2019].
 Due to the high computational efficiency of the `od2net` tool, which resulted from the grant funding agreement allowing the Alan Turing Institute to develop the tool, the approach can be applied to any local authority in England, and potentially beyond, to estimate the potential for active travel to school.
 
 To deploy the project at scale there is a substantial amount of work to do, including the following (with estimates in days of work):
