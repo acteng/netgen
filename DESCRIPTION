@@ -38,8 +38,7 @@ Suggests:
     simodels (>= 0.1.0),
     tidyverse,
     tmap
-VignetteBuilder: 
-    quarto
+VignetteBuilder: quarto
 Remotes: 
     r-tmap/tmap
     itsleeds/pct

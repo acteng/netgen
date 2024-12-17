@@ -1,9 +1,14 @@
 ---
 title: "SchoolRoutes: An approach for data-driven investment in safe routes to school"
 # For Quarto version:
-format: html
+# format: html
 #   html:
 #     embed-resources: true
+# For pkg:
+vignette: >
+  %\VignetteIndexEntry{SchoolRoutes: An approach for data-driven investment in safe routes to school}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 execute:
   echo: false
   message: false
@@ -12,10 +17,6 @@ execute:
 # output:
 #   rmarkdown::html_vignette:
 #     number_sections: true
-vignette: >
-  %\VignetteIndexEntry{SchoolRoutes: An approach for data-driven investment in safe routes to school}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
 bibliography: references.bib
 author:
    - name: Robin Lovelace
