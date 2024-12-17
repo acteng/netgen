@@ -40,6 +40,9 @@ Suggests:
     tmap
 VignetteBuilder: 
     knitr
+Remotes: 
+    r-tmap/tmap
+    itsleeds/pct
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
