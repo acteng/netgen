@@ -13,9 +13,11 @@
     "destinations_path": "destinations.geojson"
   },
   "cost": "Distance",
-  "WalkToSchool": {
-    "upper_limit": 0.7,
-    "exponent": 1.3
- },
+  "uptake": {
+    "WalkToSchool": { 
+      "upper_limit": 0.7,
+      "exponent": 1.3
+    }
+   },
  "lts": "BikeOttawa"
 }
