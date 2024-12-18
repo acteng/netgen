@@ -1,26 +1,12 @@
 ---
 title: "SchoolRoutes: An approach for data-driven investment in safe routes to school"
-# For Quarto version:
-# format: html
-#   html:
-#     embed-resources: true
-# For pkg (quarto):
-# format: 
-#   html:
-#     toc: true
-#     html-math-method: mathjax
+output:
+  rmarkdown::html_vignette:
+    number_sections: true
 vignette: >
   %\VignetteIndexEntry{Vignette's Title}
-  %\VignetteEngine{quarto::html}
+  %\VignetteEngine{knitr::knitr}
   %\VignetteEncoding{UTF-8}
-execute:
-  echo: false
-  message: false
-  warning: false
-  cache: true
-# output:
-#   rmarkdown::html_vignette:
-#     number_sections: true
 bibliography: references.bib
 author:
    - name: Robin Lovelace
@@ -42,6 +28,21 @@ browseURL("schoolroutes.html")
 # In website:
 pkgdown::build_site(here::here(""))
 browseURL("../docs/articles/schoolroutes.html")
+
+# For Quarto version:
+# format: html
+#   html:
+#     embed-resources: true
+# For pkg (quarto):
+# format: 
+#   html:
+#     toc: true
+#     html-math-method: mathjax
+# execute:
+#   echo: false
+#   message: false
+#   warning: false
+#   cache: true
 ```
 
 ```{r, include = FALSE}

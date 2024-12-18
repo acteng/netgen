@@ -11,6 +11,8 @@ cache
 input/
 output/
 intermediate/
-.pbfodgen
-^vignettes/*_files$
-^vignettes/*\.json$
+.pbf
+odgen
+vignettes/output
+vignettes/schoolroutes_
+
