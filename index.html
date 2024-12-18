@@ -125,6 +125,7 @@
 <p>It’s worth importing and visualising the OD datasets before routing and network generation stages.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/system.html" class="external-link">system</a></span><span class="op">(</span><span class="st">"gh release list"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/system.html" class="external-link">system</a></span><span class="op">(</span><span class="st">"gh release download v0.1.0"</span><span class="op">)</span></span>
 <span><span class="va">od</span> <span class="op">=</span> <span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html" class="external-link">read_csv</a></span><span class="op">(</span><span class="st">"res_output.csv"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">od</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb8"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="co"># A tibble: 6 × 3</span></span>
@@ -157,7 +158,7 @@
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">origin_zones</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span> <span class="op">=</span> <span class="st">"name"</span></span>
 <span><span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_write.html" class="external-link">write_sf</a></span><span class="op">(</span><span class="va">origin_zones</span>, <span class="st">"input/zones_york.geojson"</span>, delete_dsn <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="fu">od2net</span><span class="fu">::</span><span class="fu">make_osm</span><span class="op">(</span>zones_file <span class="op">=</span> <span class="st">"input/zones_york.geojson"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">od2net</span><span class="fu">::</span><span class="fu"><a href="https://urban-analytics-technology-platform.github.io/od2net/r/reference/make_osm.html" class="external-link">make_osm</a></span><span class="op">(</span>zones_file <span class="op">=</span> <span class="st">"input/zones_york.geojson"</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb13"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a>Reading layer <span class="st">`</span><span class="at">zones' from data source </span></span>
 <span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a><span class="at">  </span><span class="st">`</span><span class="sc">/</span>home<span class="sc">/</span>robin<span class="sc">/</span>github<span class="sc">/</span>acteng<span class="sc">/</span>netgen<span class="sc">/</span>input<span class="sc">/</span>zones.geojson<span class="st">' using driver `GeoJSON'</span></span>
 <span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a>Simple feature collection with <span class="dv">121</span> features and <span class="dv">13</span> fields</span>
@@ -166,7 +167,7 @@
 <span id="cb13-6"><a href="#cb13-6" tabindex="-1"></a>Bounding box<span class="sc">:</span>  xmin<span class="sc">:</span> <span class="sc">-</span><span class="fl">1.2237</span> ymin<span class="sc">:</span> <span class="fl">53.87459</span> xmax<span class="sc">:</span> <span class="sc">-</span><span class="fl">0.9196789</span> ymax<span class="sc">:</span> <span class="fl">54.05661</span></span>
 <span id="cb13-7"><a href="#cb13-7" tabindex="-1"></a>Geodetic CRS<span class="sc">:</span>  WGS <span class="dv">84</span></span></code></pre></div>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">od2net</span><span class="fu">::</span><span class="fu">make_origins</span><span class="op">(</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu">od2net</span><span class="fu">::</span><span class="fu"><a href="https://urban-analytics-technology-platform.github.io/od2net/r/reference/make_origins.html" class="external-link">make_origins</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co"># Optionally, get elevation data:</span></span>
 <span><span class="co"># netgen:::make_elevation()</span></span>
 <span><span class="va">destinations</span> <span class="op">=</span> <span class="fu">netgen</span><span class="fu">::</span><span class="va"><a href="reference/destinations_york.html">destinations_york</a></span> <span class="co"># Provided in the R package</span></span>
@@ -219,11 +220,7 @@
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">fs</span><span class="fu">::</span><span class="fu"><a href="https://fs.r-lib.org/reference/dir_tree.html" class="external-link">dir_tree</a></span><span class="op">(</span><span class="st">"output"</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb22"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" tabindex="-1"></a>output</span>
-<span id="cb22-2"><a href="#cb22-2" tabindex="-1"></a>├── counts.csv</span>
-<span id="cb22-3"><a href="#cb22-3" tabindex="-1"></a>├── failed_requests.geojson</span>
-<span id="cb22-4"><a href="#cb22-4" tabindex="-1"></a>├── output.geojson</span>
-<span id="cb22-5"><a href="#cb22-5" tabindex="-1"></a>├── rnet.pmtiles</span>
-<span id="cb22-6"><a href="#cb22-6" tabindex="-1"></a>└── rnet_output_osrm_overline.geojson</span></code></pre></div>
+<span id="cb22-2"><a href="#cb22-2" tabindex="-1"></a>└── rnet_output_osrm_overline.geojson</span></code></pre></div>
 <p>From that point you can visualise the pmtiles in the website at <a href="https://od2net.org" class="external-link">od2net.org</a> or other front-end application, as shown below.</p>
 <div class="section level2">
 <h2 id="minimal-od2net-example">Minimal od2net example<a class="anchor" aria-label="anchor" href="#minimal-od2net-example"></a>
