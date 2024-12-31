@@ -122,7 +122,7 @@ metric for segments on the road network: cycling potential (under a
 range of scenarios), without reference to key infrastructure datasets
 that could be vital when prioritising local interventions and
 identifying where ‘pinch points’ are in the network.</li>
-<li>The pandemic has seen an <a href="https://twitter.com/TheMooreLab/status/1492883858450169857" class="external-link">alarming
+<li>The pandemic and subsequent restrictions on have been linked with <a href="https://twitter.com/TheMooreLab/status/1492883858450169857" class="external-link">alarming
 increase in childhood obesity rates and inequalities</a>, as shown in
 Figure 1. This has pushed active travel for kids up the political
 agenda.</li>
@@ -139,16 +139,37 @@ Mission, health and wellbeing for young people has risen up the
 political agenda. ‘School Streets’ interventions featured prominently in
 all rounds of the Active Travel Fund (ATF) bids, yet there is a lack of
 evidence to support safe routes to school and where they should be
-located at the local level. More broadly, strategic active travel
-networks have already largely been designed, as part of the LCWIP
-process, while cost-effective interventions that fix ‘weak links’ in
-quiet/beginner networks have received less attention.</p>
+located. More broadly, strategic active travel networks have already
+largely been designed, as part of the LCWIP process, while
+cost-effective interventions that fix ‘weak links’ in quiet/beginner
+networks have received less attention.</p>
 <div class="figure" style="text-align: center">
 <img src="schoolroutes_files/figure-html/fig-obesdep-1.png" alt="Childhood obesity rates in most and least deprived areas over time. Source: National Child Measurement Programme." width="576"><p class="caption">
 Childhood obesity rates in most and least deprived areas over time.
 Source: National Child Measurement Programme.
 </p>
 </div>
+<p>Objectives</p>
+<p>As outlined in the project charter, the project aims to:</p>
+<ol style="list-style-type: decimal">
+<li><p>Generate estimates of active travel potential for school travel,
+based on separate uptake functions for walking and cycling.</p></li>
+<li><p>Use ‘jittering’, described in an academic paper (Lovelace et
+al. 2022), to create a realistic distribution of school route starting
+points within LSOAs, generating dense networks connecting residential
+origins with schools.</p></li>
+<li><p>Use 2023 origin-destination data from DfE, describing the number
+of children from each English LSOA travelling to each school in
+England.</p></li>
+<li><p>Update cycling and walking uptake scenarios to reflect ATE
+targets and long-term aspirations.</p></li>
+<li><p>Include route segment information on cycle friendliness and
+traffic.</p></li>
+</ol>
+<p>Furthermore, the project will provide a basis for modelling active
+travel that can be applied to other trip purposes, as part of the Active
+Travel Uptake Model (ATUM) project in 2023. ATUM aims to replace the
+PCT, building on the Network Planning Tool for Scotland (<a href="https://npt.scot/" class="external-link">NPT</a>).</p>
 </div>
 <div class="section level2">
 <h2 id="data-and-methods">Data and methods<a class="anchor" aria-label="anchor" href="#data-and-methods"></a>
@@ -172,12 +193,13 @@ the number of trips to school by mode for a sample of schools in England
 (not currently used).</li>
 </ul>
 <p>A methodological limitation of the PCT approach was that it used only
-zone centroids as trip origins, which can lead to a ‘spider’s web’ of
-routes that do not reflect the actual routes taken by children to
-school. To overcome this, the approach taken in this paper is to
-disaggregate the OD data, modelling multiple origins or ‘subpoints’
-within each zone, to better represent the geographic distribution of
-trips to school.</p>
+zone centroids as trip origins, which can lead to a sparse ‘spider’s
+web’ of routes that do not reflect the actual routes taken by children
+to school, rather than the dense networks that are needed (see example
+in the case study section below). To overcome this, the approach taken
+in this paper is to disaggregate the OD data, modelling multiple origins
+or ‘subpoints’ within each zone, to better represent the geographic
+distribution of trips to school.</p>
 <p>For each OD pair, the number of trips that could be walked or cycled
 is estimated based on route characteristics. For walking, the proportion
 of trips that can be walked
@@ -199,15 +221,9 @@ Active scenarios.
 </p>
 </div>
 <div class="figure" style="text-align: center">
-<img src="schoolroutes_files/figure-html/unnamed-chunk-4-1.png" alt="Uptake functions for cycling to school, by distance and hilliness, in baseline and Go Dutch scenarios." width="576"><p class="caption">
-Uptake functions for cycling to school, by distance and hilliness, in
-baseline and Go Dutch scenarios.
-</p>
-</div>
-<div class="figure" style="text-align: center">
-<img src="schoolroutes_files/figure-html/unnamed-chunk-4-2.png" alt="Uptake functions for cycling to school, by distance and hilliness, in baseline and Go Dutch scenarios." width="576"><p class="caption">
-Uptake functions for cycling to school, by distance and hilliness, in
-baseline and Go Dutch scenarios.
+<img src="schoolroutes_files/figure-html/decay-cycle-1.png" alt="Uptake functions for cycling to school, by distance (above) and hilliness (below), in baseline and Go Dutch scenarios." width="100%"><p class="caption">
+Uptake functions for cycling to school, by distance (above) and
+hilliness (below), in baseline and Go Dutch scenarios.
 </p>
 </div>
 <p>The figures above show that the proportion of trips made by walking
@@ -233,29 +249,24 @@ process that can be referred to as “travel flow aggregation” <span class="ci
 <!-- We used the following configuration options for this case study: -->
 <!-- The `od2net` package requires a configuration file to run. We will use the following configuration file: -->
 <!-- If the previous lines of code run successfully and you have `od2net` installed, the route network dataset can be generated with the following command, which generates the following message: -->
-<p>The <code>od2net</code> program generates the following files and
-places them in the <code>output</code> folder:</p>
-<ul>
-<li>
-<code>output.geojson</code>: the route network dataset.</li>
-<li>
-<code>rnet.pmtiles</code>: a compressed version of the route network
-dataset for interactive visualisation in web apps.</li>
-<li>
-<code>counts.csv</code>: a CSV file with the counts of trips on each
-route segment.</li>
-<li>
-<code>od.csv</code>: summary statistics with the total number of
-trips estimated for each OD pair.</li>
-<li>
-<code>failed_requests.geojson</code>: a geojson file with the failed
-requests (i.e. those that could not be routed).</li>
-</ul>
-<p>The most relevant of these is the ‘output.geojson’ file, which is
-also provided as a compressed <code>pmtiles</code> file. You can
-visualise the results in the web app hosted at <a href="https://od2net.org" class="external-link">od2net.org</a> by uploading the
-<code>output.pmtiles</code> file, resulting in an interactive map of the
-routes, as shown in the Figure below. <!-- @ref(fig:od2net). --></p>
+<!-- The `od2net` program generates the following files and places them in the `output` folder: -->
+<!-- -   `output.geojson`: the route network dataset.
+-   `rnet.pmtiles`: a compressed version of the route network dataset for interactive visualisation in web apps.
+-   `counts.csv`: a CSV file with the counts of trips on each route segment.
+-   `od.csv`: summary statistics with the total number of trips estimated for each OD pair.
+-   `failed_requests.geojson`: a geojson file with the failed requests (i.e. those that could not be routed). -->
+<!-- The most relevant of these is the 'output.geojson' file, which is also provided as a compressed `pmtiles` file. -->
+<!-- You can visualise the results in the web app hosted at [od2net.org](https://od2net.org) by uploading the `output.pmtiles` file, resulting in an interactive map of the routes, as shown in the Figure below. -->
+<!-- @ref(fig:od2net). -->
+<p>The approach uses the od2net tool, developed by Dustin Carlino on
+secondment to ATE from the Alan Turing Institute. The raw outputs can be
+visualised in the web app hosted at <a href="https://od2net.org" class="external-link">od2net.org</a>, resulting in an interactive
+map of the routes, as shown in the Figure below. The od2net web
+application is useful for gaining a quick insight into the results, but
+is rather unrefined and not adapted to the needs of transport planning.
+This suggests a need for presenting the results in an alternative way,
+for example in the Scheme Browser tool hosted at
+<!-- https://plan.activetravelengland.gov.uk/browse.html --> <a href="https://plan.activetravelengland.gov.uk" class="external-link">plan.activetravelengland.gov.uk</a>.</p>
 <div class="figure" style="text-align: center">
 <img src="od2net.png" alt="Routes generated by the SchoolRoutes project." width="632"><p class="caption">
 Routes generated by the SchoolRoutes project.
@@ -266,101 +277,63 @@ Routes generated by the SchoolRoutes project.
 can be imported and visualised for any local area using commonly
 available data science tools such as QGIS, Python and R. The figure
 below highlights this by showing the routes generated by the
-SchoolRoutes project in the vicinity of Stratford Way, next to
-Huntingdon School, with colours representing selected variables.</p>
+SchoolRoutes project within 1 km of Stratford Way, next to Huntingdon
+School, with colours representing selected variables.</p>
 <div class="figure" style="text-align: center">
 <img src="schoolroutes_files/figure-html/fig-rnet-base-1.png" alt="Routes generated by the SchoolRoutes project, with colours representing selected variables." width="576"><p class="caption">
 Routes generated by the SchoolRoutes project, with colours representing
 selected variables.
 </p>
 </div>
-<p>The route network object visualised
-<!-- in Figure @ref(fig:rnet-base) --> above, which represents the
-results within a 500 m buffer around Stratford Way, next to Huntingdon
-School, has the following variables:</p>
-<pre><code> [1] "backward_cost"     "count"             "destination_count"
+<!-- The route network object visualised -->
+<!-- in Figure @ref(fig:rnet-base) -->
+<!-- above, which represents the results within a 500 m buffer around Stratford Way, next to Huntingdon School, has the following variables: -->
+<!-- ```         
+ [1] "backward_cost"     "count"             "destination_count"
  [4] "forward_cost"      "length"            "lts"              
  [7] "nearby_amenities"  "node1"             "node2"            
 [10] "origin_count"      "osm_tags"          "way"              
-[13] "geometry" </code></pre>
-<p>Of these, <code>count</code>, <code>lts</code>,
-<code>osm_tags</code>, and <code>way</code> are the most relevant. Let’s
-take a look at these for a sample of 3 rows
-<!-- (see Table @ref(tab:rnet-sample)): --> (see Table below):</p>
-<table class="table">
-<caption>Sample of the route network dataset.</caption>
-<colgroup>
-<col width="4%">
-<col width="1%">
-<col width="69%">
-<col width="4%">
-<col width="4%">
-<col width="14%">
-</colgroup>
-<thead><tr class="header">
-<th align="right">count</th>
-<th align="right">lts</th>
-<th align="left">osm_tags</th>
-<th align="right">way</th>
-<th align="right">length</th>
-<th align="left">geometry</th>
-</tr></thead>
-<tbody>
-<tr class="odd">
-<td align="right">53.176414</td>
-<td align="right">2</td>
-<td align="left">{ “highway”: “residential”, “lit”: “yes”, “name”:
-“Muncastergate”, “sidewalk”: “right”, “source:name”: “local_knowledge”,
-“surface”: “asphalt” }</td>
-<td align="right">489406958</td>
-<td align="right">89.983441</td>
-<td align="left">LINESTRING (-1.063219 53.97…</td>
-</tr>
-<tr class="even">
-<td align="right">4.399496</td>
-<td align="right">2</td>
-<td align="left">{ “highway”: “residential”, “lit”: “yes”, “maxspeed”:
-“20 mph”, “name”: “Park Grove”, “sidewalk”: “both”, “surface”: “asphalt”
-}</td>
-<td align="right">4426768</td>
-<td align="right">40.746744</td>
-<td align="left">LINESTRING (-1.073594 53.96…</td>
-</tr>
-<tr class="odd">
-<td align="right">4.533433</td>
-<td align="right">2</td>
-<td align="left">{ “highway”: “residential”, “maxspeed”: “20 mph”,
-“name”: “Hanover Street East”, “sidewalk”: “both”, “surface”: “asphalt”
-}</td>
-<td align="right">24163226</td>
-<td align="right">9.369075</td>
-<td align="left">LINESTRING (-1.107015 53.96…</td>
-</tr>
-</tbody>
-</table>
-<p>As shown above, the <code>osm_tags</code> field has all the OSM tags
-in JSON format, enabling detailed analysis of the road network and
-adding value to the resulting files for publication.
-<!-- which can be extrated as follows with `jsonlite::fromJSON`: --></p>
+[13] "geometry" 
+``` -->
+<p>Of the output variables provided at the segment, presented in the
+figure above, the level the most relevant are:
+<!-- `count`, `lts`, `osm_tags`, and `way`. --></p>
+<ul>
+<li>
+<code>count</code>: the number of trips on each route segment.</li>
+<li>
+<code>lts</code>: the level of traffic stress (LTS) on each route
+segment.</li>
+<li>
+<code>osm_tags</code>: the OpenStreetMap tags for each route
+segment, for example surface quality, whether or not the segment is lit,
+and the maximum speed limit (the quality/coverage of these tags varies
+by region depending on the OSM community).</li>
+<li>
+<code>way</code>: the unique identifier for each route segment,
+which can be used to link to other datasets and to OSM, enabling people
+to view and update the data.</li>
+</ul>
+<!-- Let's take a look at these for a sample of 3 rows --><p><!-- (see Table @ref(tab:rnet-sample)): -->
+<!-- (see Table below): --></p>
+<!-- As shown above, the `osm_tags` field has all the OSM tags in JSON format,
+enabling detailed analysis of the road network and adding value to the resulting files for publication. -->
+<p><!-- which can be extrated as follows with `jsonlite::fromJSON`: --></p>
 <!-- Let's create a minimal version of the dataset for future plots: -->
 <p>The output dataset can be visualised with well-known data science
-tools, such as the <code>ggplot2</code> R package.
-<!-- as follows shown in  --> <!-- Figure @ref(fig:rnet-ggplot), -->
+tools, as illustrated in the figure below. The figure shows the routes
+with the highest number of trips under the Government Target cycling
+uptake scenario (left), which represents a doubling in the number of
+trips made by cycling to school <span class="citation">(Goodman et al.
+2019)</span>. <!-- as follows shown in  -->
+<!-- Figure @ref(fig:rnet-ggplot), -->
 <!-- Figure below, which is generated with the reproducible code below: --></p>
-<div class="figure" style="text-align: center">
-<img src="schoolroutes_files/figure-html/fig-rnet-ggplot-1.png" alt="Routes with the highest number of trips under the Government Target scenario." width="576"><p class="caption">
-Routes with the highest number of trips under the Government Target
-scenario.
-</p>
-</div>
-<p>From the data we can create interactive maps, showing both the</p>
-</div>
-<div class="section level2">
-<h2 id="walking-network">Walking network<a class="anchor" aria-label="anchor" href="#walking-network"></a>
-</h2>
+<!-- From the data we can create interactive maps, showing both the -->
+<!-- # Walking network -->
 <p>The same approach can be used to estimate walking to school
 potential, based on the all-mode flows to school contained in the OD
-data.</p>
+data. The results for walking and cycling surrounding Stratford Way are
+shown in the figure below.</p>
 <div class="figure" style="text-align: center">
 <img src="schoolroutes_files/figure-html/fig-walking-vs-govertarget-1.png" alt="Routes generated by the SchoolRoutes project for walking and cycling, with colours representing level of traffic stress (LTS) and line width representing the number of trips, under the Government Target for cycling and Go Active for walking." width="576"><p class="caption">
 Routes generated by the SchoolRoutes project for walking and cycling,
@@ -369,20 +342,30 @@ representing the number of trips, under the Government Target for
 cycling and Go Active for walking.
 </p>
 </div>
-</div>
-<div class="section level2">
-<h2 id="prioritising-investment">Prioritising investment<a class="anchor" aria-label="anchor" href="#prioritising-investment"></a>
-</h2>
+<p>Note that the results for walking show that the number of trips is
+generally higher than for cycling close to the school, but as you move
+further away, the relative number of cycling trips increases. This
+highlights the fact that cycle networks around schools need to be longer
+than walking networks.</p>
+<div class="section level3">
+<h3 id="prioritising-investment-with-schoolroutes-evidence">Prioritising investment with SchoolRoutes evidence<a class="anchor" aria-label="anchor" href="#prioritising-investment-with-schoolroutes-evidence"></a>
+</h3>
 <p>A simple way to prioritise investment based on the route network
 outputs shown above is to find the LTS3 and LTS4 roads with the greatest
 potential. A key output from the tool will be route network data that
 contains both the potential number of trips and the LTS classification
 of each road segment. Taking a hypothetical scenario in which there is
 sufficient funding for investment in 5 school streets, targetting the
-worst (LTS4) roads, the data allows us to identify the roads presented
-in
+worst (LTS3 and LTS4) roads in York, the data allows us to identify the
+roads presented in
 <!-- Table @ref(tab:rnet-godutch-top5) and Figure @ref(fig:rnet-godutch-top5-map). -->
 the Table below and the Figure below.</p>
+<div class="figure" style="text-align: center">
+<img src="top_5_govtarget.png" alt="Top 5 routes with the highest number of trips under the Government Target scenario." width="956"><p class="caption">
+Top 5 routes with the highest number of trips under the Government
+Target scenario.
+</p>
+</div>
 <table class="table">
 <caption>Top 5 routes with the highest potential distance cycled each
 day for travel to school under the Government Target scenario.</caption>
@@ -392,48 +375,73 @@ day for travel to school under the Government Target scenario.</caption>
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td align="left">Hull Road</td>
-<td align="right">399.2</td>
+<td align="left">Huntington Road</td>
+<td align="right">69.3</td>
 </tr>
 <tr class="even">
-<td align="left">Strensall Road</td>
-<td align="right">257.8</td>
+<td align="left">Tang Hall Lane</td>
+<td align="right">63.2</td>
 </tr>
 <tr class="odd">
-<td align="left">Shipton Road</td>
-<td align="right">136.7</td>
-</tr>
-<tr class="even">
 <td align="left">York Road</td>
-<td align="right">131.6</td>
+<td align="right">57.4</td>
+</tr>
+<tr class="even">
+<td align="left">Heslington Lane</td>
+<td align="right">41.7</td>
 </tr>
 <tr class="odd">
-<td align="left">Millfield Lane</td>
-<td align="right">79.6</td>
+<td align="left">Holgate Road</td>
+<td align="right">38.0</td>
 </tr>
 </tbody>
 </table>
-<!-- # Sense checking the results --><div class="section level3">
-<h3 id="comparing-with-the-od-data">Comparing with the OD data<a class="anchor" aria-label="anchor" href="#comparing-with-the-od-data"></a>
+<p>Combined with local knowledge and other sources of data, such as
+information on road widths and traffic speeds and volumes, and
+consultation with local residents and schools, the SchoolRoutes evidence
+can be used to inform investment decisions. The results also help
+prioritise from a list of schemes that are already in the pipeline, with
+Huntingdon Road, for example, being highlighted as a key route for
+investment in York according to the results.</p>
+</div>
+<div class="section level3">
+<h3 id="sense-checking-outputs">Sense checking outputs<a class="anchor" aria-label="anchor" href="#sense-checking-outputs"></a>
 </h3>
-<p>We’ll do some initial checks by finding by comparing the total number
-of trips and distance travelled represented in the OD dataset with the
-output of the model.</p>
-<p>The total Euclidean distance travelled according to the OD data is
-49,271 km, with a weighted mean distance of 1,922.3 km.</p>
-<p>Assuming a trip diversion factor of 1.4 and that on average 60% of
-the trips are made by cycling under the Go Dutch scenario for the short
-distances travelled to school, we can estimate the total number distance
-travelled by bike to school on a typical school day as 38,431 km. The
-equivalent for the route network output under the Go Dutch scenario is
-55,836 km. Note that the values presented above are based on
-<em>synthetic</em> OD data, which may not be representative of the
-actual travel patterns in York.</p>
+<p>The results for the synthetic data were sense-checked by comparing
+the total number of trips and distance travelled represented in the OD
+dataset with the output of the model.</p>
+<!-- The total Euclidean distance travelled according to the synthetic OD data is 49,271 km, with a weighted mean distance of 1,922.3 km. -->
+<p>Assuming a ‘trip diversion factor’ (meaning the distance travelled on
+the network compared with straight line distance) of 1.4 and that on
+average 60% of the trips are made by cycling under the Go Dutch scenario
+for the short distances travelled to school, we can estimate the total
+number distance travelled by bike to school on a typical school day as
+38,431 km. The equivalent for the route network output under the Go
+Dutch scenario is 55,836 km. Note that the values presented above are
+based on <em>synthetic</em> OD data, which may not be representative of
+the actual travel patterns in York.</p>
 <p>Let’s compare with the number who cycle under the less ambitious
 Government Target scenario: The total distance travelled under the
 Government Target scenario is 4,612 km. These numbers make sense and
 align well with the peer-reviewed results of the Propensity to Cycle
-Tool project.</p>
+Tool project, as shown in the figure below. A visual approach to quality
+assurance is to compare the results with the Propensity to Cycle Tool
+school travel outputs, which are available for York, as illustrated
+below.</p>
+<div class="figure" style="text-align: center">
+<img src="pct_huntingdon.png" alt="Comparison of Propensity to Cycle Tool school travel (top) and SchoolRoutes (bottom) outputs for York." width="956"><img src="schoolroutes_files/figure-html/fig-pct-comparison-2.png" alt="Comparison of Propensity to Cycle Tool school travel (top) and SchoolRoutes (bottom) outputs for York." width="576"><p class="caption">
+Comparison of Propensity to Cycle Tool school travel (top) and
+SchoolRoutes (bottom) outputs for York.
+</p>
+</div>
+<p>Not that while there are differences in the results, the SchoolRoutes
+outputs presented above are based on synthetic OD data. Despite this,
+both sets of results highlight the same roads, and the results are on
+the same scale, which is a good sign that the SchoolRoutes outputs are
+plausible. It is clear from the SchoolRoutes outputs in the figure above
+(bottom), that the networks it generates are much denser: most of the
+roads around the school are highlighted, rather than just a few key
+routes in the PCT.</p>
 </div>
 </div>
 <div class="section level2">
@@ -459,7 +467,8 @@ authority (5 days)</li>
 cycling uptake) functions (5-30 days)</li>
 <li>Integration of ModeShift Stars data and Census data to generate
 better baseline data (10-30 days)</li>
-<li>Inclusion of gradient data (5-10 days)</li>
+<li>Inclusion of gradient data, gradient is not included in the walking
+or cycling routes or uptake model currently (5-20 days)</li>
 <li>Sense-checking results based on local knowledge with input from
 inspectors and/or local authority staff (5-10 days)</li>
 <li>Running the tool for every local authority in England (10-20
@@ -475,7 +484,7 @@ local authorities (10 days)</li>
 <li>Writing up the results in a peer-reviewed journal article (10
 days)</li>
 </ul>
-<p>In total, the project would require around 70-200 days of work,
+<p>In total, the project would require around 70-250 days of work,
 depending on the project’s ambition and scope. With the potential to
 have a substantial impact on active travel to school in England, the
 project is well worth pursuing.</p>
