@@ -806,6 +806,7 @@ To deploy the project at scale there is a substantial amount of work to do, incl
 -  Writing up the results in a peer-reviewed journal article (10 days)
 
 In total, the project would require around 100-250 days of work, depending on the project's ambition and scope.
-With the potential to have a substantial impact on active travel to school in England, the project is well worth pursuing.
+It may be worth chunking the project into 2 distinct phases, e.g. a pilot for a handful of local authorities (e.g. 20 days' work), followed by a full rollout to all local authorities in England.
+With the potential to have a substantial impact on active travel to school in England, and to provide a foundation for a next-generation strategic active travel network planning tool going beyond the now-outdated Propensity to Cycle Tool, the project is well worth pursuing.
 
 # References
