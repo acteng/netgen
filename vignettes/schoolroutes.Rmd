@@ -791,21 +791,21 @@ Due to the high computational efficiency of the `od2net` tool, which resulted fr
 
 To deploy the project at scale there is a substantial amount of work to do, including the following (with estimates in days of work):
 
--  Detailed quantitative comparison of results for York with Propensity to Cycle Tool outputs (2 days)
--  Validating the results against ground truth data for a single local authority (5 days)
--  Refining the parameters in the walking uptake (and potentially cycling uptake) functions (5-30 days)
--  Integration of ModeShift Stars data and Census data to generate better baseline data (10-30 days)
+- Detailed quantitative comparison of results with Propensity to Cycle Tool outputs (5-10 days)
+- Validating the results against ground truth data for a single local authority (5 days)
+- Refining the parameters in the walking uptake (and potentially cycling uptake) functions (5-30 days)
+- Integration of ModeShift Stars data and Census data to generate better baseline data (10-30 days)
 - Inclusion of gradient data, gradient is not included in the walking or cycling routes or uptake model currently (5-20 days)
--  Sense-checking results based on local knowledge with input from inspectors and/or local authority staff (5-10 days)
+- Sense-checking results based on local knowledge with input from inspectors and/or local authority staff and, optionally, collaborating with partners to gain feedback and improve the approach based on that feedback (5-30 days)
 - Running the tool for every local authority in England (10-20 days)
 - Development of front-end tools for visualising the results (5-50 days depending on level of sophistication)
 - Presenting results to stakeholders in workshops (5 days)
 - Writing case studies of how to use the tool in collaboration with local authorities (10 days)
-- Training local authority staff to use the tool (5 days)
-- Integration into the browse tool in the [`atip`](https://github.com/acteng/atip)
+- Training local authority staff to use the tool (5-20 days)
+- Integration into the browse tool in the [`atip`](https://github.com/acteng/atip) codebase, (see [plan.activetravelengland.gov.uk](https://plan.activetravelengland.gov.uk)) (10 days)
 -  Writing up the results in a peer-reviewed journal article (10 days)
 
-In total, the project would require around 70-250 days of work, depending on the project's ambition and scope.
+In total, the project would require around 100-250 days of work, depending on the project's ambition and scope.
 With the potential to have a substantial impact on active travel to school in England, the project is well worth pursuing.
 
 # References
