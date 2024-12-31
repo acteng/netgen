@@ -1,14 +1,10 @@
 ---
 title: "SchoolRoutes: An approach for data-driven investment in safe routes to school"
-# output: word_document
-output: bookdown::html_document2
-# output:
-#   rmarkdown::html_vignette:
-#     number_sections: true
-# vignette: >
-#   %\VignetteIndexEntry{Vignette's Title}
-#   %\VignetteEngine{knitr::knitr}
-#   %\VignetteEncoding{UTF-8}
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{SchoolRoutes: An approach for data-driven investment in safe routes to school}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 bibliography: references.bib
 author:
    - name: Robin Lovelace
@@ -380,6 +376,10 @@ od2net config_pct_godutch_schools.json
 # - Total distance on LTS 2 roads: 18057.4 km
 # - Total distance on LTS 3 roads: 25217.0 km
 # - Total distance on LTS 4 roads: 6634.4 km
+```
+
+```{r}
+#| eval: false
 ```
 
 ```{r}
