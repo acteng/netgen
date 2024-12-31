@@ -205,12 +205,12 @@ g1 = ggplot(uptake_df) +
     linetype = scenario
   )) +
   scale_x_continuous("Distance (km)") +
-  scale_y_continuous("Proportion of trips made by walking", labels = scales::percent)
+  scale_y_continuous("% trips made by walking", labels = scales::percent)
 g1
 ```
 
 ```{r decay-cycle, out.width="100%"}
-#| fig-cap: Uptake functions for cycling to school, by distance (left) and hilliness (right), in baseline and Go Dutch scenarios.
+#| fig-cap: Uptake functions for cycling to school, by distance (above) and hilliness (below), in baseline and Go Dutch scenarios.
 # Previous info:
 # r decay-cycle, fig.height=3, out.width="50%", fig.show="hold"
 library(pct)
@@ -242,7 +242,7 @@ g2 = ggplot(uptake_df) +
     colour = as.character(hilliness)
   )) +
   scale_x_continuous("Distance (km)") +
-  scale_y_continuous("Proportion of trips made by cycling", labels = scales::percent) +
+  scale_y_continuous("% trips made by cycling", labels = scales::percent) +
   scale_color_discrete("Gradient (%)")
 
 distances = c(3, 6, 10)
@@ -272,9 +272,9 @@ g3 = ggplot(uptake_df) +
     colour = formatC(distances, flag = "0", width = 2)
   )) +
   scale_x_continuous("Gradient (%)") +
-  scale_y_continuous("Proportion of trips made by cycling", labels = scales::percent) +
+  scale_y_continuous("% trips made by cycling", labels = scales::percent) +
   scale_color_discrete("Distance (km)")
-g2 | g3
+g2 / g3
 ```
 
 ```{r, include=FALSE}
