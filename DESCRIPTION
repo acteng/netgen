@@ -40,7 +40,8 @@ Suggests:
     tidyverse,
     tmap,
     od2net,
-    patchwork
+    patchwork,
+    zonebuilder
 VignetteBuilder: knitr
 Remotes: 
     r-tmap/tmap,
