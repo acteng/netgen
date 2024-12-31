@@ -526,6 +526,7 @@ rnet_godutch_top = rnet_godutch_clean |>
 ```
 
 The output dataset can be visualised with well-known data science tools, as illustrated in the figure below.
+The figure shows the routes with the highest number of trips under the Government Target scenario, which represents a doubling in the number of trips made by cycling to school [@goodman_scenarios_2019].
  <!-- as follows shown in  -->
  <!-- Figure @ref(fig:rnet-ggplot), -->
  <!-- Figure below, which is generated with the reproducible code below: -->
