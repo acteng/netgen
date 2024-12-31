@@ -1,12 +1,14 @@
 ---
 title: "SchoolRoutes: An approach for data-driven investment in safe routes to school"
-output:
-  rmarkdown::html_vignette:
-    number_sections: true
-vignette: >
-  %\VignetteIndexEntry{Vignette's Title}
-  %\VignetteEngine{knitr::knitr}
-  %\VignetteEncoding{UTF-8}
+# output: word_document
+output: bookdown::html_document2
+# output:
+#   rmarkdown::html_vignette:
+#     number_sections: true
+# vignette: >
+#   %\VignetteIndexEntry{Vignette's Title}
+#   %\VignetteEngine{knitr::knitr}
+#   %\VignetteEncoding{UTF-8}
 bibliography: references.bib
 author:
    - name: Robin Lovelace
@@ -67,6 +69,7 @@ library(sf)
 library(tidyverse)
 library(tmap)
 library(ggplot2)
+library(patchwork)
 # # Get the datasets, see: https://github.com/acteng/netgen/releases/tag/v0.1.0
 # Automate data download if you have gh installed and authorised with:
 ```
@@ -195,7 +198,7 @@ uptake_df = rbind(
   cbind(uptake_df, scenario = "Baseline", pwalk = p_baseline_school),
   cbind(uptake_df, scenario = "Go Active", pwalk = p_goactive_school)
 )
-ggplot(uptake_df) +
+g1 = ggplot(uptake_df) +
   geom_line(aes(
     distance,
     pwalk,
@@ -203,17 +206,17 @@ ggplot(uptake_df) +
   )) +
   scale_x_continuous("Distance (km)") +
   scale_y_continuous("Proportion of trips made by walking", labels = scales::percent)
+g1
 ```
 
-```{r}
-#| fig-cap: Uptake functions for cycling to school, by distance and hilliness, in baseline and Go Dutch scenarios.
-#| layout-ncol: 2
+```{r decay-cycle, out.width="100%"}
+#| fig-cap: Uptake functions for cycling to school, by distance (left) and hilliness (right), in baseline and Go Dutch scenarios.
 # Previous info:
 # r decay-cycle, fig.height=3, out.width="50%", fig.show="hold"
 library(pct)
-max_distance = 20
+max_distance = 16
 distances = 1:max_distance
-max_hilliness = 5
+max_hilliness = 3
 hilliness = 0:max_hilliness
 uptake_df = data.frame(
   distances = rep(distances, times = max_hilliness + 1),
@@ -231,7 +234,7 @@ uptake_df = rbind(
   cbind(uptake_df, scenario = "Go Dutch", pcycle = p_godutch_school),
   cbind(uptake_df, scenario = "Baseline", pcycle = p_godutch)
 )
-ggplot(uptake_df) +
+g2 = ggplot(uptake_df) +
   geom_line(aes(
     distances,
     pcycle,
@@ -261,7 +264,7 @@ uptake_df = rbind(
   cbind(uptake_df, scenario = "Go Dutch", pcycle = p_godutch_school),
   cbind(uptake_df, scenario = "Baseline", pcycle = p_godutch)
 )
-ggplot(uptake_df) +
+g3 = ggplot(uptake_df) +
   geom_line(aes(
     hilliness,
     pcycle,
@@ -271,6 +274,7 @@ ggplot(uptake_df) +
   scale_x_continuous("Gradient (%)") +
   scale_y_continuous("Proportion of trips made by cycling", labels = scales::percent) +
   scale_color_discrete("Distance (km)")
+g2 | g3
 ```
 
 ```{r, include=FALSE}
