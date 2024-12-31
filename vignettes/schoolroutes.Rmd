@@ -717,7 +717,7 @@ rnet_govtarget_top_5 |>
 Combined with local knowledge and other sources of data, such as information on road widths and traffic speeds and volumes, and consultation with local residents and schools, the SchoolRoutes evidence can be used to inform investment decisions.
 The results also help prioritise from a list of schemes that are already in the pipeline, with Huntingdon Road, for example, being highlighted as a key route for investment in York according to the results.
 
-## Quality assurance
+## Sense checking outputs
 
 The results for the synthetic data were sense-checked by comparing the total number of trips and distance travelled represented in the OD dataset with the output of the model.
 
@@ -732,7 +732,7 @@ distance_euclidean_total = sum(od_geo$length * od_geo$trips_modelled)
 wm = weighted.mean(od_geo$length, od_geo$trips_modelled) # 1.9 km
 ```
 
-The total Euclidean distance travelled according to the OD data is `r round(distance_euclidean_total / 1000) |> format(big.mark = ",")` km, with a weighted mean distance of `r round(wm, 1) |> format(big.mark = ",")` km.
+<!-- The total Euclidean distance travelled according to the synthetic OD data is `r round(distance_euclidean_total / 1000) |> format(big.mark = ",")` km, with a weighted mean distance of `r round(wm, 1) |> format(big.mark = ",")` km. -->
 
 ```{r}
 total_euclidean_cycled = distance_euclidean_total * 1.3 * 0.6
@@ -753,14 +753,13 @@ rnet_govtarget$length = sf::st_length(rnet_govtarget) |> as.numeric()
 total_rnet_govtarget = sum(rnet_govtarget$count * rnet_govtarget$length, na.rm = TRUE)
 ```
 
-Assuming a trip diversion factor of 1.4 and that on average 60% of the trips are made by cycling under the Go Dutch scenario for the short distances travelled to school, we can estimate the total number distance travelled by bike to school on a typical school day as `r round(total_euclidean_cycled / 1000) |> format(big.mark = ",")` km.
+Assuming a 'trip diversion factor' (meaning the distance travelled on the network compared with straight line distance) of 1.4 and that on average 60% of the trips are made by cycling under the Go Dutch scenario for the short distances travelled to school, we can estimate the total number distance travelled by bike to school on a typical school day as `r round(total_euclidean_cycled / 1000) |> format(big.mark = ",")` km.
 The equivalent for the route network output under the Go Dutch scenario is `r round(total_rnet / 1e3) |> format(big.mark = ",")` km.
 Note that the values presented above are based on *synthetic* OD data, which may not be representative of the actual travel patterns in York.
 
 Let's compare with the number who cycle under the less ambitious Government Target scenario: The total distance travelled under the Government Target scenario is `r round(total_rnet_govtarget / 1e3) |> format(big.mark = ",")` km.
-These numbers make sense and align well with the peer-reviewed results of the Propensity to Cycle Tool project.
-
-A visual approach to quality assurance is to compare the results with the Propensity to Cycle Tool outputs, which are available for York, as illustrated below.
+These numbers make sense and align well with the peer-reviewed results of the Propensity to Cycle Tool project, as shown in the figure below.
+A visual approach to quality assurance is to compare the results with the Propensity to Cycle Tool school travel outputs, which are available for York, as illustrated below.
 
 ```{r pct-comparison, fig.cap="Comparison of the SchoolRoutes and Propensity to Cycle Tool outputs for York.", out.width="50%", fig.show="hold"}
 #| label: fig-pct-comparison
