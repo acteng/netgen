@@ -526,7 +526,7 @@ rnet_godutch_top = rnet_godutch_clean |>
 ```
 
 The output dataset can be visualised with well-known data science tools, as illustrated in the figure below.
-The figure shows the routes with the highest number of trips under the Government Target scenario, which represents a doubling in the number of trips made by cycling to school [@goodman_scenarios_2019].
+The figure shows the routes with the highest number of trips under the Government Target cycling uptake scenario (left), which represents a doubling in the number of trips made by cycling to school [@goodman_scenarios_2019].
  <!-- as follows shown in  -->
  <!-- Figure @ref(fig:rnet-ggplot), -->
  <!-- Figure below, which is generated with the reproducible code below: -->
@@ -535,11 +535,12 @@ The figure shows the routes with the highest number of trips under the Governmen
 #| label: fig-rnet-ggplot
 library(ggplot2)
 theme_set(theme_void())
-ggplot(rnet_godutch_top) +
+g_rnet = ggplot(rnet_godutch_top) +
   geom_sf(aes(color = lts, linewidth = count)) +
   scale_colour_viridis_d(direction = -1) +
   theme_void() +
   theme(legend.position = "none")
+# g_rnet
 ```
 
 <!-- From the data we can create interactive maps, showing both the -->
@@ -651,7 +652,7 @@ m
 
 A simple way to prioritise investment based on the route network outputs shown above is to find the LTS3 and LTS4 roads with the greatest potential.
 A key output from the tool will be route network data that contains both the potential number of trips and the LTS classification of each road segment.
-Taking a hypothetical scenario in which there is sufficient funding for investment in 5 school streets, targetting the worst (LTS4) roads, the data allows us to identify the roads presented in <!-- Table @ref(tab:rnet-godutch-top5) and Figure @ref(fig:rnet-godutch-top5-map). --> the Table below and the Figure below.
+Taking a hypothetical scenario in which there is sufficient funding for investment in 5 school streets, targetting the worst (LTS4) roads in York, the data allows us to identify the roads presented in <!-- Table @ref(tab:rnet-godutch-top5) and Figure @ref(fig:rnet-godutch-top5-map). --> the Table below and the Figure below.
 
 ```{r rnet-godutch-top5-map, fig.cap="Top 5 routes with the highest number of trips under the Government Target scenario."}
 #| label: fig-rnet-godutch-top5-map
