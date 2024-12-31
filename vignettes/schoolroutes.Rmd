@@ -761,7 +761,7 @@ Let's compare with the number who cycle under the less ambitious Government Targ
 These numbers make sense and align well with the peer-reviewed results of the Propensity to Cycle Tool project, as shown in the figure below.
 A visual approach to quality assurance is to compare the results with the Propensity to Cycle Tool school travel outputs, which are available for York, as illustrated below.
 
-```{r pct-comparison, fig.cap="Comparison of the SchoolRoutes and Propensity to Cycle Tool outputs for York.", out.width="50%", fig.show="hold"}
+```{r pct-comparison, fig.cap="Comparison of the SchoolRoutes and Propensity to Cycle Tool outputs for York.", fig.show="hold"}
 #| label: fig-pct-comparison
 knitr::include_graphics("pct_huntingdon.png")
 # knitr::include_graphics("netgen_huntingdon.png")

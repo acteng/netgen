@@ -39,7 +39,8 @@ Suggests:
     simodels (>= 0.1.0),
     tidyverse,
     tmap,
-    od2net
+    od2net,
+    patchwork
 VignetteBuilder: knitr
 Remotes: 
     r-tmap/tmap,
