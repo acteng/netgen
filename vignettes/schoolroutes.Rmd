@@ -1,12 +1,14 @@
 ---
 title: "SchoolRoutes: An approach for data-driven investment in safe routes to school"
-output:
-  rmarkdown::html_vignette:
-    number_sections: true
-vignette: >
-  %\VignetteIndexEntry{Vignette's Title}
-  %\VignetteEngine{knitr::knitr}
-  %\VignetteEncoding{UTF-8}
+# output: word_document
+output: bookdown::html_document2
+# output:
+#   rmarkdown::html_vignette:
+#     number_sections: true
+# vignette: >
+#   %\VignetteIndexEntry{Vignette's Title}
+#   %\VignetteEngine{knitr::knitr}
+#   %\VignetteEncoding{UTF-8}
 bibliography: references.bib
 author:
    - name: Robin Lovelace
@@ -67,6 +69,7 @@ library(sf)
 library(tidyverse)
 library(tmap)
 library(ggplot2)
+library(patchwork)
 # # Get the datasets, see: https://github.com/acteng/netgen/releases/tag/v0.1.0
 # Automate data download if you have gh installed and authorised with:
 ```
@@ -84,12 +87,12 @@ While the PCT --- and associated website which provides data downloads and evide
 
 -   School catchments and travel patterns have changed substantially since the 2010/2011 data on which @goodman_scenarios_2019 was based. More recent travel data can overcome a major limitation of that study by presenting current transport patterns to school.
 -   The travel to school layer in the PCT described by @goodman_scenarios_2019 provided only a single metric for segments on the road network: cycling potential (under a range of scenarios), without reference to key infrastructure datasets that could be vital when prioritising local interventions and identifying where 'pinch points' are in the network.
--   The pandemic has seen an [alarming increase in childhood obesity rates and inequalities](https://twitter.com/TheMooreLab/status/1492883858450169857), as shown in Figure 1. This has pushed active travel for kids up the political agenda.
+-   The pandemic and subsequent restrictions on have been linked with [alarming increase in childhood obesity rates and inequalities](https://twitter.com/TheMooreLab/status/1492883858450169857), as shown in Figure 1. This has pushed active travel for kids up the political agenda.
 -   The travel to school layer in the original PCT resulted in a sparse network in some places. This can be overcome using new methods for disaggregating OD pairs to show diffuse residential networks [@lovelace_jittering_2022b].
 -   Perhaps most importantly, evidence presented in the PCT omitted the potential for walking to school, which is likely to be more important for shorter trips and for younger children, especially in the near term.
 
 On the policy side, and as part of the UK Government's Health Mission, health and wellbeing for young people has risen up the political agenda.
-'School Streets' interventions featured prominently in all rounds of the Active Travel Fund (ATF) bids, yet there is a lack of evidence to support safe routes to school and where they should be located at the local level.
+'School Streets' interventions featured prominently in all rounds of the Active Travel Fund (ATF) bids, yet there is a lack of evidence to support safe routes to school and where they should be located.
 More broadly, strategic active travel networks have already largely been designed, as part of the LCWIP process, while cost-effective interventions that fix 'weak links' in quiet/beginner networks have received less attention.
 
 ```{r obesdep, fig.height=3, fig.width=6}
@@ -134,6 +137,23 @@ t11_most_least %>%
 # theme void:
 ```
 
+Objectives 
+
+As outlined in the project charter, the project aims to: 
+
+1. Generate estimates of active travel potential for school travel, based on separate uptake functions for walking and cycling.
+
+2. Use 'jittering', described in an academic paper (Lovelace et al. 2022), to create a realistic distribution of school route starting points within LSOAs, generating dense networks connecting residential origins with schools.
+
+3. Use 2023 origin-destination data from DfE, describing the number of children from each English LSOA travelling to each school in England.
+
+4. Update cycling and walking uptake scenarios to reflect ATE targets and long-term aspirations.
+
+5. Include route segment information on cycle friendliness and traffic.
+
+Furthermore, the project will provide a basis for modelling active travel that can be applied to other trip purposes, as part of the Active Travel Uptake Model (ATUM) project in 2023.
+ATUM aims to replace the PCT, building on the Network Planning Tool for Scotland ([NPT](https://npt.scot/)).
+
 # Data and methods
 
 The approach outlined in this paper uses the following datasets:
@@ -144,7 +164,7 @@ The approach outlined in this paper uses the following datasets:
 -   Elevation data, enabling hilliness to be factored into walking and cycling potential estimates.
 -   Datasets from the Modeshift Stars programme, which provides data on the number of trips to school by mode for a sample of schools in England (not currently used).
 
-A methodological limitation of the PCT approach was that it used only zone centroids as trip origins, which can lead to a 'spider's web' of routes that do not reflect the actual routes taken by children to school.
+A methodological limitation of the PCT approach was that it used only zone centroids as trip origins, which can lead to a sparse 'spider's web' of routes that do not reflect the actual routes taken by children to school, rather than the dense networks that are needed (see example in the case study section below).
 To overcome this, the approach taken in this paper is to disaggregate the OD data, modelling multiple origins or 'subpoints' within each zone, to better represent the geographic distribution of trips to school.
 
 For each OD pair, the number of trips that could be walked or cycled is estimated based on route characteristics.
@@ -178,25 +198,25 @@ uptake_df = rbind(
   cbind(uptake_df, scenario = "Baseline", pwalk = p_baseline_school),
   cbind(uptake_df, scenario = "Go Active", pwalk = p_goactive_school)
 )
-ggplot(uptake_df) +
+g1 = ggplot(uptake_df) +
   geom_line(aes(
     distance,
     pwalk,
     linetype = scenario
   )) +
   scale_x_continuous("Distance (km)") +
-  scale_y_continuous("Proportion of trips made by walking", labels = scales::percent)
+  scale_y_continuous("% trips made by walking", labels = scales::percent)
+g1
 ```
 
-```{r}
-#| fig-cap: Uptake functions for cycling to school, by distance and hilliness, in baseline and Go Dutch scenarios.
-#| layout-ncol: 2
+```{r decay-cycle, out.width="100%"}
+#| fig-cap: Uptake functions for cycling to school, by distance (above) and hilliness (below), in baseline and Go Dutch scenarios.
 # Previous info:
 # r decay-cycle, fig.height=3, out.width="50%", fig.show="hold"
 library(pct)
-max_distance = 20
+max_distance = 16
 distances = 1:max_distance
-max_hilliness = 5
+max_hilliness = 3
 hilliness = 0:max_hilliness
 uptake_df = data.frame(
   distances = rep(distances, times = max_hilliness + 1),
@@ -214,7 +234,7 @@ uptake_df = rbind(
   cbind(uptake_df, scenario = "Go Dutch", pcycle = p_godutch_school),
   cbind(uptake_df, scenario = "Baseline", pcycle = p_godutch)
 )
-ggplot(uptake_df) +
+g2 = ggplot(uptake_df) +
   geom_line(aes(
     distances,
     pcycle,
@@ -222,7 +242,7 @@ ggplot(uptake_df) +
     colour = as.character(hilliness)
   )) +
   scale_x_continuous("Distance (km)") +
-  scale_y_continuous("Proportion of trips made by cycling", labels = scales::percent) +
+  scale_y_continuous("% trips made by cycling", labels = scales::percent) +
   scale_color_discrete("Gradient (%)")
 
 distances = c(3, 6, 10)
@@ -244,7 +264,7 @@ uptake_df = rbind(
   cbind(uptake_df, scenario = "Go Dutch", pcycle = p_godutch_school),
   cbind(uptake_df, scenario = "Baseline", pcycle = p_godutch)
 )
-ggplot(uptake_df) +
+g3 = ggplot(uptake_df) +
   geom_line(aes(
     hilliness,
     pcycle,
@@ -252,8 +272,9 @@ ggplot(uptake_df) +
     colour = formatC(distances, flag = "0", width = 2)
   )) +
   scale_x_continuous("Gradient (%)") +
-  scale_y_continuous("Proportion of trips made by cycling", labels = scales::percent) +
+  scale_y_continuous("% trips made by cycling", labels = scales::percent) +
   scale_color_discrete("Distance (km)")
+g2 / g3
 ```
 
 ```{r, include=FALSE}
@@ -378,13 +399,13 @@ file.copy("output/rnet.pmtiles", "output_pct_godutch.pmtiles", overwrite = TRUE)
 system("gh release upload v0.1.0 output_pct_godutch.pmtiles --clobber")
 ```
 
-The `od2net` program generates the following files and places them in the `output` folder:
+<!-- The `od2net` program generates the following files and places them in the `output` folder: -->
 
--   `output.geojson`: the route network dataset.
+<!-- -   `output.geojson`: the route network dataset.
 -   `rnet.pmtiles`: a compressed version of the route network dataset for interactive visualisation in web apps.
 -   `counts.csv`: a CSV file with the counts of trips on each route segment.
 -   `od.csv`: summary statistics with the total number of trips estimated for each OD pair.
--   `failed_requests.geojson`: a geojson file with the failed requests (i.e. those that could not be routed).
+-   `failed_requests.geojson`: a geojson file with the failed requests (i.e. those that could not be routed). -->
 
 ```{r}
 #| eval: false
@@ -393,9 +414,16 @@ list.files("output")
 #> [3] "output.geojson"          "rnet.pmtiles"
 ```
 
-The most relevant of these is the 'output.geojson' file, which is also provided as a compressed `pmtiles` file.
-You can visualise the results in the web app hosted at [od2net.org](https://od2net.org) by uploading the `output.pmtiles` file, resulting in an interactive map of the routes, as shown in the Figure below.
+<!-- The most relevant of these is the 'output.geojson' file, which is also provided as a compressed `pmtiles` file. -->
+<!-- You can visualise the results in the web app hosted at [od2net.org](https://od2net.org) by uploading the `output.pmtiles` file, resulting in an interactive map of the routes, as shown in the Figure below. -->
 <!-- @ref(fig:od2net). -->
+
+The approach uses the od2net tool, developed by Dustin Carlino on secondment to ATE from the Alan Turing Institute.
+The raw outputs can be visualised in the web app hosted at [od2net.org](https://od2net.org), resulting in an interactive map of the routes, as shown in the Figure below.
+The od2net web application is useful for gaining a quick insight into the results, but is rather unrefined and not adapted to the needs of transport planning.
+This suggests a need for presenting the results in an alternative way, for example in the Scheme Browser tool hosted at 
+<!-- https://plan.activetravelengland.gov.uk/browse.html -->
+[plan.activetravelengland.gov.uk](https://plan.activetravelengland.gov.uk).
 
 ```{r od2net, fig.cap="Routes generated by the SchoolRoutes project."}
 #| label: fig-od2net
@@ -424,34 +452,51 @@ rnet_godutch$length_m = sf::st_length(rnet_godutch) |>
 stratford_way = rnet_godutch |>
   dplyr::filter(str_detect(osm_tags, "Stratford"))
 # stratford_way
-stratford_way_buffer = st_buffer(stratford_way, 500)
-rnet_stratford = rnet_godutch[stratford_way_buffer, op = st_within]
+stratford_way_buffer = st_buffer(stratford_way, 1000)
+york_zb = zonebuilder::zb_zone("York")
+york_1km = york_zb |>
+  filter(circle_id < 2) |>
+  sf::st_union()
+# plot(york_1km)
+rnet_1km = rnet_godutch[stratford_way_buffer, op = st_within]
 ```
 
 A useful feature of the route network level data outputs is that the can be imported and visualised for any local area using commonly available data science tools such as QGIS, Python and R.
-The figure below highlights this by showing the routes generated by the SchoolRoutes project in the vicinity of Stratford Way, next to Huntingdon School, with colours representing selected variables.
+The figure below highlights this by showing the routes generated by the SchoolRoutes project within 1 km of Stratford Way, next to Huntingdon School, with colours representing selected variables.
 
 ```{r rnet-base, fig.cap="Routes generated by the SchoolRoutes project, with colours representing selected variables."}
 #| label: fig-rnet-base
 # nrow(rnet_godutch)
 # names(rnet_godutch)
-plot(rnet_stratford, logz = TRUE)
+plot(rnet_1km, logz = TRUE)
 ```
 
-The route network object visualised <!-- in Figure @ref(fig:rnet-base) --> above, which represents the results within a 500 m buffer around Stratford Way, next to Huntingdon School, has the following variables:
+<!-- The route network object visualised -->
+<!-- in Figure @ref(fig:rnet-base) -->
+<!-- above, which represents the results within a 500 m buffer around Stratford Way, next to Huntingdon School, has the following variables: -->
 
-```         
+<!-- ```         
  [1] "backward_cost"     "count"             "destination_count"
  [4] "forward_cost"      "length"            "lts"              
  [7] "nearby_amenities"  "node1"             "node2"            
 [10] "origin_count"      "osm_tags"          "way"              
 [13] "geometry" 
-```
+``` -->
 
-Of these, `count`, `lts`, `osm_tags`, and `way` are the most relevant.
-Let's take a look at these for a sample of 3 rows <!-- (see Table @ref(tab:rnet-sample)): --> (see Table below):
+Of the output variables provided at the segment, presented in the figure above, the level the most relevant are:
+ <!-- `count`, `lts`, `osm_tags`, and `way`. -->
+
+-  `count`: the number of trips on each route segment.
+-  `lts`: the level of traffic stress (LTS) on each route segment.
+-  `osm_tags`: the OpenStreetMap tags for each route segment, for example surface quality, whether or not the segment is lit, and the maximum speed limit (the quality/coverage of these tags varies by region depending on the OSM community).
+-  `way`: the unique identifier for each route segment, which can be used to link to other datasets and to OSM, enabling people to view and update the data.
+
+<!-- Let's take a look at these for a sample of 3 rows -->
+ <!-- (see Table @ref(tab:rnet-sample)): -->
+  <!-- (see Table below): -->
 
 ```{r rnet-sample}
+#| eval: false
 set.seed(42)
 rnet_godutch |>
   dplyr::filter(count > 1) |>
@@ -460,8 +505,8 @@ rnet_godutch |>
   knitr::kable(caption = "Sample of the route network dataset.")
 ```
 
-As shown above, the `osm_tags` field has all the OSM tags in JSON format,
-enabling detailed analysis of the road network and adding value to the resulting files for publication.
+<!-- As shown above, the `osm_tags` field has all the OSM tags in JSON format,
+enabling detailed analysis of the road network and adding value to the resulting files for publication. -->
  <!-- which can be extrated as follows with `jsonlite::fromJSON`: -->
 
 ```{r}
@@ -473,14 +518,15 @@ jsonlite::fromJSON(rnet_godutch$osm_tags[1])
 <!-- Let's create a minimal version of the dataset for future plots: -->
 
 ```{r}
-rnet_godutch_clean = rnet_godutch |>
+rnet_godutch_clean = rnet_1km |>
   dplyr::transmute(count = as.integer(count), way, lts = as.character(lts), length, osm_tags)
 rnet_godutch_top = rnet_godutch_clean |>
   dplyr::slice_max(count, n = 5000) |>
   dplyr::arrange(count)
 ```
 
-The output dataset can be visualised with well-known data science tools, such as the `ggplot2` R package.
+The output dataset can be visualised with well-known data science tools, as illustrated in the figure below.
+The figure shows the routes with the highest number of trips under the Government Target cycling uptake scenario (left), which represents a doubling in the number of trips made by cycling to school [@goodman_scenarios_2019].
  <!-- as follows shown in  -->
  <!-- Figure @ref(fig:rnet-ggplot), -->
  <!-- Figure below, which is generated with the reproducible code below: -->
@@ -489,13 +535,15 @@ The output dataset can be visualised with well-known data science tools, such as
 #| label: fig-rnet-ggplot
 library(ggplot2)
 theme_set(theme_void())
-ggplot(rnet_godutch_top) +
+g_rnet = ggplot(rnet_godutch_top) +
   geom_sf(aes(color = lts, linewidth = count)) +
   scale_colour_viridis_d(direction = -1) +
-  theme_void()
+  theme_void() +
+  theme(legend.position = "none")
+# g_rnet
 ```
 
-From the data we can create interactive maps, showing both the
+<!-- From the data we can create interactive maps, showing both the -->
 
 ```{r}
 # mapview::mapview(rnet_godutch_top, zcol = "count", linewidth = rnet_godutch$count)
@@ -527,9 +575,10 @@ browseURL("output_pct_godutch.html")
 system("gh release upload v0.1.0 output_pct_godutch.html")
 ```
 
-# Walking network
+<!-- # Walking network -->
 
 The same approach can be used to estimate walking to school potential, based on the all-mode flows to school contained in the OD data.
+The results for walking and cycling surrounding Stratford Way are shown in the figure below.
 
 ```{r, engine='bash', eval=FALSE, echo=FALSE}
 #| eval: false
@@ -582,8 +631,7 @@ rnet_walking_cycling = bind_rows(
 
 
 # Plot for small region:
-stratford_way_buffer_2km = st_buffer(stratford_way, 2000)
-rnet_wc = rnet_walking_cycling[stratford_way_buffer_2km, op = st_within]
+rnet_wc = rnet_walking_cycling[stratford_way_buffer, op = st_within]
 
 # Plot with tmap and facets:
 m = tm_shape(rnet_wc) +
@@ -593,31 +641,36 @@ m = tm_shape(rnet_wc) +
     col.legend = tm_legend(orientation = "landscape"),
     lwd = "count",
     lwd.legend = NULL,
-    lwd.scale = tm_scale_continuous(values.scale = 9)
+    lwd.scale = tm_scale_continuous(values.scale = 30, trans = "sqrt"),
   ) +
   tm_facets("mode")
 tmap_mode("plot")
 m
 ```
 
-# Prioritising investment
+Note that the results for walking show that the number of trips is generally higher than for cycling close to the school, but as you move further away, the relative number of cycling trips increases.
+This highlights the fact that cycle networks around schools need to be longer than walking networks.
+
+## Prioritising investment with SchoolRoutes evidence
 
 A simple way to prioritise investment based on the route network outputs shown above is to find the LTS3 and LTS4 roads with the greatest potential.
 A key output from the tool will be route network data that contains both the potential number of trips and the LTS classification of each road segment.
-Taking a hypothetical scenario in which there is sufficient funding for investment in 5 school streets, targetting the worst (LTS4) roads, the data allows us to identify the roads presented in <!-- Table @ref(tab:rnet-godutch-top5) and Figure @ref(fig:rnet-godutch-top5-map). --> the Table below and the Figure below.
+Taking a hypothetical scenario in which there is sufficient funding for investment in 5 school streets, targetting the worst (LTS3 and LTS4) roads in York, the data allows us to identify the roads presented in <!-- Table @ref(tab:rnet-godutch-top5) and Figure @ref(fig:rnet-godutch-top5-map). -->
+the Table below and the Figure below.
 
 ```{r rnet-godutch-top5-map, fig.cap="Top 5 routes with the highest number of trips under the Government Target scenario."}
 #| label: fig-rnet-godutch-top5-map
-rnet_godutch_lts4_named = rnet_godutch_clean |>
+rnet_govtarget_lts4_named = rnet_walking_cycling |>
+  filter(mode == "cycling") |>
   filter(!is.na(osm_tags)) |>
   dplyr::mutate(osm_tags_list = purrr::map(osm_tags, jsonlite::fromJSON)) |>
   # Only keep those with names:
   filter(purrr::map_lgl(osm_tags_list, ~ "name" %in% names(.x))) |>
   dplyr::mutate(name = purrr::map_chr(osm_tags_list, ~ .x$name)) |>
-  dplyr::filter(lts %in% c("4")) |>
+  dplyr::filter(lts %in% c("3", "4")) |>
   dplyr::arrange(desc(count))
-min_count = 100
-rnet_godutch_top_5 = rnet_godutch_lts4_named |>
+min_count = 20
+rnet_govtarget_top_5 = rnet_govtarget_lts4_named |>
   dplyr::filter(count > min_count) |>
   # Exclude name = ring road:
   dplyr::filter(!str_detect(name, "Ring Road")) |>
@@ -625,7 +678,7 @@ rnet_godutch_top_5 = rnet_godutch_lts4_named |>
   dplyr::summarise(`Total (km)` = sum(count * length) / 1000, .groups = "drop") |>
   dplyr::arrange(desc(`Total (km)`)) |>
   dplyr::slice_head(n = 5)
-m = tm_shape(rnet_godutch_top_5) +
+m = tm_shape(rnet_govtarget_top_5) +
   tm_lines(
     col = "Total (km)",
     palette = "-viridis",
@@ -633,34 +686,40 @@ m = tm_shape(rnet_godutch_top_5) +
   ) +
   # Add schools:
   tm_shape(destinations) +
-  tm_dots(col = "black", size = 0.5) +
-  tm_scale_bar()
+  tm_dots(col = "black", size = 0.5)
+  #  +
+  # tm_scale_bar()
   # tm_lines(
   #   col = "Total (km)",
   #   col.scale = tm_scale(values = "viridis", breaks = c(0, 10, 20, 50, 200)),
   #   lwd = 9
   # )
+# tmap_mode("view")
 # m
+# tmap_save(m, "output_pct_govtarget_top5.html")
+# browseURL("output_pct_govtarget_top5.html")
+knitr::include_graphics("top_5_govtarget.png")
 ```
 
 ```{r, eval=FALSE}
 #| eval: false
-tmap_save(m, "output_pct_godutch_top5.html")
-browseURL("output_pct_godutch_top5.html")
-system("gh release upload v0.1.0 output_pct_godutch_top5.html --clobber")
+tmap_save(m, "output_pct_govtarget_top5.html")
+browseURL("output_pct_govtarget_top5.html")
+system("gh release upload v0.1.0 output_pct_govtarget_top5.html --clobber")
 ```
 
-```{r rnet-godutch-top5, tab.cap="Top 5 routes with the highest potential distance cycled each day for travel to school under the Government Target scenario."}
-rnet_godutch_top_5 |>
+```{r rnet-govtarget-top5, tab.cap="Top 5 routes with the highest potential distance cycled each day for travel to school under the Government Target scenario."}
+rnet_govtarget_top_5 |>
   sf::st_drop_geometry() |>
   knitr::kable(digits = 1)
 ```
 
-<!-- # Sense checking the results -->
+Combined with local knowledge and other sources of data, such as information on road widths and traffic speeds and volumes, and consultation with local residents and schools, the SchoolRoutes evidence can be used to inform investment decisions.
+The results also help prioritise from a list of schemes that are already in the pipeline, with Huntingdon Road, for example, being highlighted as a key route for investment in York according to the results.
 
-## Comparing with the OD data
+## Sense checking outputs
 
-We'll do some initial checks by finding by comparing the total number of trips and distance travelled represented in the OD dataset with the output of the model.
+The results for the synthetic data were sense-checked by comparing the total number of trips and distance travelled represented in the OD dataset with the output of the model.
 
 ```{r}
 od_geo$length = sf::st_length(od_geo) |> as.numeric()
@@ -673,7 +732,7 @@ distance_euclidean_total = sum(od_geo$length * od_geo$trips_modelled)
 wm = weighted.mean(od_geo$length, od_geo$trips_modelled) # 1.9 km
 ```
 
-The total Euclidean distance travelled according to the OD data is `r round(distance_euclidean_total / 1000) |> format(big.mark = ",")` km, with a weighted mean distance of `r round(wm, 1) |> format(big.mark = ",")` km.
+<!-- The total Euclidean distance travelled according to the synthetic OD data is `r round(distance_euclidean_total / 1000) |> format(big.mark = ",")` km, with a weighted mean distance of `r round(wm, 1) |> format(big.mark = ",")` km. -->
 
 ```{r}
 total_euclidean_cycled = distance_euclidean_total * 1.3 * 0.6
@@ -694,12 +753,34 @@ rnet_govtarget$length = sf::st_length(rnet_govtarget) |> as.numeric()
 total_rnet_govtarget = sum(rnet_govtarget$count * rnet_govtarget$length, na.rm = TRUE)
 ```
 
-Assuming a trip diversion factor of 1.4 and that on average 60% of the trips are made by cycling under the Go Dutch scenario for the short distances travelled to school, we can estimate the total number distance travelled by bike to school on a typical school day as `r round(total_euclidean_cycled / 1000) |> format(big.mark = ",")` km.
+Assuming a 'trip diversion factor' (meaning the distance travelled on the network compared with straight line distance) of 1.4 and that on average 60% of the trips are made by cycling under the Go Dutch scenario for the short distances travelled to school, we can estimate the total number distance travelled by bike to school on a typical school day as `r round(total_euclidean_cycled / 1000) |> format(big.mark = ",")` km.
 The equivalent for the route network output under the Go Dutch scenario is `r round(total_rnet / 1e3) |> format(big.mark = ",")` km.
 Note that the values presented above are based on *synthetic* OD data, which may not be representative of the actual travel patterns in York.
 
 Let's compare with the number who cycle under the less ambitious Government Target scenario: The total distance travelled under the Government Target scenario is `r round(total_rnet_govtarget / 1e3) |> format(big.mark = ",")` km.
-These numbers make sense and align well with the peer-reviewed results of the Propensity to Cycle Tool project.
+These numbers make sense and align well with the peer-reviewed results of the Propensity to Cycle Tool project, as shown in the figure below.
+A visual approach to quality assurance is to compare the results with the Propensity to Cycle Tool school travel outputs, which are available for York, as illustrated below.
+
+```{r pct-comparison, fig.cap="Comparison of the SchoolRoutes and Propensity to Cycle Tool outputs for York.", out.width="50%", fig.show="hold"}
+#| label: fig-pct-comparison
+knitr::include_graphics("pct_huntingdon.png")
+# knitr::include_graphics("netgen_huntingdon.png")
+rnet_c = rnet_wc |>
+  dplyr::filter(mode == "cycling")
+m = tm_shape(rnet_c) +
+  tm_lines(
+    col = "count",
+    palette = c("grey", "yellow", "green", "lightblue"),
+    breaks = c(1, 10, 50, 100, Inf),
+    lwd = 2
+  )
+m
+```
+
+Not that while there are differences in the results, the SchoolRoutes outputs presented above are based on synthetic OD data.
+Despite this, both sets of results highlight the same roads, and the results are on the same scale, which is a good sign that the SchoolRoutes outputs are plausible.
+It is clear from the SchoolRoutes outputs, on the right in the figure above, that the networks it generates are much denser: most of the roads around the school are highlighted, rather than just a few key routes in the PCT.
+
 
 # Conclusions and next steps
 
@@ -712,7 +793,7 @@ To deploy the project at scale there is a substantial amount of work to do, incl
 -  Validating the results against ground truth data for a single local authority (5 days)
 -  Refining the parameters in the walking uptake (and potentially cycling uptake) functions (5-30 days)
 -  Integration of ModeShift Stars data and Census data to generate better baseline data (10-30 days)
-- Inclusion of gradient data (5-10 days)
+- Inclusion of gradient data, gradient is not included in the walking or cycling routes or uptake model currently (5-20 days)
 -  Sense-checking results based on local knowledge with input from inspectors and/or local authority staff (5-10 days)
 - Running the tool for every local authority in England (10-20 days)
 - Development of front-end tools for visualising the results (5-50 days depending on level of sophistication)
@@ -722,7 +803,7 @@ To deploy the project at scale there is a substantial amount of work to do, incl
 - Integration into the browse tool in the [`atip`](https://github.com/acteng/atip)
 -  Writing up the results in a peer-reviewed journal article (10 days)
 
-In total, the project would require around 70-200 days of work, depending on the project's ambition and scope.
+In total, the project would require around 70-250 days of work, depending on the project's ambition and scope.
 With the potential to have a substantial impact on active travel to school in England, the project is well worth pursuing.
 
 # References
