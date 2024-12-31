@@ -478,10 +478,20 @@ plot(rnet_stratford, logz = TRUE)
 [13] "geometry" 
 ``` -->
 
-Of these, `count`, `lts`, `osm_tags`, and `way` are the most relevant.
-Let's take a look at these for a sample of 3 rows <!-- (see Table @ref(tab:rnet-sample)): --> (see Table below):
+Of the output variables provided at the segment, presented in the figure above, the level the most relevant are:
+ <!-- `count`, `lts`, `osm_tags`, and `way`. -->
+
+-  `count`: the number of trips on each route segment.
+-  `lts`: the level of traffic stress (LTS) on each route segment.
+-  `osm_tags`: the OpenStreetMap tags for each route segment, for example surface quality, whether or not the segment is lit, and the maximum speed limit (the quality/coverage of these tags varies by region depending on the OSM community).
+-  `way`: the unique identifier for each route segment, which can be used to link to other datasets and to OSM, enabling people to view and update the data.
+
+<!-- Let's take a look at these for a sample of 3 rows -->
+ <!-- (see Table @ref(tab:rnet-sample)): -->
+  <!-- (see Table below): -->
 
 ```{r rnet-sample}
+#| eval: false
 set.seed(42)
 rnet_godutch |>
   dplyr::filter(count > 1) |>
@@ -490,8 +500,8 @@ rnet_godutch |>
   knitr::kable(caption = "Sample of the route network dataset.")
 ```
 
-As shown above, the `osm_tags` field has all the OSM tags in JSON format,
-enabling detailed analysis of the road network and adding value to the resulting files for publication.
+<!-- As shown above, the `osm_tags` field has all the OSM tags in JSON format,
+enabling detailed analysis of the road network and adding value to the resulting files for publication. -->
  <!-- which can be extrated as follows with `jsonlite::fromJSON`: -->
 
 ```{r}
