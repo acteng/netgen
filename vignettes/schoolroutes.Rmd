@@ -59,10 +59,8 @@ knitr::opts_chunk$set(
 ```
 
 ```{r setup}
+#| include: false
 library(netgen)
-```
-
-```{r}
 library(sf)
 library(tidyverse)
 library(tmap)
