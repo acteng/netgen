@@ -13,6 +13,8 @@ author:
      affiliation: Active Travel England
    - name: Emma Vinter
      affiliation: Active Travel England
+   - name: Adrian Fletcher
+     affiliation: Active Travel England
    - name: Chris Conlan
      affiliation: Active Travel England and The Alan Turing Institute
    - name: Dustin Carlino
