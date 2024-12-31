@@ -74,7 +74,7 @@ library(ggplot2)
 # Introduction
 
 This outlines the methods and preliminary findings of the SchoolRoutes project.
-See the [project charter](https://departmentfortransportuk.sharepoint.com/:w:/r/sites/ATE/Data%20%20Analysis/Digital/projects/atum/schoolroutes/Project%20Charter/project_charter_schoolroutes.docx?d=w27b2cd1af6d74e7fb789f5039f8286b0&csf=1&web=1&e=LsZ7Mi) for the project's aims, objectives, and scope.
+See the [project charter](https://departmentfortransportuk.sharepoint.com/:w:/r/sites/ATE/Data%20%20Analysis/Digital/projects/atum/schoolroutes/Project%20Charter/project_charter_schoolroutes.docx?d=w27b2cd1af6d74e7fb789f5039f8286b0&csf=1&web=1&e=LsZ7Mi) for a full description of the project's aims, objectives, and scope.
 
 There is a large and growing body of evidence on the relationships between active travel, physical activity, and positive environmental, economic, social and health outcomes.
 Research supporting the Propensity to Cycle Tool (PCT) project, based on 2010/2011 English travel to school data, with the number of trips by mode at the origin-destination level, for example found that there was substantial unmet potential for cycling to school.
