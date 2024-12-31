@@ -648,24 +648,29 @@ tmap_mode("plot")
 m
 ```
 
+Note that the results for walking show that the number of trips is generally higher than for cycling close to the school, but as you move further away, the relative number of cycling trips increases.
+This highlights the fact that cycle networks around schools need to be longer than walking networks.
+
 ## Prioritising investment with SchoolRoutes evidence
 
 A simple way to prioritise investment based on the route network outputs shown above is to find the LTS3 and LTS4 roads with the greatest potential.
 A key output from the tool will be route network data that contains both the potential number of trips and the LTS classification of each road segment.
-Taking a hypothetical scenario in which there is sufficient funding for investment in 5 school streets, targetting the worst (LTS4) roads in York, the data allows us to identify the roads presented in <!-- Table @ref(tab:rnet-godutch-top5) and Figure @ref(fig:rnet-godutch-top5-map). --> the Table below and the Figure below.
+Taking a hypothetical scenario in which there is sufficient funding for investment in 5 school streets, targetting the worst (LTS3 and LTS4) roads in York, the data allows us to identify the roads presented in <!-- Table @ref(tab:rnet-godutch-top5) and Figure @ref(fig:rnet-godutch-top5-map). -->
+the Table below and the Figure below.
 
 ```{r rnet-godutch-top5-map, fig.cap="Top 5 routes with the highest number of trips under the Government Target scenario."}
 #| label: fig-rnet-godutch-top5-map
-rnet_godutch_lts4_named = rnet_godutch_clean |>
+rnet_govtarget_lts4_named = rnet_walking_cycling |>
+  filter(mode == "cycling") |>
   filter(!is.na(osm_tags)) |>
   dplyr::mutate(osm_tags_list = purrr::map(osm_tags, jsonlite::fromJSON)) |>
   # Only keep those with names:
   filter(purrr::map_lgl(osm_tags_list, ~ "name" %in% names(.x))) |>
   dplyr::mutate(name = purrr::map_chr(osm_tags_list, ~ .x$name)) |>
-  dplyr::filter(lts %in% c("4")) |>
+  dplyr::filter(lts %in% c("3", "4")) |>
   dplyr::arrange(desc(count))
-min_count = 100
-rnet_godutch_top_5 = rnet_godutch_lts4_named |>
+min_count = 20
+rnet_govtarget_top_5 = rnet_govtarget_lts4_named |>
   dplyr::filter(count > min_count) |>
   # Exclude name = ring road:
   dplyr::filter(!str_detect(name, "Ring Road")) |>
@@ -673,7 +678,7 @@ rnet_godutch_top_5 = rnet_godutch_lts4_named |>
   dplyr::summarise(`Total (km)` = sum(count * length) / 1000, .groups = "drop") |>
   dplyr::arrange(desc(`Total (km)`)) |>
   dplyr::slice_head(n = 5)
-m = tm_shape(rnet_godutch_top_5) +
+m = tm_shape(rnet_govtarget_top_5) +
   tm_lines(
     col = "Total (km)",
     palette = "-viridis",
@@ -681,34 +686,37 @@ m = tm_shape(rnet_godutch_top_5) +
   ) +
   # Add schools:
   tm_shape(destinations) +
-  tm_dots(col = "black", size = 0.5) +
-  tm_scale_bar()
+  tm_dots(col = "black", size = 0.5)
+  #  +
+  # tm_scale_bar()
   # tm_lines(
   #   col = "Total (km)",
   #   col.scale = tm_scale(values = "viridis", breaks = c(0, 10, 20, 50, 200)),
   #   lwd = 9
   # )
+# tmap_mode("view")
 # m
+# tmap_save(m, "output_pct_govtarget_top5.html")
+# browseURL("output_pct_govtarget_top5.html")
+knitr::include_graphics("top_5_govtarget.png")
 ```
 
 ```{r, eval=FALSE}
 #| eval: false
-tmap_save(m, "output_pct_godutch_top5.html")
-browseURL("output_pct_godutch_top5.html")
-system("gh release upload v0.1.0 output_pct_godutch_top5.html --clobber")
+tmap_save(m, "output_pct_govtarget_top5.html")
+browseURL("output_pct_govtarget_top5.html")
+system("gh release upload v0.1.0 output_pct_govtarget_top5.html --clobber")
 ```
 
-```{r rnet-godutch-top5, tab.cap="Top 5 routes with the highest potential distance cycled each day for travel to school under the Government Target scenario."}
-rnet_godutch_top_5 |>
+```{r rnet-govtarget-top5, tab.cap="Top 5 routes with the highest potential distance cycled each day for travel to school under the Government Target scenario."}
+rnet_govtarget_top_5 |>
   sf::st_drop_geometry() |>
   knitr::kable(digits = 1)
 ```
 
-<!-- # Sense checking the results -->
+## Quality assurance
 
-## Comparing with the OD data
-
-We'll do some initial checks by finding by comparing the total number of trips and distance travelled represented in the OD dataset with the output of the model.
+The results for the synthetic data were sense-checked by comparing the total number of trips and distance travelled represented in the OD dataset with the output of the model.
 
 ```{r}
 od_geo$length = sf::st_length(od_geo) |> as.numeric()
