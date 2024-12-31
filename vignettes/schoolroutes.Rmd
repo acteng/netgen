@@ -13,6 +13,8 @@ author:
      affiliation: Active Travel England
    - name: Emma Vinter
      affiliation: Active Travel England
+   - name: Adrian Fletcher
+     affiliation: Active Travel England
    - name: Chris Conlan
      affiliation: Active Travel England and The Alan Turing Institute
    - name: Dustin Carlino
@@ -777,7 +779,7 @@ m = tm_shape(rnet_c) +
 m
 ```
 
-Not that while there are differences in the results, the SchoolRoutes outputs presented above are based on synthetic OD data.
+Note that while there are differences in the results, the SchoolRoutes outputs presented above are based on synthetic OD data.
 Despite this, both sets of results highlight the same roads, and the results are on the same scale, which is a good sign that the SchoolRoutes outputs are plausible.
 It is clear from the SchoolRoutes outputs in the figure above (bottom), that the networks it generates are much denser: most of the roads around the school are highlighted, rather than just a few key routes in the PCT.
 
@@ -789,21 +791,22 @@ Due to the high computational efficiency of the `od2net` tool, which resulted fr
 
 To deploy the project at scale there is a substantial amount of work to do, including the following (with estimates in days of work):
 
--  Detailed quantitative comparison of results for York with Propensity to Cycle Tool outputs (2 days)
--  Validating the results against ground truth data for a single local authority (5 days)
--  Refining the parameters in the walking uptake (and potentially cycling uptake) functions (5-30 days)
--  Integration of ModeShift Stars data and Census data to generate better baseline data (10-30 days)
+- Detailed quantitative comparison of results with Propensity to Cycle Tool outputs (5-10 days)
+- Validating the results against ground truth data for a single local authority (5 days)
+- Refining the parameters in the walking uptake (and potentially cycling uptake) functions (5-30 days)
+- Integration of ModeShift Stars data and Census data to generate better baseline data (10-30 days)
 - Inclusion of gradient data, gradient is not included in the walking or cycling routes or uptake model currently (5-20 days)
--  Sense-checking results based on local knowledge with input from inspectors and/or local authority staff (5-10 days)
+- Sense-checking results based on local knowledge with input from inspectors and/or local authority staff and, optionally, collaborating with partners to gain feedback and improve the approach based on that feedback (5-30 days)
 - Running the tool for every local authority in England (10-20 days)
 - Development of front-end tools for visualising the results (5-50 days depending on level of sophistication)
 - Presenting results to stakeholders in workshops (5 days)
 - Writing case studies of how to use the tool in collaboration with local authorities (10 days)
-- Training local authority staff to use the tool (5 days)
-- Integration into the browse tool in the [`atip`](https://github.com/acteng/atip)
+- Training local authority staff to use the tool (5-20 days)
+- Integration into the browse tool in the [`atip`](https://github.com/acteng/atip) codebase, (see [plan.activetravelengland.gov.uk](https://plan.activetravelengland.gov.uk)) (10 days)
 -  Writing up the results in a peer-reviewed journal article (10 days)
 
-In total, the project would require around 70-250 days of work, depending on the project's ambition and scope.
-With the potential to have a substantial impact on active travel to school in England, the project is well worth pursuing.
+In total, the project would require around 100-250 days of work, depending on the project's ambition and scope.
+It may be worth chunking the project into 2 distinct phases, e.g. a pilot for a handful of local authorities (e.g. 20 days' work), followed by a full rollout to all local authorities in England.
+With the potential to have a substantial impact on active travel to school in England, and to provide a foundation for a next-generation strategic active travel network planning tool going beyond the now-outdated Propensity to Cycle Tool, the project is well worth pursuing.
 
 # References
