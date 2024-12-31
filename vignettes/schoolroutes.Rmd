@@ -84,12 +84,12 @@ While the PCT --- and associated website which provides data downloads and evide
 
 -   School catchments and travel patterns have changed substantially since the 2010/2011 data on which @goodman_scenarios_2019 was based. More recent travel data can overcome a major limitation of that study by presenting current transport patterns to school.
 -   The travel to school layer in the PCT described by @goodman_scenarios_2019 provided only a single metric for segments on the road network: cycling potential (under a range of scenarios), without reference to key infrastructure datasets that could be vital when prioritising local interventions and identifying where 'pinch points' are in the network.
--   The pandemic has seen an [alarming increase in childhood obesity rates and inequalities](https://twitter.com/TheMooreLab/status/1492883858450169857), as shown in Figure 1. This has pushed active travel for kids up the political agenda.
+-   The pandemic and subsequent restrictions on have been linked with [alarming increase in childhood obesity rates and inequalities](https://twitter.com/TheMooreLab/status/1492883858450169857), as shown in Figure 1. This has pushed active travel for kids up the political agenda.
 -   The travel to school layer in the original PCT resulted in a sparse network in some places. This can be overcome using new methods for disaggregating OD pairs to show diffuse residential networks [@lovelace_jittering_2022b].
 -   Perhaps most importantly, evidence presented in the PCT omitted the potential for walking to school, which is likely to be more important for shorter trips and for younger children, especially in the near term.
 
 On the policy side, and as part of the UK Government's Health Mission, health and wellbeing for young people has risen up the political agenda.
-'School Streets' interventions featured prominently in all rounds of the Active Travel Fund (ATF) bids, yet there is a lack of evidence to support safe routes to school and where they should be located at the local level.
+'School Streets' interventions featured prominently in all rounds of the Active Travel Fund (ATF) bids, yet there is a lack of evidence to support safe routes to school and where they should be located.
 More broadly, strategic active travel networks have already largely been designed, as part of the LCWIP process, while cost-effective interventions that fix 'weak links' in quiet/beginner networks have received less attention.
 
 ```{r obesdep, fig.height=3, fig.width=6}
@@ -134,6 +134,23 @@ t11_most_least %>%
 # theme void:
 ```
 
+Objectives 
+
+As outlined in the project charter, the project aims to: 
+
+1. Generate estimates of active travel potential for school travel, based on separate uptake functions for walking and cycling.
+
+2. Use 'jittering', described in an academic paper (Lovelace et al. 2022), to create a realistic distribution of school route starting points within LSOAs, generating dense networks connecting residential origins with schools.
+
+3. Use 2023 origin-destination data from DfE, describing the number of children from each English LSOA travelling to each school in England.
+
+4. Update cycling and walking uptake scenarios to reflect ATE targets and long-term aspirations.
+
+5. Include route segment information on cycle friendliness and traffic.
+
+Furthermore, the project will provide a basis for modelling active travel that can be applied to other trip purposes, as part of the Active Travel Uptake Model (ATUM) project in 2023.
+ATUM aims to replace the PCT, building on the Network Planning Tool for Scotland ([NPT](https://npt.scot/)).
+
 # Data and methods
 
 The approach outlined in this paper uses the following datasets:
@@ -144,7 +161,7 @@ The approach outlined in this paper uses the following datasets:
 -   Elevation data, enabling hilliness to be factored into walking and cycling potential estimates.
 -   Datasets from the Modeshift Stars programme, which provides data on the number of trips to school by mode for a sample of schools in England (not currently used).
 
-A methodological limitation of the PCT approach was that it used only zone centroids as trip origins, which can lead to a 'spider's web' of routes that do not reflect the actual routes taken by children to school.
+A methodological limitation of the PCT approach was that it used only zone centroids as trip origins, which can lead to a sparse 'spider's web' of routes that do not reflect the actual routes taken by children to school, rather than the dense networks that are needed (see example in the case study section below).
 To overcome this, the approach taken in this paper is to disaggregate the OD data, modelling multiple origins or 'subpoints' within each zone, to better represent the geographic distribution of trips to school.
 
 For each OD pair, the number of trips that could be walked or cycled is estimated based on route characteristics.
